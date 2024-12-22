@@ -75,9 +75,10 @@ public class PersonRepositoryTest {
 
          //then
          List<Person> persons = personRepository.getPersons();
-         assertThat(persons).isNotNull()
-         .hasSize(1)
-         .containsExactly(person3); 
+         assertThat(persons)
+             .isNotNull()
+             .hasSize(1)
+             .containsExactly(person3); 
         
     }
 
@@ -92,9 +93,10 @@ public class PersonRepositoryTest {
         
         //then
         List<Person> persons = personRepository.getPersons();
-        assertThat(persons).isNotNull()
-        .hasSize(1)
-        .containsExactly(person2);
+        assertThat(persons)
+            .isNotNull()
+            .hasSize(1)
+            .containsExactly(person2);
 
     }
     
@@ -111,9 +113,10 @@ public class PersonRepositoryTest {
         
         // then
         assertThat(result).isTrue();
-        assertThat(persons).isNotNull()
-        .hasSize(1)
-        .containsExactly(person1Updated);
+        assertThat(persons)
+            .isNotNull()
+            .hasSize(1)
+            .containsExactly(person1Updated);
         
     }
         
@@ -149,9 +152,10 @@ public class PersonRepositoryTest {
                 
         // then
         assertThat(result).isTrue();
-        assertThat(persons).isNotNull()
-        .hasSize(2)
-        .containsExactlyInAnyOrder(person1, person3); 
+        assertThat(persons)
+            .isNotNull()
+            .hasSize(2)
+            .containsExactlyInAnyOrder(person1, person3); 
        
     }
     
