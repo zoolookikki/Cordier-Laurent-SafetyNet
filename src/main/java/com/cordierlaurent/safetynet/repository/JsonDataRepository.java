@@ -3,27 +3,23 @@ package com.cordierlaurent.safetynet.repository;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.cordierlaurent.safetynet.model.EntityContainer;
-import com.cordierlaurent.safetynet.service.MessageService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 
 @Repository
 @Data
+@Log4j2
 public class JsonDataRepository {
     
     private String jsonFileName = "src/main/resources/data/data.json";
-    private static final Logger logger = LogManager.getLogger(JsonDataRepository.class);
 
-    @Autowired
-    private MessageService messageService;
     @Autowired
     private PersonRepository personRepository;
     @Autowired
@@ -34,20 +30,42 @@ public class JsonDataRepository {
     private ObjectMapper objectMapper;
     
     public void load() {
+        log.debug("JsonDataRepository : load called");                
         try {
             EntityContainer entityContainer = objectMapper.readValue(new File(jsonFileName), EntityContainer.class);
-
-            personRepository.setPersons(entityContainer.getPersons());
-            fireStationRepository.setFireStations(entityContainer.getFireStations());
-            medicalRecordRepository.setMedicalRecords(entityContainer.getMedicalRecords());
+            
+            if (entityContainer == null) {
+                log.error("EntityContainer is null, unable to load data.");
+                return;
+            }
+            // contrôle des fichiers json à faire +++
+            if (entityContainer.getPersons() != null) {
+                log.debug("JsonDataRepository : list person ok");                
+                personRepository.setPersons(entityContainer.getPersons());
+            } else {
+                log.debug("JsonDataRepository : list person null");                
+            }
+            if (entityContainer.getFireStations() != null) {
+                log.debug("JsonDataRepository : list firestation ok");                
+                fireStationRepository.setFireStations(entityContainer.getFireStations());
+            } else {
+                log.debug("JsonDataRepository : list firestation null");                
+            }
+            if (entityContainer.getMedicalRecords() != null) {
+                log.debug("JsonDataRepository : list medicalrecord ok");                
+                medicalRecordRepository.setMedicalRecords(entityContainer.getMedicalRecords());
+            } else {
+                log.debug("JsonDataRepository : list medicalrecord null");                
+            }
 
         } catch (IOException e) {
-            logger.error(messageService.getMessage("json.file_not_exist") + jsonFileName);
+            log.error("unable to load Json file : " + jsonFileName);
             e.printStackTrace();
         }
     }
     
     public void save() {
+        log.debug("JsonDataRepository : save called");                
         try {
             EntityContainer entityContainer = new EntityContainer(
                     personRepository.getPersons(),
@@ -57,7 +75,7 @@ public class JsonDataRepository {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(jsonFileName), entityContainer);
 
         } catch (IOException e) {
-            logger.error(messageService.getMessage("json.write_error") + jsonFileName);
+            log.error("write error in json file : " + jsonFileName);
             e.printStackTrace();
         }
     }

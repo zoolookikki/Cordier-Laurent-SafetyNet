@@ -6,35 +6,32 @@ import org.springframework.stereotype.Service;
 import com.cordierlaurent.safetynet.model.Person;
 import com.cordierlaurent.safetynet.repository.PersonRepository;
 
+import lombok.NonNull;
+import lombok.extern.log4j.Log4j2;
+
 @Service
+@Log4j2
 public class PersonService {
 
     @Autowired
     private PersonRepository personRepository;
     
-    private void validation(Person person) {
-        if (person == null) {
-            throw new IllegalArgumentException("Person cannot be null");
-        }
-        if (person.getFirstName().isEmpty() || person.getLastName().isEmpty()) {
-            throw new IllegalArgumentException("Firstname or lastname is empty");
-        }
-    }
-    
-    public boolean createPerson(Person personToCreate) {
-
-        // validation des champs dans le service.
-        validation(personToCreate);
-        
-        // contrôle d'unicité dans le service.
+    // contrôle d'unicité dans le service (métier).
+    public boolean isUnique(@NonNull Person personToVerify) {
         for (Person person : personRepository.getPersons()) {
-            if (person.getFirstName().equalsIgnoreCase(personToCreate.getFirstName()) &&
-                    person.getLastName().equalsIgnoreCase(personToCreate.getLastName())) {
+            if (person.getFirstName().equalsIgnoreCase(personToVerify.getFirstName()) &&
+                    person.getLastName().equalsIgnoreCase(personToVerify.getLastName())) {
+                log.debug("PersonService : unicité NOK");
                 return false;
             }
         }
-        personRepository.addPerson(personToCreate);
+        log.debug("PersonService : unicité OK");
         return true;
+    }
+    
+    public void addPerson(@NonNull Person personToAdd) {
+        personRepository.addPerson(personToAdd);
+        log.debug("PersonService : ajout personToAdd OK");
     }
     
 }

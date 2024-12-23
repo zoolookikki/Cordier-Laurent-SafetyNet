@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.cordierlaurent.safetynet.Util.EntityDataTest;
 import com.cordierlaurent.safetynet.model.Person;
 
 // inutile ici mais par sécurité pour le moment je le laisse.
@@ -26,10 +27,10 @@ public class PersonRepositoryTest {
 
     @BeforeAll
     private static void setUp() {
-        person1 = new Person("John", "Boyd", "1509 Culver St", "Culver", "97451", "841-874-6512", "jaboyd@email.com");
-        person1Updated = new Person("John", "Boyd", "1510 Culver St", "Culver", "97452", "841-874-6513", "jaboyd@gmail.com");
-        person2 = new Person("Jacob", "Boyd", "1509 Culver St", "Culver", "97451", "841-874-6513", "drk@email.com");
-        person3 = new Person("Tenley", "Boyd", "1509 Culver St", "Culver", "97451", "841-874-6512", "tenz@email.com");
+        person1 = EntityDataTest.createPerson1();
+        person1Updated = EntityDataTest.createPerson1Updated();
+        person2 = EntityDataTest.createPerson2();
+        person3 = EntityDataTest.createPerson3();
     }
     
     @BeforeEach
