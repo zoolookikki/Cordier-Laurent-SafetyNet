@@ -15,7 +15,7 @@ public abstract class CrudRepository<ID, MODEL> {
     private List<MODEL> models = new ArrayList<>();
 
     // à implémenter par les classes filles et accessible uniquement par elles.
-    protected abstract boolean isUnique(ID id, MODEL model);
+    protected abstract boolean containsId(ID id, MODEL model);
         
     // pour récupérer la liste de tous les éléments du modèle.
     // retourne une copie : attention au passage par référence des objets.
@@ -38,7 +38,7 @@ public abstract class CrudRepository<ID, MODEL> {
     // mise à jour du modèle avec la clef unique.
     public boolean updateModelByUniqueKey (ID id, @NonNull MODEL modelToUpdate) {
         for (MODEL model : models) {
-            if (isUnique(id, model)) {
+            if (containsId(id, model)) {
                 models.set(models.indexOf(model), modelToUpdate);
                 return true;
             }
@@ -48,7 +48,7 @@ public abstract class CrudRepository<ID, MODEL> {
     
     // Suppression par clef unique avec lambda.
     public boolean deleteModelByUniqueKey(ID id) {
-        return models.removeIf(model -> isUnique(id, model));
+        return models.removeIf(model -> containsId(id, model));
     }
     
     

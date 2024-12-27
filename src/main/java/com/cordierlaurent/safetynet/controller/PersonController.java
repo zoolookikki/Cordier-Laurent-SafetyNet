@@ -50,7 +50,7 @@ public class PersonController {
         
         // c'est ok.
         log.info("vérification contrôleur : tout est ok");
-        personService.addPerson(person);
+        personService.addModel(person);
         jsonDataRepository.save(); // je mets à jour le fichier json ici.
         return ResponseEntity
                 .status(HttpStatus.CREATED) // 201 created => préférable à 200 ok.

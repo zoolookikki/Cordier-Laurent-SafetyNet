@@ -191,6 +191,14 @@
     "zip" : "77127",
     "phone" : "0601020304",
     "email" : "laurent.cordier28@orange.fr"
+  }, {
+    "firstName" : "Laurent",
+    "lastName" : "Cardier",
+    "address" : "2 passage du buisson de la reine",
+    "city" : "Lieusaint",
+    "zip" : "77127",
+    "phone" : "0601020304",
+    "email" : "laurent.cordier28@orange.fr"
   } ],
   "firestations" : [ {
     "address" : "1509 Culver St",

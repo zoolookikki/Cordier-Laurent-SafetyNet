@@ -77,7 +77,7 @@ public class PersonControllerTest {
             .andExpect(jsonPath("$.firstName").value("John"))
             .andExpect(jsonPath("$.lastName").value("Boyd"));         
 
-        verify(personService, times(1)).addPerson(any(Person.class));
+        verify(personService, times(1)).addModel(any(Person.class));
         verify(jsonDataRepository, times(1)).save();        
     }
     

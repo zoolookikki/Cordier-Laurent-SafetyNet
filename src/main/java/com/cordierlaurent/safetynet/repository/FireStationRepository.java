@@ -8,7 +8,7 @@ import com.cordierlaurent.safetynet.model.FireStation;
 public class FireStationRepository extends CrudRepository<String, FireStation> {
     
     @Override
-    protected boolean isUnique(String id, FireStation fireStation) {
+    protected boolean containsId(String id, FireStation fireStation) {
         return fireStation.getAddress().equalsIgnoreCase(id);
     }
     
