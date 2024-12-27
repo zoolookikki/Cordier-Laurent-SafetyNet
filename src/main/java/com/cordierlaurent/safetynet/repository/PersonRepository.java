@@ -15,13 +15,13 @@ public class PersonRepository {
     // Liste dans l'ordre car c'est une petite liste, je ne cherche pas l'optmisation en recherche.
     private List<Person> persons = new ArrayList<>();
 
-    // pour récupérer toutes les personnes
+    // pour récupérer la liste de toutes les personnes.
     // retourne une copie : attention au passage par référence des objets.
     public List<Person> getPersons() {
         return new ArrayList<>(persons);  
     }
 
-    // pour remplacer toute la liste de personnes
+    // pour remplacer la liste de toutes les personnes.
     // création d'une nouvelle liste : attention au passage par référence des objets.
     public void setPersons(List<Person> newPersons) {
         persons = new ArrayList<>(newPersons);  
@@ -33,7 +33,7 @@ public class PersonRepository {
         persons.add(person);
     }
 
-    // mise à jour avec la clef nom, prénom qui est l'identificateur unique.
+    // mise à jour de la personne avec la clef nom, prénom qui est l'identificateur unique.
     public boolean updatePersonByFirstNameAndLastName (String firstName, String lastName, @NonNull Person personToUpdate) {
         for (Person person : persons) {
             if (person.getFirstName().equalsIgnoreCase(firstName) &&
@@ -52,5 +52,6 @@ public class PersonRepository {
             person.getLastName().equalsIgnoreCase(lastName)
         );
     }
+    
     
 }
