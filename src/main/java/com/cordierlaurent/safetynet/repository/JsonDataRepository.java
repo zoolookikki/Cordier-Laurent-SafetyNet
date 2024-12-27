@@ -41,7 +41,7 @@ public class JsonDataRepository {
             // contrôle des fichiers json à faire +++
             if (entityContainer.getPersons() != null) {
                 log.debug("JsonDataRepository : list person ok");                
-                personRepository.setPersons(entityContainer.getPersons());
+                personRepository.setModels(entityContainer.getPersons());
             } else {
                 log.debug("JsonDataRepository : list person null");                
             }
@@ -68,7 +68,7 @@ public class JsonDataRepository {
         log.debug("JsonDataRepository : save called");                
         try {
             EntityContainer entityContainer = new EntityContainer(
-                    personRepository.getPersons(),
+                    personRepository.getModels(),
                     fireStationRepository.getFireStations(),
                     medicalRecordRepository.getMedicalRecords()
                     );

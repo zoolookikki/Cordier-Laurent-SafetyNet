@@ -50,11 +50,11 @@ public class PersonRepositoryTest {
     void getPersonsTest() {
 
         // given
-        personRepository.addPerson(person1);
-        personRepository.addPerson(person2);
+        personRepository.addModel(person1);
+        personRepository.addModel(person2);
         
         // when
-        List<Person> persons = personRepository.getPersons();
+        List<Person> persons = personRepository.getModels();
         
         // then
         assertThat(persons).isNotNull()
@@ -69,16 +69,16 @@ public class PersonRepositoryTest {
     void setPersonsTest() {
          
          // given
-         personRepository.addPerson(person1);
-         personRepository.addPerson(person2);
+         personRepository.addModel(person1);
+         personRepository.addModel(person2);
 
          //when
          List<Person> personsNewList = new ArrayList<Person>();
          personsNewList.add(person3);
-         personRepository.setPersons(personsNewList);
+         personRepository.setModels(personsNewList);
 
          //then
-         List<Person> persons = personRepository.getPersons();
+         List<Person> persons = personRepository.getModels();
          assertThat(persons)
              .isNotNull()
              .hasSize(1)
@@ -93,10 +93,10 @@ public class PersonRepositoryTest {
         // given : repository empty.
 
         // when
-        personRepository.addPerson(person2);
+        personRepository.addModel(person2);
         
         //then
-        List<Person> persons = personRepository.getPersons();
+        List<Person> persons = personRepository.getModels();
         assertThat(persons)
             .isNotNull()
             .hasSize(1)
@@ -109,11 +109,11 @@ public class PersonRepositoryTest {
     void updatePersonsTest() {
         
         // given
-        personRepository.addPerson(person1);
+        personRepository.addModel(person1);
         
         // when
-        boolean result = personRepository.updatePersonByFirstNameAndLastName ("John", "Boyd", person1Updated);
-        List<Person> persons = personRepository.getPersons();
+        boolean result = personRepository.updateModelByUniqueKey( new String[]{"John", "Boyd"}, person1Updated);
+        List<Person> persons = personRepository.getModels();
         
         // then
         assertThat(result).isTrue();
@@ -129,12 +129,12 @@ public class PersonRepositoryTest {
     void updatePersonsFailTest() {
         
         // given
-        personRepository.addPerson(person1);
-        personRepository.addPerson(person2);
-        personRepository.addPerson(person3);
+        personRepository.addModel(person1);
+        personRepository.addModel(person2);
+        personRepository.addModel(person3);
         
         // when
-        boolean result = personRepository.updatePersonByFirstNameAndLastName ("xxxxx", "Boyd", person1Updated);
+        boolean result = personRepository.updateModelByUniqueKey (new String[]{"xxxxx", "Boyd"}, person1Updated);
                 
         // then
         assertThat(result).isFalse();
@@ -146,13 +146,13 @@ public class PersonRepositoryTest {
     void deletePersonsTest() {
         
         // given
-        personRepository.addPerson(person1);
-        personRepository.addPerson(person2);
-        personRepository.addPerson(person3);
+        personRepository.addModel(person1);
+        personRepository.addModel(person2);
+        personRepository.addModel(person3);
         
         // when
-        boolean result = personRepository.deletePersonByFirstNameAndLastName ("Jacob", "Boyd"); // the number 2
-        List<Person> persons = personRepository.getPersons();
+        boolean result = personRepository.deleteModelByUniqueKey(new String[]{"Jacob", "Boyd"}); // the number 2
+        List<Person> persons = personRepository.getModels();
                 
         // then
         assertThat(result).isTrue();
@@ -168,12 +168,12 @@ public class PersonRepositoryTest {
     void deletePersonsFailTest() {
         
         // given
-        personRepository.addPerson(person1);
-        personRepository.addPerson(person2);
-        personRepository.addPerson(person3);
+        personRepository.addModel(person1);
+        personRepository.addModel(person2);
+        personRepository.addModel(person3);
         
         // when
-        boolean result = personRepository.deletePersonByFirstNameAndLastName ("xxxxx", "Boyd"); 
+        boolean result = personRepository.deleteModelByUniqueKey(new String[] {"xxxxx", "Boyd"}); 
                 
         // then
         assertThat(result).isFalse();

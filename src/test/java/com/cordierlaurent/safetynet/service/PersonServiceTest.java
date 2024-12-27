@@ -41,7 +41,7 @@ public class PersonServiceTest {
     public void isUniquePersonTest(){
         
         // given
-        when(personRepository.getPersons()).thenReturn(List.of(person1, person2));
+        when(personRepository.getModels()).thenReturn(List.of(person1, person2));
         
         // when
         boolean isUnique = personService.isUnique(person3);
@@ -55,7 +55,7 @@ public class PersonServiceTest {
     public void isNotUniquePersonTest(){
         
         // given
-        when(personRepository.getPersons()).thenReturn(List.of(person1, person2));
+        when(personRepository.getModels()).thenReturn(List.of(person1, person2));
         
         // when
         boolean isUnique = personService.isUnique(person2);

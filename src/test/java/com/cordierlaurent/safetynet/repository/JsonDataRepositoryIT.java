@@ -56,20 +56,20 @@ public class JsonDataRepositoryIT {
         List<Person> persons = List.of(person1, person2, person3);
         List<FireStation> fireStations = List.of(fireStation1);
         List<MedicalRecord> medicalRecords = List.of(medicalRecord1, medicalRecord2);
-        personRepository.setPersons(persons);
+        personRepository.setModels(persons);
         fireStationRepository.setFireStations(fireStations);
         medicalRecordRepository.setMedicalRecords(medicalRecords);  
 
         // when
         jsonDataRepository.save();
-        personRepository.setPersons(new ArrayList<>());
+        personRepository.setModels(new ArrayList<>());
         fireStationRepository.setFireStations(new ArrayList<>());
         medicalRecordRepository.setMedicalRecords(new ArrayList<>());
         jsonDataRepository.load();
         
         // then
         assertThat(file.exists()).isTrue();
-        assertThat(personRepository.getPersons())
+        assertThat(personRepository.getModels())
             .isNotNull()
             .hasSize(3)
             .containsExactlyInAnyOrder(person1, person2, person3); 

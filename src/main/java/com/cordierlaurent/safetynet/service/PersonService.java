@@ -18,7 +18,7 @@ public class PersonService {
     
     // contrôle d'unicité dans le service (métier).
     public boolean isUnique(@NonNull Person personToVerify) {
-        for (Person person : personRepository.getPersons()) {
+        for (Person person : personRepository.getModels()) {
             if (person.getFirstName().equalsIgnoreCase(personToVerify.getFirstName()) &&
                     person.getLastName().equalsIgnoreCase(personToVerify.getLastName())) {
                 log.debug("PersonService : unicité NOK");
@@ -30,7 +30,7 @@ public class PersonService {
     }
     
     public void addPerson(@NonNull Person personToAdd) {
-        personRepository.addPerson(personToAdd);
+        personRepository.addModel(personToAdd);
         log.debug("PersonService : ajout personToAdd OK");
     }
     
