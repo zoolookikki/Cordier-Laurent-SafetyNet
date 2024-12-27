@@ -47,13 +47,13 @@ public class JsonDataRepository {
             }
             if (entityContainer.getFireStations() != null) {
                 log.debug("JsonDataRepository : list firestation ok");                
-                fireStationRepository.setFireStations(entityContainer.getFireStations());
+                fireStationRepository.setModels(entityContainer.getFireStations());
             } else {
                 log.debug("JsonDataRepository : list firestation null");                
             }
             if (entityContainer.getMedicalRecords() != null) {
                 log.debug("JsonDataRepository : list medicalrecord ok");                
-                medicalRecordRepository.setMedicalRecords(entityContainer.getMedicalRecords());
+                medicalRecordRepository.setModels(entityContainer.getMedicalRecords());
             } else {
                 log.debug("JsonDataRepository : list medicalrecord null");                
             }
@@ -69,8 +69,8 @@ public class JsonDataRepository {
         try {
             EntityContainer entityContainer = new EntityContainer(
                     personRepository.getModels(),
-                    fireStationRepository.getFireStations(),
-                    medicalRecordRepository.getMedicalRecords()
+                    fireStationRepository.getModels(),
+                    medicalRecordRepository.getModels()
                     );
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(jsonFileName), entityContainer);
 

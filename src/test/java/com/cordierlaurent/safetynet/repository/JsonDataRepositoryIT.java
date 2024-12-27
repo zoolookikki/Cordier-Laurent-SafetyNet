@@ -57,14 +57,14 @@ public class JsonDataRepositoryIT {
         List<FireStation> fireStations = List.of(fireStation1);
         List<MedicalRecord> medicalRecords = List.of(medicalRecord1, medicalRecord2);
         personRepository.setModels(persons);
-        fireStationRepository.setFireStations(fireStations);
-        medicalRecordRepository.setMedicalRecords(medicalRecords);  
+        fireStationRepository.setModels(fireStations);
+        medicalRecordRepository.setModels(medicalRecords);  
 
         // when
         jsonDataRepository.save();
         personRepository.setModels(new ArrayList<>());
-        fireStationRepository.setFireStations(new ArrayList<>());
-        medicalRecordRepository.setMedicalRecords(new ArrayList<>());
+        fireStationRepository.setModels(new ArrayList<>());
+        medicalRecordRepository.setModels(new ArrayList<>());
         jsonDataRepository.load();
         
         // then
@@ -73,11 +73,11 @@ public class JsonDataRepositoryIT {
             .isNotNull()
             .hasSize(3)
             .containsExactlyInAnyOrder(person1, person2, person3); 
-        assertThat(fireStationRepository.getFireStations())
+        assertThat(fireStationRepository.getModels())
             .isNotNull()
             .hasSize(1)
             .containsExactlyInAnyOrder(fireStation1); 
-        assertThat(medicalRecordRepository.getMedicalRecords())
+        assertThat(medicalRecordRepository.getModels())
             .isNotNull()
             .hasSize(2)
             .containsExactlyInAnyOrder(medicalRecord1, medicalRecord2); 
