@@ -45,6 +45,10 @@ public abstract class CrudService<MODEL> {
     public boolean updateModelByUniqueKey (String[] id, @NonNull MODEL modelToUpdate) {
         return getRepository().updateModelByUniqueKey(id, modelToUpdate);
     }
+
+    public boolean deleteModelByUniqueKey (String[] id) {
+        return getRepository().deleteModelByUniqueKey(id);
+    }
     
 }
 

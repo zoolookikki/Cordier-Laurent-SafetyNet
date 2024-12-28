@@ -3,6 +3,7 @@ package com.cordierlaurent.safetynet.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,7 +33,7 @@ public abstract class CrudController <MODEL> {
     // à implémenter dans la classe fille : on vérifie les paramètres reçus via le contrôleur, chaque contrôleur qui héritera choisira sa façon de vérifier les paramètres.
     protected abstract boolean checkId (String[] id);
     
-    // @PostMapping : mappe une requête HTTP POST à une méthode de contrôleur : ici en POST. 
+    // @PostMapping : mappe une requête HTTP POST à une méthode de contrôleur : création. 
     // ResponseEntity représente l'ensemble de la réponse HTTP envoyée au client (corps, status, entête http) : <MODEL> => objet générique retourné en Json.
     // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique MODEL (désérialisaion automatique : json -> MODEL).
     // ? au lieu de MODEL sinon erreur type mismatch car ici on renvoit soit MODEL soit un String.
@@ -42,7 +43,7 @@ public abstract class CrudController <MODEL> {
 
         // le contrôleur doit vérifier le contenu de la requête avant de le transmettre au service.
         if (!checkModel(model)) {
-            log.info(this.getClass().getSimpleName() + " : objet Json incorrect");
+            log.info("creation : " + this.getClass().getSimpleName() + " : objet Json incorrect");
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST) // 400 
                     .body("creation : missing fields");
@@ -50,14 +51,14 @@ public abstract class CrudController <MODEL> {
         
         // vérification de l'unicité par le service => logique métier.
         if (!getService().isUnique(null,model)) {
-            log.info(this.getClass().getSimpleName() + " : pas unique");
+            log.info("creation : " + this.getClass().getSimpleName() + " : pas unique");
             return ResponseEntity
                     .status(HttpStatus.CONFLICT) // 409 
                     .body("creation : already exists");
         }
         
         // c'est ok.
-        log.info(this.getClass().getSimpleName() + " : tout est ok");
+        log.info("creation : " + this.getClass().getSimpleName() + " : tout est ok");
         getService().addModel(model);
         jsonDataRepository.save(); // je mets à jour le fichier json ici.
         return ResponseEntity
@@ -65,7 +66,7 @@ public abstract class CrudController <MODEL> {
                 .body(model); // on retourne ce qui a été envoyé même si c'est identique ici pour respecter le standard.
     }
     
-    // @PutMapping : mappe une requête HTTP PUT à une méthode de contrôleur : ici en PUT (mis à jour).
+    // @PutMapping : mappe une requête HTTP PUT à une méthode de contrôleur : mise à jour.
     // /{param1}", "/{param1}/{param2} : syntaxe pour dire que j'attends 1 ou 2 paramètres sur l'url en plus du Json dans le body.
     // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut).
     // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique MODEL (désérialisaion automatique : json -> MODEL).
@@ -77,7 +78,7 @@ public abstract class CrudController <MODEL> {
         
         // le contrôleur doit d'abord vérifier les paramètres qui ont été reçus.
         if (!checkId(id)) {
-            log.info(this.getClass().getSimpleName() + " : paramètres incorrects");
+            log.info("modification : " + this.getClass().getSimpleName() + " : paramètres incorrects");
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST) // 400 
                     .body("modification : invalid parameters");
@@ -85,7 +86,7 @@ public abstract class CrudController <MODEL> {
         
         // comme pour la création, le contrôleur doit vérifier le contenu de la requête avant de le transmettre au service.
         if (!checkModel(model)) {
-            log.info(this.getClass().getSimpleName() + " : objet Json incorrect");
+            log.info("modification : " + this.getClass().getSimpleName() + " : objet Json incorrect");
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST) // 400 
                     .body("modification : missing fields");
@@ -117,4 +118,38 @@ public abstract class CrudController <MODEL> {
         }
     }
 
+    // @DeleteMapping : mappe une requête HTTP DELETE à une méthode de contrôleur : suppression.
+    // /{param1}", "/{param1}/{param2} : syntaxe pour dire que j'attends 1 ou 2 paramètres sur l'url en plus du Json dans le body.
+    // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut).
+    @DeleteMapping({"/{param1}", "/{param1}/{param2}"})
+    public ResponseEntity<?> deleteModelByUniqueKey(@PathVariable String param1,@PathVariable(required = false) String param2){
+
+        // Construction de l'id en fonction du nombre de paramètres.
+        String[] id = (param2 != null) ? new String[]{param1, param2} : new String[]{param1};
+        
+        // le contrôleur doit d'abord vérifier les paramètres qui ont été reçus.
+        if (!checkId(id)) {
+            log.info("suppression : " + this.getClass().getSimpleName() + " : paramètres incorrects");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST) // 400 
+                    .body("suppression : invalid parameters");
+        }
+        
+        if (getService().deleteModelByUniqueKey(id)) {
+            // ok.
+            log.info("suppression : " + this.getClass().getSimpleName() + " : supression réussie");
+            jsonDataRepository.save(); // je mets à jour le fichier json ici.
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT) // 204 mieux que 200
+                    .build(); // on ne retourne pas de réponse, soit un body null.
+        } else {
+            // nok. 
+            log.info("suppression : " + this.getClass().getSimpleName() + " : non trouvé ");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND) // 404 
+                    .body("suppression : not found");
+        }
+    }
+    
+    
 }
