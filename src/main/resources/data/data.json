@@ -185,7 +185,7 @@
     "email" : "gramps@email.com"
   }, {
     "firstName" : "Laurent",
-    "lastName" : "Cordier",
+    "lastName" : "Cardier",
     "address" : "2 passage du buisson de la reine",
     "city" : "Lieusaint",
     "zip" : "77127",
@@ -193,7 +193,7 @@
     "email" : "laurent.cordier28@orange.fr"
   }, {
     "firstName" : "Laurent",
-    "lastName" : "Cardier",
+    "lastName" : "Cordier",
     "address" : "2 passage du buisson de la reine",
     "city" : "Lieusaint",
     "zip" : "77127",
@@ -239,6 +239,9 @@
   }, {
     "address" : "951 LoneTree Rd",
     "station" : 2
+  }, {
+    "address" : "2 avenue de Paris",
+    "station" : 3
   } ],
   "medicalrecords" : [ {
     "firstName" : "John",
@@ -378,5 +381,11 @@
     "birthdate" : "08/06/1945",
     "medications" : [ "tradoxidine:400mg" ],
     "allergies" : [ ]
+  }, {
+    "firstName" : "Joe",
+    "lastName" : "Le Malade",
+    "birthdate" : "01/01/1900",
+    "medications" : [ "abc", "def", "ghi", "jkl" ],
+    "allergies" : [ "www", "xxx", "yyy", "zzz" ]
   } ]
 }
