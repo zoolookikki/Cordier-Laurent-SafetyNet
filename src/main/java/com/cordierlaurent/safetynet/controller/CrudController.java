@@ -19,12 +19,12 @@ public abstract class CrudController <ID, MODEL> {
     @Autowired
     private JsonDataRepository jsonDataRepository;
 
-    // à implémenter dans la classe fille : on compare 2 modèles, chaque service qui héritera choisira sa façon de comparer les modèles pour décider qu'il est unique.
+    // à implémenter dans la classe fille : on vérifie le modèle reçu via le contrôleur, chaque contrôleur qui héritera choisira sa façon de vérifier le contenu du Json.
     protected abstract boolean checkModel (MODEL model);
 
     // à implémenter dans la classe fille : 
-    // pour pouvoir appeler parcourir tous les éléments du modèle contenu dans le repository concerné.
-    // pour pouvoir appeler les fonctions de Crud de chaque repository concerné.
+    // pour pouvoir appeler le service concerné pour lui demander de vérifier l'unicité.
+    // pour pouvoir appeler les fonctions de Crud de chaque service concerné.
     protected abstract CrudService<ID, MODEL> getService();
     
     
