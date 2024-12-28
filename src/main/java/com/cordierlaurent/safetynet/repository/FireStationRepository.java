@@ -5,11 +5,11 @@ import org.springframework.stereotype.Repository;
 import com.cordierlaurent.safetynet.model.FireStation;
 
 @Repository
-public class FireStationRepository extends CrudRepository<String, FireStation> {
+public class FireStationRepository extends CrudRepository<FireStation> {
     
     @Override
-    protected boolean containsId(String id, FireStation fireStation) {
-        return fireStation.getAddress().equalsIgnoreCase(id);
+    public boolean containsId(String[] id, FireStation fireStation) {
+        return fireStation.getAddress().equalsIgnoreCase(id[0]);
     }
     
 }

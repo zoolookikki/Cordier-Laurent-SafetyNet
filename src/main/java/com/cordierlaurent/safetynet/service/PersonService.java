@@ -8,7 +8,7 @@ import com.cordierlaurent.safetynet.repository.CrudRepository;
 import com.cordierlaurent.safetynet.repository.PersonRepository;
 
 @Service
-public class PersonService extends CrudService<String[], Person> {
+public class PersonService extends CrudService<Person> {
 
     @Autowired
     private PersonRepository personRepository;
@@ -22,7 +22,7 @@ public class PersonService extends CrudService<String[], Person> {
     }
 
     @Override
-    protected CrudRepository<String[], Person> getRepository() {
+    protected CrudRepository<Person> getRepository() {
         return personRepository;
     }    
 

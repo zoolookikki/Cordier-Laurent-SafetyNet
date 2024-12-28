@@ -8,7 +8,7 @@ import com.cordierlaurent.safetynet.repository.CrudRepository;
 import com.cordierlaurent.safetynet.repository.FireStationRepository;
 
 @Service
-public class FireStationService extends CrudService<String, FireStation> {
+public class FireStationService extends CrudService<FireStation> {
 
     @Autowired
     private FireStationRepository fireStationRepository;
@@ -19,7 +19,7 @@ public class FireStationService extends CrudService<String, FireStation> {
     }
 
     @Override
-    protected CrudRepository<String, FireStation> getRepository() {
+    protected CrudRepository<FireStation> getRepository() {
         return fireStationRepository;
     }    
 

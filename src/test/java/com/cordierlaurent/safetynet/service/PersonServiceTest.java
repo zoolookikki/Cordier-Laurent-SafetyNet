@@ -44,7 +44,7 @@ public class PersonServiceTest {
         when(personRepository.getModels()).thenReturn(List.of(person1, person2));
         
         // when
-        boolean isUnique = personService.isUnique(person3);
+        boolean isUnique = personService.isUnique(null,person3);
         
         // then
         assertThat(isUnique).isTrue();
@@ -58,7 +58,7 @@ public class PersonServiceTest {
         when(personRepository.getModels()).thenReturn(List.of(person1, person2));
         
         // when
-        boolean isUnique = personService.isUnique(person2);
+        boolean isUnique = personService.isUnique(null, person2);
         
         // then
         assertThat(isUnique).isFalse();

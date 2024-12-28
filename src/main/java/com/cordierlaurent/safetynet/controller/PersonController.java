@@ -14,7 +14,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 // la route est définie ici dans la classe fille.
 @RequestMapping("/person")
-public class PersonController extends CrudController<String[], Person>{
+public class PersonController extends CrudController<Person>{
 
     @Autowired
     private PersonService personService;
@@ -26,7 +26,16 @@ public class PersonController extends CrudController<String[], Person>{
     }
 
     @Override
-    protected CrudService<String[], Person> getService() {
+    protected CrudService<Person> getService() {
         return personService;
+    }
+
+    @Override
+    protected boolean checkId(String[] id) {
+        if ((id == null) || (id.length != 2) || id[0].isBlank() || id[1].isBlank()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

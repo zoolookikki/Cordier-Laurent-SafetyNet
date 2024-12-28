@@ -14,7 +14,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 // la route est définie ici dans la classe fille.
 @RequestMapping("/medicalrecord")
-public class MedicalRecordController extends CrudController<String[], MedicalRecord>{
+public class MedicalRecordController extends CrudController<MedicalRecord>{
 
     @Autowired
     private MedicalRecordService medicalRecordService;
@@ -26,8 +26,17 @@ public class MedicalRecordController extends CrudController<String[], MedicalRec
     }
 
     @Override
-    protected CrudService<String[], MedicalRecord> getService() {
+    protected CrudService<MedicalRecord> getService() {
         return medicalRecordService;
+    }
+
+    @Override
+    protected boolean checkId(String[] id) {
+        if ((id == null) || (id.length != 2) || id[0].isBlank() || id[1].isBlank()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
 

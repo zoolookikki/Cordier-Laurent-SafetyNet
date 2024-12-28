@@ -184,21 +184,13 @@
     "phone" : "841-874-7458",
     "email" : "gramps@email.com"
   }, {
-    "firstName" : "Laurent",
-    "lastName" : "Cardier",
-    "address" : "2 passage du buisson de la reine",
-    "city" : "Lieusaint",
-    "zip" : "77127",
-    "phone" : "0601020304",
-    "email" : "laurent.cordier28@orange.fr"
-  }, {
-    "firstName" : "Laurent",
-    "lastName" : "Cordier",
-    "address" : "2 passage du buisson de la reine",
-    "city" : "Lieusaint",
-    "zip" : "77127",
-    "phone" : "0601020304",
-    "email" : "laurent.cordier28@orange.fr"
+    "firstName" : "Aaaa",
+    "lastName" : "Bbbb",
+    "address" : "9 zzzz",
+    "city" : "Ddddd",
+    "zip" : "99999",
+    "phone" : "0102030405",
+    "email" : "x.y@orange.fr"
   } ],
   "firestations" : [ {
     "address" : "1509 Culver St",
@@ -239,9 +231,6 @@
   }, {
     "address" : "951 LoneTree Rd",
     "station" : 2
-  }, {
-    "address" : "2 avenue de Paris",
-    "station" : 3
   } ],
   "medicalrecords" : [ {
     "firstName" : "John",
@@ -381,11 +370,5 @@
     "birthdate" : "08/06/1945",
     "medications" : [ "tradoxidine:400mg" ],
     "allergies" : [ ]
-  }, {
-    "firstName" : "Joe",
-    "lastName" : "Le Malade",
-    "birthdate" : "01/01/1900",
-    "medications" : [ "abc", "def", "ghi", "jkl" ],
-    "allergies" : [ "www", "xxx", "yyy", "zzz" ]
   } ]
 }

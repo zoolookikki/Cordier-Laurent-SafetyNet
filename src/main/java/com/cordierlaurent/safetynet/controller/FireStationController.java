@@ -14,7 +14,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 // la route est définie ici dans la classe fille.
 @RequestMapping("/firestation")
-public class FireStationController extends CrudController<String, FireStation>{
+public class FireStationController extends CrudController<FireStation>{
 
     @Autowired
     private FireStationService fireStationService;
@@ -25,8 +25,17 @@ public class FireStationController extends CrudController<String, FireStation>{
     }
 
     @Override
-    protected CrudService<String, FireStation> getService() {
+    protected CrudService<FireStation> getService() {
         return fireStationService;
+    }
+
+    @Override
+    protected boolean checkId(String[] id) {
+        if ((id == null) || (id.length != 1) || id[0].isBlank()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
 

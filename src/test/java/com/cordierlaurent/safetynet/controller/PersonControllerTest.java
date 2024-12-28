@@ -1,6 +1,7 @@
 package com.cordierlaurent.safetynet.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,7 +58,7 @@ public class PersonControllerTest {
         // given
         
         Person person1 = EntityDataTest.createPerson1();
-        when(personService.isUnique(any(Person.class))).thenReturn(true);
+        when(personService.isUnique(isNull(), any(Person.class))).thenReturn(true);
         
         // when
 
