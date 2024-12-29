@@ -20,7 +20,7 @@ import lombok.extern.log4j.Log4j2;
 public abstract class CrudController <MODEL> {
 
     @Autowired
-    private JsonDataRepository jsonDataRepository;
+    protected JsonDataRepository jsonDataRepository;
 
     // à implémenter dans la classe fille : on vérifie le modèle reçu via le contrôleur, chaque contrôleur qui héritera choisira sa façon de vérifier le contenu du Json.
     protected abstract boolean checkModel (MODEL model);
@@ -41,8 +41,8 @@ public abstract class CrudController <MODEL> {
     @PostMapping
     public ResponseEntity<?> addModel(@RequestBody MODEL model) {
 
-        // le contrôleur doit vérifier le contenu de la requête avant de le transmettre au service.
         if (!checkModel(model)) {
+            // le contrôleur doit vérifier le contenu de la requête avant de le transmettre au service.
             log.info("creation : " + this.getClass().getSimpleName() + " : objet Json incorrect");
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST) // 400 
@@ -150,6 +150,5 @@ public abstract class CrudController <MODEL> {
                     .body("suppression : not found");
         }
     }
-    
     
 }

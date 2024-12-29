@@ -12,4 +12,13 @@ public class FireStationRepository extends CrudRepository<FireStation> {
         return fireStation.getAddress().equalsIgnoreCase(id[0]);
     }
     
+    public boolean deleteByAddress(String address) {
+        String[] id = new String[] {address};
+        return deleteModelByUniqueKey (id); // c'est le mode par défaut.
+    }
+    
+    public boolean deleteByStation(int station) {
+        return models.removeIf(model -> model.getStation() == station);
+    }
+    
 }

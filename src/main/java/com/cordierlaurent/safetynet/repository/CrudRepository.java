@@ -12,7 +12,8 @@ import lombok.NonNull;
 public abstract class CrudRepository<MODEL> {
     
     // Liste dans l'ordre car c'est une petite liste, je ne cherche pas l'optmisation en recherche.
-    private List<MODEL> models = new ArrayList<>();
+    // protected au lieu de private car une des filles en a besoin pour la manipuler (suppression par station de FireStationRepository)
+    protected List<MODEL> models = new ArrayList<>();
 
     // à implémenter par les classes filles.
     // public car j'en ai besoin dans le CrudService pour vérifier le cas de la mise à jour (voir isUnique).
@@ -51,7 +52,5 @@ public abstract class CrudRepository<MODEL> {
     public boolean deleteModelByUniqueKey(String[] id) {
         return models.removeIf(model -> containsId(id, model));
     }
-    
-    
 
 }

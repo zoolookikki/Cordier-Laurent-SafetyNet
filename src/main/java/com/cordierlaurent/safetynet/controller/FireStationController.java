@@ -1,6 +1,10 @@
 package com.cordierlaurent.safetynet.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,5 +41,80 @@ public class FireStationController extends CrudController<FireStation>{
             return true;
         }
     }
+    
+
+    // On invalide la suppression par défaut du CrudController en la surchargant car il faut soit supprimer par addresse, soit par station (la suppression par défaut ne fait que par adresse).
+    @Override
+    public ResponseEntity<?> deleteModelByUniqueKey(@PathVariable String param1,@PathVariable(required = false) String param2){
+        log.info("suppression par adresse : " + this.getClass().getSimpleName() + " : fonctionnalité inexistante");
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED) // 405
+                .body("Non-existent functionality");
+    }
+    
+    // suppression spéciale par adresse explicite => route = firestation/address/...
+    // @DeleteMapping : mappe une requête HTTP DELETE à une méthode de contrôleur : suppression.
+    // /address/{address}" => je n'attends comme paramètre que l'adresse.
+    // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode.
+    @DeleteMapping("/address/{address}")
+    public ResponseEntity<?> deleteByAddress(@PathVariable String address){
+
+        // le contrôleur doit d'abord vérifier les paramètres qui ont été reçus.
+        if (!checkId(new String[]{address})) { // pour ne pas compliquer la fonction.
+            log.info("suppression par adresse : " + this.getClass().getSimpleName() + " : paramètres incorrects");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST) // 400 
+                    .body("suppression : invalid parameters");
+        }
+        
+        // presque ok.
+        if (fireStationService.deleteByAddress(address)) {
+            // ok.
+            log.info("suppression par adresse : " + this.getClass().getSimpleName() + " : supression réussie");
+            jsonDataRepository.save(); // je mets à jour le fichier json ici.
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT) // 204 mieux que 200
+                    .build(); // on ne retourne pas de réponse, soit un body null.
+        } else {
+            // nok. 
+            log.info("suppression par adresse : " + this.getClass().getSimpleName() + " : non trouvé ");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND) // 404 
+                    .body("suppression : not found");
+        }
+    }
+    
+    // suppression spéciale par station explicite => route = firestation/station/...
+    // @DeleteMapping : mappe une requête HTTP DELETE à une méthode de contrôleur : suppression.
+    // /station/{station}" => je n'attends comme paramètre que la station.
+    // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode.
+    @DeleteMapping("/station/{station}")
+    public ResponseEntity<?> deleteByStation(@PathVariable int station){
+
+        // le contrôleur doit d'abord vérifier les paramètres qui ont été reçus.
+        if (station <= 0) {
+            log.info("suppression par station : " + this.getClass().getSimpleName() + " : paramètres incorrects");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST) // 400 
+                    .body("suppression : invalid parameters");
+        }
+        
+        // presque ok.
+        if (fireStationService.deleteByStation(station)) {
+            // ok.
+            log.info("suppression par station : " + this.getClass().getSimpleName() + " : supression réussie");
+            jsonDataRepository.save(); // je mets à jour le fichier json ici.
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT) // 204 mieux que 200
+                    .build(); // on ne retourne pas de réponse, soit un body null.
+        } else {
+            // nok. 
+            log.info("suppression par station : " + this.getClass().getSimpleName() + " : non trouvé ");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND) // 404 
+                    .body("suppression : not found");
+        }
+    }
+
 }
 

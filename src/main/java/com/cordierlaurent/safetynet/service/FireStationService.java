@@ -21,6 +21,15 @@ public class FireStationService extends CrudService<FireStation> {
     @Override
     protected CrudRepository<FireStation> getRepository() {
         return fireStationRepository;
-    }    
+    }
+    
+    public boolean deleteByAddress (String address) {
+        return fireStationRepository.deleteByAddress(address);
+    }
+
+    public boolean deleteByStation (int station) {
+        return fireStationRepository.deleteByStation(station);
+    }
+
 
 }
