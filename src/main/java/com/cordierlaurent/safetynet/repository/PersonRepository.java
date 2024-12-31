@@ -1,5 +1,8 @@
 package com.cordierlaurent.safetynet.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.cordierlaurent.safetynet.model.Person;
@@ -13,4 +16,16 @@ public class PersonRepository extends CrudRepository<Person> {
                 person.getLastName().equalsIgnoreCase(id[1]);
     }
     
+    public List<Person> findByAddresses(List<String> addresses){
+//        return new ArrayList<>();
+        List<Person> persons = new ArrayList<>();
+        for (Person person : this.getModels()) {
+            if (addresses.contains(person.getAddress())) {
+                persons.add(person);
+            }
+        }
+        return persons;
+    }
+    
 }
+

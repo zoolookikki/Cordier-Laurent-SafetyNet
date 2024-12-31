@@ -1,5 +1,8 @@
 package com.cordierlaurent.safetynet.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.cordierlaurent.safetynet.model.FireStation;
@@ -21,4 +24,17 @@ public class FireStationRepository extends CrudRepository<FireStation> {
         return models.removeIf(model -> model.getStation() == station);
     }
     
+    public List<String> findAddressesByStationNumber(int stationNumber){
+ //       return new ArrayList<>();
+        List<String> addresses = new ArrayList<>();
+        for (FireStation firestation : this.getModels()) {
+            if (firestation.getStation() == stationNumber) {
+                addresses.add(firestation.getAddress());
+            }
+        }
+        return addresses;
+    }
+    
 }
+
+

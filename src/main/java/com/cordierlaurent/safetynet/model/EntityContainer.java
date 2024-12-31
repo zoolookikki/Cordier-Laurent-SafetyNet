@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor 
+@NoArgsConstructor  // Jackson a besoin d'un constructeur par défaut (sans argument) pour instancier l'objet lors de la désérialisation.
 public class EntityContainer {
     private List<Person> persons;
     // pour que Jackson fasse automatiquement la désérialisation sur firestations au lieu fireStations.

@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.model.FireStation;
 import com.cordierlaurent.safetynet.service.CrudService;
 import com.cordierlaurent.safetynet.service.FireStationService;
@@ -116,5 +119,52 @@ public class FireStationController extends CrudController<FireStation>{
         }
     }
 
+    // implémentation de l'url qui demande la liste des personnes corresponant à une station : http://localhost:8080/firestation?stationNumber=<station_number>
+    /*
+    recherche firestations par station => liste d'adresses.
+    recherche personnes par adresse => liste de personnes.
+    dans cette liste de personnes il ne faut avoir que le prénom + nom + adresse + téléphone.
+    calculer le nombre de personnes > et <=18. 
+    Renvoyer un json sous la forme :
+    {
+        "persons": [
+        {
+          "firstName": "xxxx",
+          "lastName": "xxxx",
+          "address": "xxxx",
+          "phone": "xxxx"
+        },
+        {
+          "firstName": "yyyy",
+          "lastName": "yyyy",
+          "address": "yyyy",
+          "phone": "yyyy"
+        }
+      ],
+      "numberOfAdults": ?,
+      "numberOfChildren": ?
+    }
+    */
+    
+    // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture.
+    // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
+    @GetMapping 
+    public ResponseEntity<?> getPersonsCoveredByFireStation(@RequestParam("stationNumber") int stationNumber){
+        PersonsCoveredByFireStationDTO personsCoveredByFireStationDTO = fireStationService.findPersonsCoveredByFireStation(stationNumber);
+
+        // la liste de personnes est vide => rien trouvé.
+        if (personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().isEmpty()) {
+            log.info("getPersonsCoveredByFireStationDTO : " + this.getClass().getSimpleName() + " : non trouvé ");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND) // 404 
+                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
+        }
+        // il y a au moins une personne => ok.
+        log.info("getPersonsCoveredByFireStationDTO : " + this.getClass().getSimpleName() + " : " +  personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().size() + " trouvé(s) ");
+        return ResponseEntity
+                .status(HttpStatus.OK) // 200
+                .body(personsCoveredByFireStationDTO); 
+    }
+    
 }
 
