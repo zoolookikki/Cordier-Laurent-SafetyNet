@@ -1,14 +1,12 @@
 package com.cordierlaurent.safetynet.service;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cordierlaurent.safetynet.Util.DateUtil;
 import com.cordierlaurent.safetynet.dto.PersonBasicInformationsDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.model.FireStation;
@@ -32,22 +30,6 @@ public class FireStationService extends CrudService<FireStation> {
 
     @Autowired
     private PersonRepository personRepository;
-    
-    private int age(String birthdate) {
-
-        // Retourne -1 pour une date invalide
-        if (birthdate == null || birthdate.isBlank()) return -1;
-
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // whoaaa, MM en majuscule pour Mois et mm en minuscule pour minute...
-            LocalDate start = LocalDate.parse(birthdate, formatter);
-            LocalDate end = LocalDate.now();
-            Period period = Period.between(start, end);
-            return period.getYears();
-        } catch (Exception e) {
-            return -1;  // Retourne -1 en cas de format incorrect
-        }
-    }
     
     @Override
     protected boolean isSameModel(FireStation model, FireStation modelToVerify) {
@@ -93,9 +75,9 @@ public class FireStationService extends CrudService<FireStation> {
                                    person.getLastName()});
                 log.debug("findPersonsCoveredByFireStation/findBirthdateByUniqueKey=>firstName="+person.getFirstName()+",lastName="+person.getLastName()+",birthdate="+birthdate);
 
-                // on calcule son age puis on définit sa catégorie. 
-                int age = age(birthdate);
-                log.debug("findPersonsCoveredByFireStation/age=>age="+age);
+                int age = DateUtil.CalculateAge(birthdate);
+                log.debug("findPersonsCoveredByFireStation/firstName="+person.getFirstName()+",lastName="+person.getLastName()+",age="+age);
+                // on définit sa catégorie. 
                 if (age >=0) {
                     if (age > 18) {
                         numberOfAdults++;

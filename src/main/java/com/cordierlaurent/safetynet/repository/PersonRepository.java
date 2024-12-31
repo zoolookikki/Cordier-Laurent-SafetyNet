@@ -27,5 +27,9 @@ public class PersonRepository extends CrudRepository<Person> {
         return persons;
     }
     
+    public List<Person> findByAddress(String address) {
+        return findByAddresses(List.of(address));
+    }
+    
 }
 
