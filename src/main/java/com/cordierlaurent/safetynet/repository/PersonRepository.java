@@ -17,7 +17,6 @@ public class PersonRepository extends CrudRepository<Person> {
     }
     
     public List<Person> findByAddresses(List<String> addresses){
-//        return new ArrayList<>();
         List<Person> persons = new ArrayList<>();
         for (Person person : this.getModels()) {
             if (addresses.contains(person.getAddress())) {

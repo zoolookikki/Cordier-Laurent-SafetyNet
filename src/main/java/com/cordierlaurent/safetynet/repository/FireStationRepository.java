@@ -25,7 +25,6 @@ public class FireStationRepository extends CrudRepository<FireStation> {
     }
     
     public List<String> findAddressesByStationNumber(int stationNumber){
- //       return new ArrayList<>();
         List<String> addresses = new ArrayList<>();
         for (FireStation firestation : this.getModels()) {
             if (firestation.getStation() == stationNumber) {

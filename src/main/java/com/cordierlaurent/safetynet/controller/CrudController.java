@@ -24,7 +24,7 @@ public abstract class CrudController <MODEL> {
 
     // à implémenter dans la classe fille : on vérifie le modèle reçu via le contrôleur, chaque contrôleur qui héritera choisira sa façon de vérifier le contenu du Json.
     protected abstract boolean checkModel (MODEL model);
-
+    
     // à implémenter dans la classe fille : 
     // pour pouvoir appeler le service concerné pour lui demander de vérifier l'unicité.
     // pour pouvoir appeler les fonctions de Crud de chaque service concerné.
@@ -120,7 +120,7 @@ public abstract class CrudController <MODEL> {
 
     // @DeleteMapping : mappe une requête HTTP DELETE à une méthode de contrôleur : suppression.
     // /{param1}", "/{param1}/{param2} : syntaxe pour dire que j'attends 1 ou 2 paramètres sur l'url en plus du Json dans le body.
-    // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut).
+    // $PathVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut).
     @DeleteMapping({"/{param1}", "/{param1}/{param2}"})
     public ResponseEntity<?> deleteModelByUniqueKey(@PathVariable String param1,@PathVariable(required = false) String param2){
 

@@ -93,5 +93,47 @@ public class AlertController {
                 .status(HttpStatus.OK) // 200
                 .body(childAlertDTO); 
     }
+    
+    
+    // implémentation de l'url qui retourne la liste des numéros de téléphone des personnes couvertes par une station de pompiers, pour envoyer des sms. : http://localhost:8080/phoneAlert?firestation=<firestation_number>
+    /*
+    recherche firestations par station => liste d'adresses.
+    recherche personnes par adresse => liste de personnes.
+    dans cette liste de personnes il ne faut avoir que le téléphone.
+    attention aux doublons de numéro de téléphone => liste de type Set.
+    la liste doit être triée => TreeSet.
+    Renvoyer un json sous la forme :
+    {
+        [
+        "???-???-????",
+        "???-???-????",
+        "???-???-????",
+        "???-???-????",
+        "???-???-????"
+        ]
+    }
+    */
+    
+    // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture + route phoneAlert.
+    // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
+    @GetMapping("/phoneAlert")
+    public ResponseEntity<?> getPhoneAlert(@RequestParam("firestation") int fireStation){
+        // pas besoin de DTO ici car structure du fichier Json à renvoyer simple.
+        List<String> phoneNumbers = alertService.findPhoneNumbersdByFireStation(fireStation);
+
+        // la liste est vide => rien trouvé.
+        if (phoneNumbers.isEmpty()) {
+            log.info("getPhoneAlert : " + this.getClass().getSimpleName() + " : non trouvé ");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND) // 404 
+                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
+        }
+        // il y a au moins un numéro de téléphone => ok.
+        log.info("getPhoneAlert : " + this.getClass().getSimpleName() + " : " +  phoneNumbers.size() + " trouvé(s) ");
+        return ResponseEntity
+                .status(HttpStatus.OK) // 200
+                .body(phoneNumbers); 
+    }
+    
 
 }
