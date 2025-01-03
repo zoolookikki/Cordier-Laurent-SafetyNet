@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cordierlaurent.safetynet.Util.DateUtil;
+import com.cordierlaurent.safetynet.dto.FireDTO;
 import com.cordierlaurent.safetynet.dto.PersonBasicInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonHealthInformationsDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.model.FireStation;
+import com.cordierlaurent.safetynet.model.MedicalRecord;
 import com.cordierlaurent.safetynet.model.Person;
 import com.cordierlaurent.safetynet.repository.CrudRepository;
 import com.cordierlaurent.safetynet.repository.FireStationRepository;
@@ -100,6 +103,52 @@ public class FireStationService extends CrudService<FireStation> {
             }
         }
         return new PersonsCoveredByFireStationDTO(personBasicInformationsDTO, numberOfAdults, numberOfChildren);
+    }
+    
+    public FireDTO findFireByaddress(String address) {
+//        return new FireDTO (0, new ArrayList<PersonHealthInformationsDTO>()) ;
+        // créer la DTO de base qui contiendra prénom+nom+téléphone+age+antécédents médicaux.
+        List<PersonHealthInformationsDTO> personsHealthInformationsDTO = new ArrayList<>();
+
+        // Rechercher la station correspondante à cette adresse.
+        int station = fireStationRepository.findStationByAddress(address);
+        log.debug("findFireByaddress/fireStationRepository.findStationByAddress=>address="+address+",station="+station);
+        // Si la station existe
+        if (station > 0) {
+            // rechercher la liste des personnes habitant à cette adresse.
+            List<Person> persons = personRepository.findByAddress(address);
+            log.debug("findFireByaddress/personRepository.findByAddress=>address="+address+",persons.size="+persons.size());
+            // Pour chaque personne 
+            for (Person person : persons) {
+                // Trouver la date de naissance et les antécédents médicaux via la clef unique dans MedicalRecord
+                MedicalRecord medicalRecord = medicalRecordRepository.findMedicalRecordByUniqueKey(
+                        new String[]{
+                                person.getFirstName(), 
+                                person.getLastName()});
+                if (medicalRecord != null) {
+                    log.debug("findFireByaddress/medicalRecordRepository.findMedicalRecordByUniqueKey=>firstName="+person.getFirstName()+",lastName="+person.getLastName()+"==> NOT NULL");
+                    // Calculer l'age
+                    int age = DateUtil.CalculateAge(medicalRecord.getBirthdate());
+                    log.debug("findFireByaddress/DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
+                    if (age >= 0) {
+                        // ajouter à la DTO de base.
+                        personsHealthInformationsDTO.add(new PersonHealthInformationsDTO(
+                                person.getFirstName(),
+                                person.getLastName(),
+                                person.getPhone(),
+                                age,
+                                medicalRecord.getMedications(),
+                                medicalRecord.getAllergies()
+                                ));
+                    }
+                }
+                else {
+                    log.debug("findFireByaddress/medicalRecordRepository.findMedicalRecordByUniqueKey=>firstName="+person.getFirstName()+",lastName="+person.getLastName()+"==> NULL");
+                }
+            }
+        }
+        //Créer la DTO finale dans laquelle on met la station + le contenu de la DTO de base.
+        return new FireDTO (station, personsHealthInformationsDTO);
     }
     
 }

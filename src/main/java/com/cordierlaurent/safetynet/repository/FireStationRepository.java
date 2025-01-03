@@ -26,14 +26,23 @@ public class FireStationRepository extends CrudRepository<FireStation> {
     
     public List<String> findAddressesByStationNumber(int stationNumber){
         List<String> addresses = new ArrayList<>();
-        for (FireStation firestation : this.getModels()) {
-            if (firestation.getStation() == stationNumber) {
-                addresses.add(firestation.getAddress());
+        for (FireStation fireStation : this.getModels()) {
+            if (fireStation.getStation() == stationNumber) {
+                addresses.add(fireStation.getAddress());
             }
         }
         return addresses;
     }
     
+    public int findStationByAddress(String address) {
+        for (FireStation fireStation : this.getModels()) {
+            if (fireStation.getAddress().equalsIgnoreCase(address)) {
+                return fireStation.getStation();
+            }
+        }
+        // aucune station trouvée.
+        return 0;
+    }
+    
 }
-
 

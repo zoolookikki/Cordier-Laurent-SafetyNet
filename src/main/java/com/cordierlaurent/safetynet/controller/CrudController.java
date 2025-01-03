@@ -40,6 +40,7 @@ public abstract class CrudController <MODEL> {
     // ici pour @PostMapping je ne mets plus entre () la route HTTP à laquelle la méthode doit répondre : c'est juste un POST pour le moment, la route est à définir dans la classe fille avec @RequestMapping.
     @PostMapping
     public ResponseEntity<?> addModel(@RequestBody MODEL model) {
+        log.debug("appel de : POST/addModel");
 
         if (!checkModel(model)) {
             // le contrôleur doit vérifier le contenu de la requête avant de le transmettre au service.
@@ -72,6 +73,7 @@ public abstract class CrudController <MODEL> {
     // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique MODEL (désérialisaion automatique : json -> MODEL).
     @PutMapping({"/{param1}", "/{param1}/{param2}"})
     public ResponseEntity<?> updateModelByUniqueKey(@PathVariable String param1,@PathVariable(required = false) String param2, @RequestBody MODEL model){
+        log.debug("appel de : PUT/updateModelByUniqueKey");
 
         // Construction de l'id en fonction du nombre de paramètres.
         String[] id = (param2 != null) ? new String[]{param1, param2} : new String[]{param1};
@@ -123,6 +125,7 @@ public abstract class CrudController <MODEL> {
     // $PathVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut).
     @DeleteMapping({"/{param1}", "/{param1}/{param2}"})
     public ResponseEntity<?> deleteModelByUniqueKey(@PathVariable String param1,@PathVariable(required = false) String param2){
+        log.debug("appel de : DELETE/deleteModelByUniqueKey");
 
         // Construction de l'id en fonction du nombre de paramètres.
         String[] id = (param2 != null) ? new String[]{param1, param2} : new String[]{param1};

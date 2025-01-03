@@ -78,6 +78,8 @@ public class AlertController {
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/childAlert")
     public ResponseEntity<?> getChildAlert(@RequestParam("address") String address){
+        log.debug("appel de : /childAlert?address=<address>");
+
         List<ChildAlertDTO> childAlertDTO = alertService.findChilddByAddress(address);
 
         // la liste de personnes est vide => rien trouvé.
@@ -118,6 +120,8 @@ public class AlertController {
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/phoneAlert")
     public ResponseEntity<?> getPhoneAlert(@RequestParam("firestation") int fireStation){
+        log.debug("appel de : /phoneAlert?firestation=<firestation_number>");
+
         // pas besoin de DTO ici car structure du fichier Json à renvoyer simple.
         List<String> phoneNumbers = alertService.findPhoneNumbersdByFireStation(fireStation);
 

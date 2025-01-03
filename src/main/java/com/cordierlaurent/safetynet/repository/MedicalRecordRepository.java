@@ -13,12 +13,20 @@ public class MedicalRecordRepository extends CrudRepository<MedicalRecord> {
                 medicalRecord.getLastName().equalsIgnoreCase(id[1]);
     }
 
-    public String findBirthdateByUniqueKey(String[] id) {
+    public MedicalRecord findMedicalRecordByUniqueKey(String[] id) {
         for (MedicalRecord medicalRecord : this.getModels()) {
             if (medicalRecord.getFirstName().equalsIgnoreCase(id[0]) && 
                     medicalRecord.getLastName().equalsIgnoreCase(id[1])) {
-                return medicalRecord.getBirthdate();
+                return medicalRecord;
             }
+        }
+        return new MedicalRecord(null, null, null, null, null);
+    }
+
+    public String findBirthdateByUniqueKey(String[] id) {
+        MedicalRecord medicalRecord = findMedicalRecordByUniqueKey(id);
+        if (medicalRecord != null) {
+            return medicalRecord.getBirthdate();
         }
         return new String();
     }
