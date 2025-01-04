@@ -106,7 +106,6 @@ public class FireStationService extends CrudService<FireStation> {
     }
     
     public FireDTO findFireByaddress(String address) {
-//        return new FireDTO (0, new ArrayList<PersonHealthInformationsDTO>()) ;
         // créer la DTO de base qui contiendra prénom+nom+téléphone+age+antécédents médicaux.
         List<PersonHealthInformationsDTO> personsHealthInformationsDTO = new ArrayList<>();
 

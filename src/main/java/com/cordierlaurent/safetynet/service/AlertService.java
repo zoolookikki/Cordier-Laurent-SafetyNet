@@ -1,7 +1,9 @@
 package com.cordierlaurent.safetynet.service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -9,7 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cordierlaurent.safetynet.dto.ChildAlertDTO;
+import com.cordierlaurent.safetynet.dto.FloodAlertDTO;
+import com.cordierlaurent.safetynet.dto.FloodHouseoldDTO;
 import com.cordierlaurent.safetynet.dto.PersonBasicInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonHealthInformationsDTO;
+import com.cordierlaurent.safetynet.model.MedicalRecord;
 import com.cordierlaurent.safetynet.model.Person;
 import com.cordierlaurent.safetynet.repository.FireStationRepository;
 import com.cordierlaurent.safetynet.repository.MedicalRecordRepository;
@@ -32,7 +38,7 @@ public class AlertService {
     private FireStationRepository fireStationRepository;
 
     public List<ChildAlertDTO> findChilddByAddress(String address) {
-        List<ChildAlertDTO> childAlertDTO = new ArrayList<>();
+        List<ChildAlertDTO> childAlertDTOs = new ArrayList<>();
   
         // Rechercher la liste des personnes habitant à cette adresse.
         List<Person> persons = personRepository.findByAddress(address);
@@ -68,7 +74,7 @@ public class AlertService {
                         }
                     }
                     // Ajouter dans la nouvelle DTO (prénom,nom,age).
-                    childAlertDTO.add(new ChildAlertDTO(
+                    childAlertDTOs.add(new ChildAlertDTO(
                             person.getFirstName(),
                             person.getLastName(),
                             age,
@@ -76,7 +82,7 @@ public class AlertService {
                 }
             }
         }
-        return childAlertDTO;
+        return childAlertDTOs;
     }
     
     public List<String> findPhoneNumbersdByFireStation(int fireStation){
@@ -85,7 +91,7 @@ public class AlertService {
         // la liste doit être triée => TreeSet.
         Set<String> phoneNumbers = new TreeSet<>();
 
-        // recherche firestations par station => liste d'adresses.
+        // recherche les adresses par station => liste d'adresses.
         List<String> addresses = fireStationRepository.findAddressesByStationNumber(fireStation);
         // recherche personnes par adresse => liste de personnes.
         List<Person> persons = personRepository.findByAddresses(addresses);
@@ -100,6 +106,92 @@ public class AlertService {
         return new ArrayList<>(phoneNumbers); 
     }
     
+    // List<Integer> et non List<int> car List ne peut stocker que des objets (pas des primitifs).
+    public List<FloodAlertDTO> findFloodByStations(List<Integer> stations){
+        log.debug("START findFloodByStations");
+
+        // création de la DTO à retourner.
+        List<FloodAlertDTO> floodAlertDTOs = new ArrayList<>();
+        // Map pour filtrer les doublons d'adresse et ne garder que la première station rencontrée. LinkedHashMap mieux que HashMap pour que ce soit trié par adresse, plus facile à contrôler.
+        Map<String, Integer> filteredAddresses = new LinkedHashMap<>();
+        
+        log.debug("filtering of addresses by station :");
+        for (int station : stations) {
+            log.debug("filtering=>station="+station);
+            // recherche les adresses par station => liste d'adresses.
+            List<String> addresses = fireStationRepository.findAddressesByStationNumber(station);
+            for (String address : addresses) {
+                /*
+                les 2 cas sont traités en même temps avec putIfAbsent :
+                cas 1 (doublons) : la prochaine adresse identique ne sera pas insérée.
+                cas 2 (même adresse, stations différentes) : la première station rencontrée avec cette adresse a déjà été insérée, donc l'odre est respecté. 
+                */
+                log.debug("filteredAddresses.putIfAbsent=>station="+station+",address="+address);
+                filteredAddresses.putIfAbsent(address, station);
+            }
+        }
+        log.debug("fitlering result ; "+filteredAddresses);
+
+        log.debug("treatment :");
+        // pour chaque station
+        for (int station : stations) {
+            log.debug("for each station=>"+station);
+            // création de la DTO intermédiaire
+            List<FloodHouseoldDTO> floodHouseoldDTOs = new ArrayList<>();
+            // pour chaque adresses de la liste d'adresse filtrées.
+            for (Map.Entry<String, Integer> entry : filteredAddresses.entrySet()) {
+                String addressFiltered = entry.getKey();
+                int stationFiltered = entry.getValue();; 
+                log.debug(" for each address=>addressFiltered="+addressFiltered+",stationFiltered="+stationFiltered);
+                // si la station = la station de la liste d'adresse filtrées
+                if (station == stationFiltered) {
+                    // recherche personnes par adresse => liste de personnes.
+                    List<Person> persons = personRepository.findByAddress(addressFiltered);                
+                    // création de la DTO de base
+                    List<PersonHealthInformationsDTO> personHealthInformationsDTOs = new ArrayList<>();
+                    // pour chaque personne
+                    for (Person person : persons) {
+                        log.debug("    for each person=>firstName="+person.getFirstName()+",lastName="+person.getLastName());
+                        // Trouver la date de naissance et les antécédents médicaux via la clef unique dans MedicalRecord
+                        MedicalRecord medicalRecord = medicalRecordRepository.findMedicalRecordByUniqueKey(
+                                new String[]{
+                                        person.getFirstName(), 
+                                        person.getLastName()});
+                        if (medicalRecord != null) {
+                            log.debug("      medicalRecordRepository.findMedicalRecordByUniqueKey=> NOT NULL");
+                            // Calculer l'age
+                            int age = DateUtil.CalculateAge(medicalRecord.getBirthdate());
+                            log.debug("      DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
+                            if (age >= 0) {
+                                // ajouter à la DTO de base.
+                                personHealthInformationsDTOs.add(new PersonHealthInformationsDTO(
+                                        person.getFirstName(),
+                                        person.getLastName(),
+                                        person.getPhone(),
+                                        age,
+                                        medicalRecord.getMedications(),
+                                        medicalRecord.getAllergies()
+                                        ));
+                            }
+                        }
+                        else {
+                            log.debug("      medicalRecordRepository.findMedicalRecordByUniqueKey=> NULL");
+                        }
+                    }
+                    // si la DTO de base n'est pas vide, ajouter à la DTO intermédiaire.
+                    if (!personHealthInformationsDTOs.isEmpty()) {
+                        floodHouseoldDTOs.add(new FloodHouseoldDTO(addressFiltered, personHealthInformationsDTOs));
+                    }
+                }
+            }
+            // si la DTO intermédiaire n'est pas vide, ajouter à la DTO finale.
+            if (!floodHouseoldDTOs.isEmpty()) {
+                floodAlertDTOs.add(new FloodAlertDTO(station,floodHouseoldDTOs));
+            }
+        }
+        log.debug("END  findFloodByStations");
+        return floodAlertDTOs;
+    }
 
 }
 
