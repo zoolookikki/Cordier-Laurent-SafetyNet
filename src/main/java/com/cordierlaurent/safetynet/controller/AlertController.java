@@ -142,34 +142,19 @@ public class AlertController {
     
     // implémentation de l'url qui retourne une liste des foyers desservis par des casernes de pompiers en cas d'inondation : http://localhost:8080/flood/stations?stations=<a list of station_numbers>
     /*
-    ici, il y a 2 choses à prendre en compte // fichier json fournit :
-        1) il y a des adresses en doublons pour la même station :
-                { "address":"748 Townings Dr", "station":"3" },
-                { "address":"748 Townings Dr", "station":"3" },
-        2) il y a des adresses identiques dans des stations différentes :
-                { "address":"112 Steppes Pl", "station":"3" },
-                { "address":"112 Steppes Pl", "station":"4" },
-    => avant d'effectuer le traitement :
-    cas 1 : supprimer les doublons d'adresse.
-    cas 2 : selon l'ordre des stations passées en paramètres, je ne garde que la première rencontrée. Si on a 3,4 l'adresse apparaitra dans la station 3 uniquement, si 4,3, dans la station 4 uniquement.
-    => création d'une liste d'adresse filtrées.
-    
-    algo :
-
     création de la DTO FloodAlertDTO ((station, liste de FloodHouseoldDTO)
-    filtrage des adresses par station ==> liste d'adresses filtrées.
     pour chaque station
         création de la DTO FloodHouseoldDTO (address, liste de PersonHealthInformationsDTO)
-        pour chaque adresses de la liste d'adresse filtrées.
-            si la station = la station de la liste d'adresse filtrées
-                recherche personnes par adresse => liste de personnes.
-                création de la DTO PersonHealthInformations
-                pour chaque personne
-                    trouver la date de naissance et les antécédents médicaux via la clef unique dans MedicalRecord
-                    calculer l'age 
-                    ajouter à la DTO PersonHealthInformationsDTO
-                si la DTO PersonHealthInformationsDTO n'est pas vide
-                    ajouter à la DTO FloodHouseoldDTO
+        recherche des adresses de la station => liste d'adresses.
+        pour chaque adresses
+            recherche personnes par adresse => liste de personnes.
+            création de la DTO PersonHealthInformations
+            pour chaque personne
+                trouver la date de naissance et les antécédents médicaux via la clef unique dans MedicalRecord
+                calculer l'age 
+                ajouter à la DTO PersonHealthInformationsDTO
+            si la DTO PersonHealthInformationsDTO n'est pas vide
+                ajouter à la DTO FloodHouseoldDTO
         si la DTO FloodHouseoldDTO n'est pas vide
             ajouter à la DTO FloodAlertDTO 
 
