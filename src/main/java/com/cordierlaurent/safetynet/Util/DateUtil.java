@@ -12,7 +12,7 @@ public class DateUtil {
         if (birthdate == null || birthdate.isBlank()) return -1;
 
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // whoaaa, MM en majuscule pour Mois et mm en minuscule pour minute...
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy"); // whoaaa, MM en majuscule pour Mois et mm en minuscule pour minute...
             LocalDate start = LocalDate.parse(birthdate, formatter);
             LocalDate end = LocalDate.now();
             Period period = Period.between(start, end);
