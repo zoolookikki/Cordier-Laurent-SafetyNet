@@ -35,6 +35,9 @@ public class AlertService {
     @Autowired
     private FireStationRepository fireStationRepository;
 
+    @Autowired
+    private MedicalRecordService medicalRecordService;
+
     public List<ChildAlertDTO> findChilddByAddress(String address) {
         List<ChildAlertDTO> childAlertDTOs = new ArrayList<>();
   
@@ -45,13 +48,7 @@ public class AlertService {
         if (!persons.isEmpty()) {
         
             for (Person person : persons) {
-                // on retrouve sa date de naissance via la clef unique dans MedicalRecord.
-                String birthdate = medicalRecordRepository.findBirthdateByUniqueKey(
-                           new String[]{
-                                   person.getFirstName(), 
-                                   person.getLastName()});
-
-                int age = DateUtil.CalculateAge(birthdate);
+                int age = medicalRecordService.age(person);
                 log.debug("findChilddByAddress/firstName="+person.getFirstName()+",lastName="+person.getLastName()+",age="+age);
 //              Si moins de 18 ans 
                 if (age >=0 && age <=18) {

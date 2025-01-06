@@ -34,6 +34,9 @@ public class FireStationService extends CrudService<FireStation> {
     @Autowired
     private PersonRepository personRepository;
     
+    @Autowired
+    private MedicalRecordService medicalRecordService;
+
     @Override
     protected boolean isSameModel(FireStation model, FireStation modelToVerify) {
         return (model.getAddress().equalsIgnoreCase(modelToVerify.getAddress()));
@@ -70,15 +73,7 @@ public class FireStationService extends CrudService<FireStation> {
 
             // pour chaque personne trouvée, on calcule d'abord son age, si il est >=0 donc valide,  on met à jour la DTO pour n'avoir que le prénom + nom + adresse + téléphone.
             for (Person person : persons) {
-
-                // on retrouve sa date de naissance.
-                String birthdate = medicalRecordRepository.findBirthdateByUniqueKey(
-                           new String[]{
-                                   person.getFirstName(), 
-                                   person.getLastName()});
-                log.debug("findPersonsCoveredByFireStation/findBirthdateByUniqueKey=>firstName="+person.getFirstName()+",lastName="+person.getLastName()+",birthdate="+birthdate);
-
-                int age = DateUtil.CalculateAge(birthdate);
+                int age = medicalRecordService.age(person);
                 log.debug("findPersonsCoveredByFireStation/firstName="+person.getFirstName()+",lastName="+person.getLastName()+",age="+age);
                 // on définit sa catégorie. 
                 if (age >=0) {
