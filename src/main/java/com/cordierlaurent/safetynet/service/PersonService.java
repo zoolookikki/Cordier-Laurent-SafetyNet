@@ -46,6 +46,8 @@ public class PersonService extends CrudService<Person> {
         List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOList = new ArrayList<>();  
         // recherche personnes par nom => liste de personnes.
         List<Person> persons = personRepository.findByLastName(lastName);
+
+        // à factoriser avec MedicalRecordService.getPersonHealthInformationsDTOs quand j'aurai revu les DTOS avec Jsonview.
         
         // Pour chaque personne 
         for (Person person : persons) {

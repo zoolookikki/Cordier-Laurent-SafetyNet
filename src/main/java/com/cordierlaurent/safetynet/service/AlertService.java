@@ -13,12 +13,9 @@ import com.cordierlaurent.safetynet.dto.FloodAlertDTO;
 import com.cordierlaurent.safetynet.dto.FloodHouseoldDTO;
 import com.cordierlaurent.safetynet.dto.PersonBasicInformationsDTO;
 import com.cordierlaurent.safetynet.dto.PersonHealthInformationsDTO;
-import com.cordierlaurent.safetynet.model.MedicalRecord;
 import com.cordierlaurent.safetynet.model.Person;
 import com.cordierlaurent.safetynet.repository.FireStationRepository;
-import com.cordierlaurent.safetynet.repository.MedicalRecordRepository;
 import com.cordierlaurent.safetynet.repository.PersonRepository;
-import com.cordierlaurent.safetynet.Util.DateUtil;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -29,9 +26,6 @@ public class AlertService {
     @Autowired
     PersonRepository personRepository;
 
-    @Autowired
-    private MedicalRecordRepository medicalRecordRepository;
-    
     @Autowired
     private FireStationRepository fireStationRepository;
 
@@ -121,37 +115,8 @@ public class AlertService {
                 log.debug("  for each address=>"+address);
                 // recherche personnes par adresse => liste de personnes.
                 List<Person> persons = personRepository.findByAddress(address);                
-                // création de la DTO de base
-                List<PersonHealthInformationsDTO> personHealthInformationsDTOs = new ArrayList<>();
-                // pour chaque personne
-                for (Person person : persons) {
-                    log.debug("    for each person=>firstName="+person.getFirstName()+",lastName="+person.getLastName());
-                    // Trouver la date de naissance et les antécédents médicaux via la clef unique dans MedicalRecord
-                    MedicalRecord medicalRecord = medicalRecordRepository.findMedicalRecordByUniqueKey(
-                            new String[]{
-                                    person.getFirstName(), 
-                                    person.getLastName()});
-                    if (medicalRecord != null) {
-                        log.debug("      medicalRecordRepository.findMedicalRecordByUniqueKey=> NOT NULL");
-                        // Calculer l'age
-                        int age = DateUtil.CalculateAge(medicalRecord.getBirthdate());
-                        log.debug("      DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
-                        if (age >= 0) {
-                            // ajouter à la DTO de base.
-                            personHealthInformationsDTOs.add(new PersonHealthInformationsDTO(
-                                    person.getFirstName(),
-                                    person.getLastName(),
-                                    person.getPhone(),
-                                    age,
-                                    medicalRecord.getMedications(),
-                                    medicalRecord.getAllergies()
-                                    ));
-                        }
-                    }
-                    else {
-                        log.debug("      medicalRecordRepository.findMedicalRecordByUniqueKey=> NULL");
-                    }
-                }
+                // DTO de base
+                List<PersonHealthInformationsDTO> personHealthInformationsDTOs = medicalRecordService.getPersonHealthInformationsDTOs(persons);
                 // si la DTO de base n'est pas vide, ajouter à la DTO intermédiaire.
                 if (!personHealthInformationsDTOs.isEmpty()) {
                     floodHouseoldDTOs.add(new FloodHouseoldDTO(address, personHealthInformationsDTOs));
