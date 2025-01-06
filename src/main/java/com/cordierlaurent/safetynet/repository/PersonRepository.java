@@ -39,6 +39,16 @@ public class PersonRepository extends CrudRepository<Person> {
         }
         return persons;
     }
+
+    public List<Person> findByCity(String city) {
+        List<Person> persons = new ArrayList<>();
+        for (Person person : this.getModels()) {
+            if (person.getCity().equalsIgnoreCase(city)) {
+                persons.add(person);
+            }
+        }
+        return persons;
+    }
     
 }
 

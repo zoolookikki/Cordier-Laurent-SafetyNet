@@ -2,6 +2,8 @@ package com.cordierlaurent.safetynet.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,7 @@ public class PersonService extends CrudService<Person> {
     }
 
     public List<PersonHealthExtentedInformationsDTO> findPersonInfoByLastName(String lastName) {
+        log.debug("findPersonInfoByLastName,lastName)="+lastName);
         // créer une liste de DTO contenant prénom+nom+adresse+age+email+antécédents médicaux.
         List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOList = new ArrayList<>();  
         // recherche personnes par nom => liste de personnes.
@@ -76,6 +79,26 @@ public class PersonService extends CrudService<Person> {
             
         }
         return personHealthExtentedInformationsDTOList;
+    }
+
+    public Set<String> findEmailsByCity(String city) {
+        log.debug("findEmailsByCity,city)="+city);
+        // attention aux doublons d'e-mails => liste de type Set.
+        // intéressant de trier la lsite également => TreeSet.
+        Set<String> emails = new TreeSet<>();
+
+        // recherche personnes par ville => liste de personnes.
+        List<Person> persons = personRepository.findByCity(city);
+
+        for (Person person : persons) {
+            log.debug("for each person=>firstName="+person.getFirstName()+",lastName="+person.getLastName()+",email="+person.getEmail());
+            if (!person.getEmail().isBlank()) {
+                if (!emails.add(person.getEmail())) {
+                    log.debug("  duplicate : not added");
+                }
+            }
+        }
+       return emails;
     }    
 
 }

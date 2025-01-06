@@ -1,6 +1,7 @@
 package com.cordierlaurent.safetynet.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,19 +72,49 @@ public class PersonInfosController {
     }
     
     private ResponseEntity<?> getCommonPersonInfoLastName(String lastName) {
-        List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOList = personService.findPersonInfoByLastName(lastName);
+        List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOs = personService.findPersonInfoByLastName(lastName);
         // la liste de personnes est vide => rien trouvé.
-        if (personHealthExtentedInformationsDTOList.isEmpty()) {
+        if (personHealthExtentedInformationsDTOs.isEmpty()) {
             log.info("getPersonInfoLastName : " + this.getClass().getSimpleName() + " : non trouvé");
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
                     .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
         }
         // il y a au moins une personne => ok.
-        log.info("getPersonInfoLastName : " + this.getClass().getSimpleName() + " : " +  personHealthExtentedInformationsDTOList.size() + " trouvé(s)");
+        log.info("getPersonInfoLastName : " + this.getClass().getSimpleName() + " : " +  personHealthExtentedInformationsDTOs.size() + " trouvé(s)");
         return ResponseEntity
                 .status(HttpStatus.OK) // 200
-                .body(personHealthExtentedInformationsDTOList); 
+                .body(personHealthExtentedInformationsDTOs); 
     }
 
+    // implémentation de l'url qui retourne les adresses mail de tous les habitants d'une ville donnée : http://localhost:8080/communityEmail?city=<city> 
+    /*
+    recherche personnes par ville => liste de personnes.
+    pour chaque personne 
+        ajout de l'adresse e-mail dans la liste (attention au filtrage des doublons).
+    Renvoyer un json sous la forme :
+    [
+      "xxxx@xxxx.com",
+      "yyyy@yyyy.com",
+      "zzzz@zzzz.com",
+    ]
+    */
+    // $RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
+    @GetMapping("/communityEmail")
+    public ResponseEntity<?> getCommunityEmails(@RequestParam("city") String city){
+        log.debug("appel de : /communityEmail?city=<city>");
+        Set<String> emails = personService.findEmailsByCity(city);        
+        if (emails.isEmpty()) {
+            log.info("getCommunityEmails : " + this.getClass().getSimpleName() + " : non trouvé");
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND) // 404 
+                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
+        }
+        // il y a au moins un email => ok.
+        log.info("getCommunityEmails : " + this.getClass().getSimpleName() + " : " +  emails.size() + " trouvé(s)");
+        return ResponseEntity
+                .status(HttpStatus.OK) // 200
+                .body(emails); 
+    }
+    
 }
