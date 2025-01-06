@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cordierlaurent.safetynet.dto.PersonHealthExtentedInformationsDTO;
@@ -51,14 +52,26 @@ public class PersonInfosController {
         }
     ]
     */
-    // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture => ici il est un peu spécial car directement à la racine.
-    // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode
+    /* Attention car gestion de 2 cas d'url car celle demandée dans les spécifications n'est pas "standard".
+        http://localhost:8080/personInfolastName=<lastName>
+        http://localhost:8080/personInfo?lastName=<lastName>
+    @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture => on gère ici les 2 urls.
+    */
+    // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode.
     @GetMapping("/personInfolastName={lastName}")
-    public ResponseEntity<?> getPersonInfoLastName(@PathVariable("lastName") String lastName){
-        log.debug("appel de : /personInfolastName=<lastName>");
-        
+    public ResponseEntity<?> getPersonInfoByPath(@PathVariable("lastName") String lastName) {
+        log.debug("appel de : /personInfolastName=<lastName>}");
+        return getCommonPersonInfoLastName(lastName);
+    }
+    // $RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
+    @GetMapping("/personInfo")
+    public ResponseEntity<?> getPersonInfoByRequest(@RequestParam("lastName") String lastName) {
+        log.debug("appel de : /personInfo?lastName=<lastName>");
+        return getCommonPersonInfoLastName(lastName);
+    }
+    
+    private ResponseEntity<?> getCommonPersonInfoLastName(String lastName) {
         List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOList = personService.findPersonInfoByLastName(lastName);
-
         // la liste de personnes est vide => rien trouvé.
         if (personHealthExtentedInformationsDTOList.isEmpty()) {
             log.info("getPersonInfoLastName : " + this.getClass().getSimpleName() + " : non trouvé");
