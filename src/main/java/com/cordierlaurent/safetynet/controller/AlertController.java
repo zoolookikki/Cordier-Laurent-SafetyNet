@@ -3,12 +3,12 @@ package com.cordierlaurent.safetynet.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.dto.ChildAlertDTO;
 import com.cordierlaurent.safetynet.dto.FloodAlertDTO;
 import com.cordierlaurent.safetynet.service.AlertService;
@@ -82,19 +82,7 @@ public class AlertController {
         log.debug("appel de : /childAlert?address=<address>");
 
         List<ChildAlertDTO> childAlertDTO = alertService.findChilddByAddress(address);
-
-        // la liste de personnes est vide => rien trouvé.
-        if (childAlertDTO.isEmpty()) {
-            log.info("getChildAlertDTO : " + this.getClass().getSimpleName() + " : non trouvé ");
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND) // 404 
-                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
-        }
-        // il y a au moins une personne => ok.
-        log.info("getChildAlertDTO : " + this.getClass().getSimpleName() + " : " +  childAlertDTO.size() + " trouvé(s) ");
-        return ResponseEntity
-                .status(HttpStatus.OK) // 200
-                .body(childAlertDTO); 
+        return ResponseEntityUtil.response(childAlertDTO, "getChildAlert");
     }
     
     
@@ -125,19 +113,7 @@ public class AlertController {
 
         // pas besoin de DTO ici car structure du fichier Json à renvoyer simple.
         List<String> phoneNumbers = alertService.findPhoneNumbersdByFireStation(fireStation);
-
-        // la liste est vide => rien trouvé.
-        if (phoneNumbers.isEmpty()) {
-            log.info("getPhoneAlert : " + this.getClass().getSimpleName() + " : non trouvé ");
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND) // 404 
-                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
-        }
-        // il y a au moins un numéro de téléphone => ok.
-        log.info("getPhoneAlert : " + this.getClass().getSimpleName() + " : " +  phoneNumbers.size() + " trouvé(s) ");
-        return ResponseEntity
-                .status(HttpStatus.OK) // 200
-                .body(phoneNumbers); 
+        return ResponseEntityUtil.response(phoneNumbers, "getPhoneAlert");
     }
     
     // implémentation de l'url qui retourne une liste des foyers desservis par des casernes de pompiers en cas d'inondation : http://localhost:8080/flood/stations?stations=<a list of station_numbers>
@@ -263,7 +239,10 @@ public class AlertController {
         log.debug("appel de : /flood/stations?stations=<a list of station_numbers>");
 
         List<FloodAlertDTO> floodAlertDTO = alertService.findFloodByStations(stations);
+        return ResponseEntityUtil.response(floodAlertDTO, "getFloodAlert");
+    }
 
+/*
         // la liste est vide => rien trouvé.
         if (floodAlertDTO.isEmpty()) {
             log.info("getFloodAlert : " + this.getClass().getSimpleName() + " : non trouvé ");
@@ -277,6 +256,6 @@ public class AlertController {
                 .status(HttpStatus.OK) // 200
                 .body(floodAlertDTO); 
     }
-    
+*/    
     
 }

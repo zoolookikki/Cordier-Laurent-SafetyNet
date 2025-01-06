@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.dto.FireDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.service.FireStationService;
@@ -54,7 +55,9 @@ public class FireStationInfosController {
         log.debug("appel de : /firestation?stationNumber=<station_number>");
         
         PersonsCoveredByFireStationDTO personsCoveredByFireStationDTO = fireStationService.findPersonsCoveredByFireStation(stationNumber);
-
+        
+        // pour le moment non optimisable avec ResponseEntityUtil car il faut créer une méthode générique pour les DTO de ce type.
+        
         // la liste de personnes est vide => rien trouvé.
         if (personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().isEmpty()) {
             log.info("getPersonsCoveredByFireStation : " + this.getClass().getSimpleName() + " : non trouvé ");
@@ -66,7 +69,8 @@ public class FireStationInfosController {
         log.info("getPersonsCoveredByFireStation : " + this.getClass().getSimpleName() + " : " +  personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().size() + " trouvé(s) ");
         return ResponseEntity
                 .status(HttpStatus.OK) // 200
-                .body(personsCoveredByFireStationDTO); 
+                .body(personsCoveredByFireStationDTO);
+                 
     }
 
     // implémentation de l'url qui retourne les personnes habitants à une adresse donnée avec le numéro de la caserne de pompiers la déservant. 
@@ -111,6 +115,8 @@ public class FireStationInfosController {
         log.debug("appel de : /fire?address=<address>");
         
         FireDTO fireDTO = fireStationService.findFireByaddress(address);
+
+        // pour le moment non optimisable avec ResponseEntityUtil car il faut créer une méthode générique pour les DTO de ce type.
 
         // la liste de personnes est vide => rien trouvé.
         if (fireDTO.getStation() <=0 || fireDTO.getPersons().isEmpty()) {

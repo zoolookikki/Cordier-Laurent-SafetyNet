@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.dto.PersonHealthExtentedInformationsDTO;
 import com.cordierlaurent.safetynet.service.PersonService;
 
@@ -73,19 +74,8 @@ public class PersonInfosController {
     
     private ResponseEntity<?> getCommonPersonInfoLastName(String lastName) {
         List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOs = personService.findPersonInfoByLastName(lastName);
-        // la liste de personnes est vide => rien trouvé.
-        if (personHealthExtentedInformationsDTOs.isEmpty()) {
-            log.info("getPersonInfoLastName : " + this.getClass().getSimpleName() + " : non trouvé");
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND) // 404 
-                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
-        }
-        // il y a au moins une personne => ok.
-        log.info("getPersonInfoLastName : " + this.getClass().getSimpleName() + " : " +  personHealthExtentedInformationsDTOs.size() + " trouvé(s)");
-        return ResponseEntity
-                .status(HttpStatus.OK) // 200
-                .body(personHealthExtentedInformationsDTOs); 
-    }
+        return ResponseEntityUtil.response(personHealthExtentedInformationsDTOs, "getCommonPersonInfoLastName");
+     }
 
     // implémentation de l'url qui retourne les adresses mail de tous les habitants d'une ville donnée : http://localhost:8080/communityEmail?city=<city> 
     /*
@@ -104,17 +94,7 @@ public class PersonInfosController {
     public ResponseEntity<?> getCommunityEmails(@RequestParam("city") String city){
         log.debug("appel de : /communityEmail?city=<city>");
         Set<String> emails = personService.findEmailsByCity(city);        
-        if (emails.isEmpty()) {
-            log.info("getCommunityEmails : " + this.getClass().getSimpleName() + " : non trouvé");
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND) // 404 
-                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
-        }
-        // il y a au moins un email => ok.
-        log.info("getCommunityEmails : " + this.getClass().getSimpleName() + " : " +  emails.size() + " trouvé(s)");
-        return ResponseEntity
-                .status(HttpStatus.OK) // 200
-                .body(emails); 
+        return ResponseEntityUtil.response(emails, "getCommunityEmails");
     }
     
 }
