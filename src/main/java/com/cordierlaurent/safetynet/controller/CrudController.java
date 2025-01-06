@@ -17,29 +17,29 @@ import lombok.extern.log4j.Log4j2;
 
 @RestController
 @Log4j2
-public abstract class CrudController <MODEL> {
+public abstract class CrudController <Model> {
 
     @Autowired
     protected JsonDataRepository jsonDataRepository;
 
     // à implémenter dans la classe fille : on vérifie le modèle reçu via le contrôleur, chaque contrôleur qui héritera choisira sa façon de vérifier le contenu du Json.
-    protected abstract boolean checkModel (MODEL model);
+    protected abstract boolean checkModel (Model model);
     
     // à implémenter dans la classe fille : 
     // pour pouvoir appeler le service concerné pour lui demander de vérifier l'unicité.
     // pour pouvoir appeler les fonctions de Crud de chaque service concerné.
-    protected abstract CrudService<MODEL> getService();
+    protected abstract CrudService<Model> getService();
     
     // à implémenter dans la classe fille : on vérifie les paramètres reçus via le contrôleur, chaque contrôleur qui héritera choisira sa façon de vérifier les paramètres.
     protected abstract boolean checkId (String[] id);
     
     // @PostMapping : mappe une requête HTTP POST à une méthode de contrôleur : création. 
-    // ResponseEntity représente l'ensemble de la réponse HTTP envoyée au client (corps, status, entête http) : <MODEL> => objet générique retourné en Json.
-    // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique MODEL (désérialisaion automatique : json -> MODEL).
-    // ? au lieu de MODEL sinon erreur type mismatch car ici on renvoit soit MODEL soit un String.
+    // ResponseEntity représente l'ensemble de la réponse HTTP envoyée au client (corps, status, entête http) : <Model> => objet générique retourné en Json.
+    // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique Model (désérialisaion automatique : json -> Model).
+    // ? au lieu de Model sinon erreur type mismatch car ici on renvoit soit Model soit un String.
     // ici pour @PostMapping je ne mets plus entre () la route HTTP à laquelle la méthode doit répondre : c'est juste un POST pour le moment, la route est à définir dans la classe fille avec @RequestMapping.
     @PostMapping
-    public ResponseEntity<?> addModel(@RequestBody MODEL model) {
+    public ResponseEntity<?> addModel(@RequestBody Model model) {
         log.debug("appel de : POST/addModel");
 
         if (!checkModel(model)) {
@@ -70,9 +70,9 @@ public abstract class CrudController <MODEL> {
     // @PutMapping : mappe une requête HTTP PUT à une méthode de contrôleur : mise à jour.
     // /{param1}", "/{param1}/{param2} : syntaxe pour dire que j'attends 1 ou 2 paramètres sur l'url en plus du Json dans le body.
     // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut).
-    // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique MODEL (désérialisaion automatique : json -> MODEL).
+    // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique Model (désérialisaion automatique : json -> Model).
     @PutMapping({"/{param1}", "/{param1}/{param2}"})
-    public ResponseEntity<?> updateModelByUniqueKey(@PathVariable String param1,@PathVariable(required = false) String param2, @RequestBody MODEL model){
+    public ResponseEntity<?> updateModelByUniqueKey(@PathVariable String param1,@PathVariable(required = false) String param2, @RequestBody Model model){
         log.debug("appel de : PUT/updateModelByUniqueKey");
 
         // Construction de l'id en fonction du nombre de paramètres.

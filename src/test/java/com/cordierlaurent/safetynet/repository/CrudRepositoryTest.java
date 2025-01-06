@@ -11,17 +11,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public abstract class CrudRepositoryTest<MODEL> {
+public abstract class CrudRepositoryTest<Model> {
 
     // attention, pensez aux assertions de contrôle de l'initialisation ci-dessous.
-    protected CrudRepository<MODEL> repository;
-    protected MODEL model1;
-    protected MODEL model1Updated;
+    protected CrudRepository<Model> repository;
+    protected Model model1;
+    protected Model model1Updated;
     protected String[] id1UpdatedExist; //  new String[]{"John", "Boyd"}
     protected String[] id1UpdatedNotExist; //  new String[]{"xxxxx", "Boyd"}
-    protected MODEL model2;
+    protected Model model2;
     protected String[] id2; // new String[]{"Jacob", "Boyd"}
-    protected MODEL model3;
+    protected Model model3;
     
     // à implémenter par les classes filles.
     // cette fonction doit initialiser toutes les variables ci-dessus qui sont protected, dont la fille va hériter.
@@ -60,7 +60,7 @@ public abstract class CrudRepositoryTest<MODEL> {
         repository.addModel(model2);
         
         // when
-        List<MODEL> models = repository.getModels();
+        List<Model> models = repository.getModels();
         
         // then
         assertThat(models)
@@ -80,12 +80,12 @@ public abstract class CrudRepositoryTest<MODEL> {
          repository.addModel(model2);
 
          //when
-         List<MODEL> modelsNewList = new ArrayList<MODEL>();
+         List<Model> modelsNewList = new ArrayList<Model>();
          modelsNewList.add(model3);
          repository.setModels(modelsNewList);
 
          //then
-         List<MODEL> models = repository.getModels();
+         List<Model> models = repository.getModels();
          assertThat(models)
              .isNotNull()
              .hasSize(1)
@@ -103,7 +103,7 @@ public abstract class CrudRepositoryTest<MODEL> {
         repository.addModel(model2);
         
         //then
-        List<MODEL> models = repository.getModels();
+        List<Model> models = repository.getModels();
         assertThat(models)
             .isNotNull()
             .hasSize(1)
@@ -120,7 +120,7 @@ public abstract class CrudRepositoryTest<MODEL> {
         
         // when
         boolean result = repository.updateModelByUniqueKey(id1UpdatedExist, model1Updated);
-        List<MODEL> models = repository.getModels();
+        List<Model> models = repository.getModels();
         
         // then
         assertThat(result).isTrue();
@@ -159,7 +159,7 @@ public abstract class CrudRepositoryTest<MODEL> {
         
         // when
         boolean result = repository.deleteModelByUniqueKey(id2);
-        List<MODEL> models = repository.getModels();
+        List<Model> models = repository.getModels();
                 
         // then
         assertThat(result).isTrue();
