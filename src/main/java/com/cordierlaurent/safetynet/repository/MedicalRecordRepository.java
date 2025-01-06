@@ -20,7 +20,7 @@ public class MedicalRecordRepository extends CrudRepository<MedicalRecord> {
                 return medicalRecord;
             }
         }
-        return new MedicalRecord(null, null, null, null, null);
+        return null;
     }
 
     public String findBirthdateByUniqueKey(String[] id) {
