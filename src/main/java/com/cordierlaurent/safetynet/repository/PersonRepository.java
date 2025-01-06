@@ -30,5 +30,15 @@ public class PersonRepository extends CrudRepository<Person> {
         return findByAddresses(List.of(address));
     }
     
+    public List<Person> findByLastName(String lastName){
+        List<Person> persons = new ArrayList<>();
+        for (Person person : this.getModels()) {
+            if (person.getLastName().equalsIgnoreCase(lastName)) {
+                persons.add(person);
+            }
+        }
+        return persons;
+    }
+    
 }
 
