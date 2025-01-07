@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Email;
 
 /*
@@ -37,10 +38,12 @@ public class Person {
 
     @NotNull(message = "Le code postal ne peut pas être null")
     @NotBlank(message = "Le code postal est obligatoire")    
+    @Pattern(regexp = "\\d{5}", message = "Le code postal doit être sur 5 chiffres")
     private String zip; 
 
     @NotNull(message = "Le numéro de téléphone ne peut pas être null")
     @NotBlank(message = "Le numéro de téléphone est obligatoire")    
+    @Pattern(regexp = "\\d{10}", message = "Le numéro de téléphone doit être composé de 10 chiffres")
     private String phone;
 
     @NotNull(message = "L'email ne peut pas être null")
