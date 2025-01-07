@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.CrudService;
 
+import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
@@ -22,9 +23,6 @@ public abstract class CrudController <Model> {
     @Autowired
     protected JsonDataRepository jsonDataRepository;
 
-    // à implémenter dans la classe fille : on vérifie le modèle reçu via le contrôleur, chaque contrôleur qui héritera choisira sa façon de vérifier le contenu du Json.
-    protected abstract boolean checkModel (Model model);
-    
     // à implémenter dans la classe fille : 
     // pour pouvoir appeler le service concerné pour lui demander de vérifier l'unicité.
     // pour pouvoir appeler les fonctions de Crud de chaque service concerné.
@@ -36,20 +34,13 @@ public abstract class CrudController <Model> {
     // @PostMapping : mappe une requête HTTP POST à une méthode de contrôleur : création. 
     // ResponseEntity représente l'ensemble de la réponse HTTP envoyée au client (corps, status, entête http) : <Model> => objet générique retourné en Json.
     // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique Model (désérialisaion automatique : json -> Model).
+    // @Valid : pour valider tout ce qui a été déclaré comme à contrôler dans le modèle (@NotNull, @NotBlank etc...)    
     // ? au lieu de Model sinon erreur type mismatch car ici on renvoit soit Model soit un String.
     // ici pour @PostMapping je ne mets plus entre () la route HTTP à laquelle la méthode doit répondre : c'est juste un POST pour le moment, la route est à définir dans la classe fille avec @RequestMapping.
     @PostMapping
-    public ResponseEntity<?> addModel(@RequestBody Model model) {
+    public ResponseEntity<?> addModel(@Valid @RequestBody Model model) {
         log.debug("appel de : POST/addModel");
 
-        if (!checkModel(model)) {
-            // le contrôleur doit vérifier le contenu de la requête avant de le transmettre au service.
-            log.info("creation : " + this.getClass().getSimpleName() + " : objet Json incorrect");
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST) // 400 
-                    .body("creation : missing fields");
-        }
-        
         // vérification de l'unicité par le service => logique métier.
         if (!getService().isUnique(null,model)) {
             log.info("creation : " + this.getClass().getSimpleName() + " : pas unique");
@@ -70,9 +61,10 @@ public abstract class CrudController <Model> {
     // @PutMapping : mappe une requête HTTP PUT à une méthode de contrôleur : mise à jour.
     // /{param1}", "/{param1}/{param2} : syntaxe pour dire que j'attends 1 ou 2 paramètres sur l'url en plus du Json dans le body.
     // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut).
+    // @Valid : pour valider tout ce qui a été déclaré comme à contrôler dans le modèle (@NotNull, @NotBlank etc...)    
     // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique Model (désérialisaion automatique : json -> Model).
     @PutMapping({"/{param1}", "/{param1}/{param2}"})
-    public ResponseEntity<?> updateModelByUniqueKey(@PathVariable String param1,@PathVariable(required = false) String param2, @RequestBody Model model){
+    public ResponseEntity<?> updateModelByUniqueKey(@PathVariable String param1,@PathVariable(required = false) String param2, @Valid @RequestBody Model model){
         log.debug("appel de : PUT/updateModelByUniqueKey");
 
         // Construction de l'id en fonction du nombre de paramètres.
@@ -86,13 +78,6 @@ public abstract class CrudController <Model> {
                     .body("modification : invalid parameters");
         }
         
-        // comme pour la création, le contrôleur doit vérifier le contenu de la requête avant de le transmettre au service.
-        if (!checkModel(model)) {
-            log.info("modification : " + this.getClass().getSimpleName() + " : objet Json incorrect");
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST) // 400 
-                    .body("modification : missing fields");
-        }
         
         // attention, pour la modification, il faut vérifier que le modèle que l'on va mettre à jour n'existe pas déjà (sauf moi même...).
         // vérification de l'unicité par le service => logique métier.

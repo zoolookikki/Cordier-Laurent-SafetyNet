@@ -20,12 +20,6 @@ public class PersonController extends CrudController<Person>{
     private PersonService personService;
     
     @Override
-    protected boolean checkModel(Person model) {
-        return (model.getFirstName() != null && !model.getFirstName().isBlank() && 
-                model.getLastName() != null && !model.getLastName().isBlank());
-    }
-
-    @Override
     protected CrudService<Person> getService() {
         return personService;
     }

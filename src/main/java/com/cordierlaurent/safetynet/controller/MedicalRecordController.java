@@ -18,12 +18,6 @@ public class MedicalRecordController extends CrudController<MedicalRecord>{
 
     @Autowired
     private MedicalRecordService medicalRecordService;
-    
-    @Override
-    protected boolean checkModel(MedicalRecord model) {
-        return (model.getFirstName() != null && !model.getFirstName().isBlank() && 
-                model.getLastName() != null && !model.getLastName().isBlank());
-    }
 
     @Override
     protected CrudService<MedicalRecord> getService() {

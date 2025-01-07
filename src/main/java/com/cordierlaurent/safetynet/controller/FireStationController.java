@@ -24,11 +24,6 @@ public class FireStationController extends CrudController<FireStation>{
     private FireStationService fireStationService;
     
     @Override
-    protected boolean checkModel(FireStation model) {
-        return (model.getAddress() != null && !model.getAddress().isBlank()); 
-    }
-
-    @Override
     protected CrudService<FireStation> getService() {
         return fireStationService;
     }

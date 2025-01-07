@@ -242,20 +242,4 @@ public class AlertController {
         return ResponseEntityUtil.response(floodAlertDTO, "getFloodAlert");
     }
 
-/*
-        // la liste est vide => rien trouvé.
-        if (floodAlertDTO.isEmpty()) {
-            log.info("getFloodAlert : " + this.getClass().getSimpleName() + " : non trouvé ");
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND) // 404 
-                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
-        }
-        // il y a au moins une station.
-        log.info("getFloodAlert : " + this.getClass().getSimpleName() + " : " +  floodAlertDTO.size() + " trouvé(s) ");
-        return ResponseEntity
-                .status(HttpStatus.OK) // 200
-                .body(floodAlertDTO); 
-    }
-*/    
-    
 }
