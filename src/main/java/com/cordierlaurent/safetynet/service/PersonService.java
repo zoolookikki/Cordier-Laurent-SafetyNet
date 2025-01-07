@@ -2,6 +2,7 @@ package com.cordierlaurent.safetynet.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -53,12 +54,13 @@ public class PersonService extends CrudService<Person> {
         for (Person person : persons) {
             log.debug("for each person=>firstName="+person.getFirstName()+",lastName="+person.getLastName());
             // Trouver la date de naissance et les antécédents médicaux via la clef unique dans MedicalRecord
-            MedicalRecord medicalRecord = medicalRecordRepository.findMedicalRecordByUniqueKey(
+            Optional<MedicalRecord> medicalRecordOptional = medicalRecordRepository.findMedicalRecordByUniqueKey(
                     new String[]{
                             person.getFirstName(), 
                             person.getLastName()});
-            if (medicalRecord != null) {
-                log.debug("  findPersonInfoByLastName/medicalRecordRepository.findMedicalRecordByUniqueKey==> NOT NULL");
+            if (medicalRecordOptional.isPresent()) {
+                MedicalRecord medicalRecord = medicalRecordOptional.get();
+                log.debug("  findPersonInfoByLastName/medicalRecordRepository.findMedicalRecordByUniqueKey==> true");
                 // Calculer l'age
                 int age = DateUtil.CalculateAge(medicalRecord.getBirthdate());
                 log.debug("  findFireByaddress/DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
@@ -76,7 +78,7 @@ public class PersonService extends CrudService<Person> {
                 }
             }
             else {
-                log.debug("  findPersonInfoByLastName/medicalRecordRepository.findMedicalRecordByUniqueKey==> NULL");
+                log.debug("  findPersonInfoByLastName/medicalRecordRepository.findMedicalRecordByUniqueKey==> false");
             }
             
         }

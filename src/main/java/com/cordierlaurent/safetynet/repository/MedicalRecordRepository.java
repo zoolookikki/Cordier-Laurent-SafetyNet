@@ -1,5 +1,7 @@
 package com.cordierlaurent.safetynet.repository;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 import com.cordierlaurent.safetynet.model.MedicalRecord;
@@ -13,22 +15,25 @@ public class MedicalRecordRepository extends CrudRepository<MedicalRecord> {
                 medicalRecord.getLastName().equalsIgnoreCase(id[1]);
     }
 
-    public MedicalRecord findMedicalRecordByUniqueKey(String[] id) {
+    public Optional<MedicalRecord> findMedicalRecordByUniqueKey(String[] id) {
         for (MedicalRecord medicalRecord : this.getModels()) {
             if (medicalRecord.getFirstName().equalsIgnoreCase(id[0]) && 
                     medicalRecord.getLastName().equalsIgnoreCase(id[1])) {
-                return medicalRecord;
+                return Optional.of(medicalRecord);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public String findBirthdateByUniqueKey(String[] id) {
-        MedicalRecord medicalRecord = findMedicalRecordByUniqueKey(id);
+        Optional<MedicalRecord> medicalRecord = findMedicalRecordByUniqueKey(id);
+/*
         if (medicalRecord != null) {
             return medicalRecord.getBirthdate();
         }
         return new String();
-    }
+*/
+        return medicalRecord.map(MedicalRecord::getBirthdate).orElse("");
+}
 
 }

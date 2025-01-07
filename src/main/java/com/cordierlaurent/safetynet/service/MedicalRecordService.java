@@ -2,6 +2,7 @@ package com.cordierlaurent.safetynet.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,12 +50,13 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
 
         for (Person person : persons) {
             log.debug("    for each person=>firstName="+person.getFirstName()+",lastName="+person.getLastName());
-            MedicalRecord medicalRecord = medicalRecordRepository.findMedicalRecordByUniqueKey(
+            Optional<MedicalRecord> medicalRecordOptional = medicalRecordRepository.findMedicalRecordByUniqueKey(
                     new String[]{
                             person.getFirstName(), 
                             person.getLastName()});
-            if (medicalRecord != null) {
-                log.debug("      medicalRecordRepository.findMedicalRecordByUniqueKey=> NOT NULL");
+            if (medicalRecordOptional.isPresent()) {
+                MedicalRecord medicalRecord = medicalRecordOptional.get();
+                log.debug("      medicalRecordRepository.findMedicalRecordByUniqueKey=> true");
                 int age = DateUtil.CalculateAge(medicalRecord.getBirthdate());
                 log.debug("      DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
                 if (age >= 0) {
@@ -69,7 +71,7 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
                 }
             }
             else {
-                log.debug("      medicalRecordRepository.findMedicalRecordByUniqueKey=> NULL");
+                log.debug("      medicalRecordRepository.findMedicalRecordByUniqueKey=> false");
             }
         }
         
