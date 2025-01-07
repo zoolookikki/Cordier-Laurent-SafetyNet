@@ -20,33 +20,26 @@ equals si je dois comparer les entités + utilisation comparaison containsExactl
 // @SuppressWarnings("unused") // pour Eclipse => inutile après installation de lombok dans Eclipse.
 public class Person {
     
-    @NotNull(message = "Le prénom ne peut pas être null")
     @NotBlank(message = "Le prénom est obligatoire")    
     private String firstName;
 
-    @NotNull(message = "Le nom ne peut pas être null")
     @NotBlank(message = "Le nom est obligatoire")    
     private String lastName;
 
-    @NotNull(message = "L'adresse ne peut pas être null")
     @NotBlank(message = "L'adresse est obligatoire")    
     private String address;
 
-    @NotNull(message = "La ville ne peut pas être null")
     @NotBlank(message = "La ville est obligatoire")    
     private String city;
 
-    @NotNull(message = "Le code postal ne peut pas être null")
     @NotBlank(message = "Le code postal est obligatoire")    
     @Pattern(regexp = "\\d{5}", message = "Le code postal doit être sur 5 chiffres")
     private String zip; 
 
-    @NotNull(message = "Le numéro de téléphone ne peut pas être null")
     @NotBlank(message = "Le numéro de téléphone est obligatoire")    
     @Pattern(regexp = "\\d{10}", message = "Le numéro de téléphone doit être composé de 10 chiffres")
     private String phone;
 
-    @NotNull(message = "L'email ne peut pas être null")
     @NotBlank(message = "L'email est obligatoire")    
     @Email(message = "L'email doit être valide")
     private String email;

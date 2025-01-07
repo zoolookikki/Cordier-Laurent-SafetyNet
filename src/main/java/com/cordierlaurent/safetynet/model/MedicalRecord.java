@@ -12,11 +12,9 @@ import jakarta.validation.constraints.Pattern;
 @AllArgsConstructor //  Génère un constructeur avec tous les arguments.
 public class MedicalRecord {
 
-    @NotNull(message = "Le prénom ne peut pas être null")
     @NotBlank(message = "Le prénom est obligatoire")    
     private String firstName;
     
-    @NotNull(message = "Le nom ne peut pas être null")
     @NotBlank(message = "Le nom est obligatoire")    
     private String lastName;
 

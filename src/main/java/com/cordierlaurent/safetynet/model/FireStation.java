@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor //  Génère un constructeur avec tous les arguments.
 public class FireStation {
 
-    @NotNull(message = "L'adresse ne peut pas être null")
     @NotBlank(message = "L'adresse est obligatoire")    
     private String address;
 
