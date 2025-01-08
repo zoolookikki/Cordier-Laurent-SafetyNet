@@ -88,10 +88,12 @@ public class AlertController {
     public ResponseEntity<?> getChildAlert(
             @RequestParam("address") 
             @NotBlank(message = "L'adresse est obligatoire") String address){
-        log.debug("appel de : /childAlert?address=<address>");
 
-        List<ChildAlertDTO> childAlertDTO = alertService.findChilddByAddress(address);
-        return ResponseEntityUtil.response(childAlertDTO, "getChildAlert");
+        log.debug("GET/getChildAlert : key=" + address);
+
+        List<ChildAlertDTO> childAlertDTOs = alertService.findChilddByAddress(address);
+        
+        return ResponseEntityUtil.response(childAlertDTOs, "childAlert : recherche par adresse : " + address);
     }
     
     
@@ -120,11 +122,12 @@ public class AlertController {
     public ResponseEntity<?> getPhoneAlert(
             @RequestParam("firestation")
             @Min(value = 1, message = "Le numéro de station doit être supérieur à 0") int fireStation){
-        log.debug("appel de : /phoneAlert?firestation=<firestation_number>");
+
+        log.debug("GET/getPhoneAlert : key=" + fireStation);
 
         // pas besoin de DTO ici car structure du fichier Json à renvoyer simple.
         List<String> phoneNumbers = alertService.findPhoneNumbersdByFireStation(fireStation);
-        return ResponseEntityUtil.response(phoneNumbers, "getPhoneAlert");
+        return ResponseEntityUtil.response(phoneNumbers, "phoneAlert : recherche par station : " + fireStation);
     }
     
     // implémentation de l'url qui retourne une liste des foyers desservis par des casernes de pompiers en cas d'inondation : http://localhost:8080/flood/stations?stations=<a list of station_numbers>
@@ -249,15 +252,17 @@ public class AlertController {
     public ResponseEntity<?> getFloodAlert(
             @RequestParam("stations") 
             @NotEmpty(message = "La liste des stations ne peut pas être vide") List<Integer> stations){
-        log.debug("appel de : /flood/stations?stations=<a list of station_numbers>");
+
+        log.debug("GET/getFloodAlert : key=" + stations);
+
         // Vérification pour filtrer les valeurs nulles ==> filtrage @notEmpty insuffisant si ajout de blancs après stations=
         if (stations == null || stations.isEmpty() || stations.contains(null)) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body("La liste des stations est obligatoire et doit contenir uniquement des entiers valides");
         }
-        List<FloodAlertDTO> floodAlertDTO = alertService.findFloodByStations(stations);
-        return ResponseEntityUtil.response(floodAlertDTO, "getFloodAlert");
+        List<FloodAlertDTO> floodAlertDTOs = alertService.findFloodByStations(stations);
+        return ResponseEntityUtil.response(floodAlertDTOs, "flood : recherche par stations: " + stations);
     }
 
 }

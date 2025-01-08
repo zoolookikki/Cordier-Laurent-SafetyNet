@@ -36,7 +36,8 @@ public class Person {
     private String zip; 
 
     @NotBlank(message = "Le numéro de téléphone est obligatoire")    
-    @Pattern(regexp = "\\d{10}", message = "Le numéro de téléphone doit être composé de 10 chiffres")
+//    @Pattern(regexp = "\\d{10}", message = "Le numéro de téléphone doit être composé de 10 chiffres")
+    @Pattern(regexp = "^\\d{3}-\\d{3}-\\d{4}$", message = "Le numéro de téléphone doit être au format 123-456-7890")
     private String phone;
 
     @NotBlank(message = "L'email est obligatoire")    

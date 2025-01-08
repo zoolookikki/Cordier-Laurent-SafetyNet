@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.dto.FireDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.service.FireStationService;
@@ -58,7 +59,8 @@ public class FireStationInfosController {
     public ResponseEntity<?> getPersonsCoveredByFireStation(
             @RequestParam("stationNumber") 
             @Min(value = 1, message = "Le numéro de station doit être supérieur à 0") int stationNumber){
-        log.debug("appel de : /firestation?stationNumber=<station_number>");
+
+        log.debug("GET/getPersonsCoveredByFireStation : key=" + stationNumber);
         
         PersonsCoveredByFireStationDTO personsCoveredByFireStationDTO = fireStationService.findPersonsCoveredByFireStation(stationNumber);
         
@@ -66,17 +68,16 @@ public class FireStationInfosController {
         
         // la liste de personnes est vide => rien trouvé.
         if (personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().isEmpty()) {
-            log.info("getPersonsCoveredByFireStation : " + this.getClass().getSimpleName() + " : non trouvé ");
+            log.info("Recherche par station : " + stationNumber + " ==> non trouvé ");
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
                     .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
         }
         // il y a au moins une personne => ok.
-        log.info("getPersonsCoveredByFireStation : " + this.getClass().getSimpleName() + " : " +  personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().size() + " trouvé(s) ");
+        log.info("Recherche par station : " + stationNumber + " ==> " +  personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().size() + " trouvé(s) ");
         return ResponseEntity
                 .status(HttpStatus.OK) // 200
                 .body(personsCoveredByFireStationDTO);
-                 
     }
 
     // implémentation de l'url qui retourne les personnes habitants à une adresse donnée avec le numéro de la caserne de pompiers la déservant. 
@@ -120,7 +121,8 @@ public class FireStationInfosController {
     public ResponseEntity<?> getFireByAddresse(
             @RequestParam("address") 
             @NotBlank(message = "L'adresse est obligatoire") String address){
-        log.debug("appel de : /fire?address=<address>");
+
+        log.debug("GET/getFireByAddresse : key=" + address);
         
         FireDTO fireDTO = fireStationService.findFireByaddress(address);
 
@@ -128,17 +130,16 @@ public class FireStationInfosController {
 
         // la liste de personnes est vide => rien trouvé.
         if (fireDTO.getStation() <=0 || fireDTO.getPersons().isEmpty()) {
-            log.info("getFireByAddresse : " + this.getClass().getSimpleName() + " : non trouvé");
+            log.info("recherche par addresse : " + address + " => non trouvé");
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
                     .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
         }
         // il y a au moins une personne => ok.
-        log.info("getFireByAddresse : " + this.getClass().getSimpleName() + " : " +  fireDTO.getPersons().size() + " trouvé(s)");
+        log.info("recherche par addresse : " + address + " => " +  fireDTO.getPersons().size() + " trouvé(s)");
         return ResponseEntity
                 .status(HttpStatus.OK) // 200
                 .body(fireDTO); 
     }
-
     
 }

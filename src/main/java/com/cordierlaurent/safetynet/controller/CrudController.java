@@ -1,5 +1,7 @@
 package com.cordierlaurent.safetynet.controller;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,18 +45,18 @@ public abstract class CrudController <Model> {
     // ici pour @PostMapping je ne mets plus entre () la route HTTP à laquelle la méthode doit répondre : c'est juste un POST pour le moment, la route est à définir dans la classe fille avec @RequestMapping.
     @PostMapping
     public ResponseEntity<?> addModel(@Valid @RequestBody Model model) {
-        log.debug("appel de : POST/addModel");
+        log.debug(this.getClass().getSimpleName() + " : POST/addModel : "+ model);
 
         // vérification de l'unicité par le service => logique métier.
         if (!getService().isUnique(null,model)) {
-            log.info("creation : " + this.getClass().getSimpleName() + " : pas unique");
+            log.info("creation : " + model + " ==> doublon");
             return ResponseEntity
                     .status(HttpStatus.CONFLICT) // 409 
                     .body("creation : already exists");
         }
         
         // c'est ok.
-        log.info("creation : " + this.getClass().getSimpleName() + " : tout est ok");
+        log.info("creation : " + model + " ==> ok");
         getService().addModel(model);
         jsonDataRepository.save(); // je mets à jour le fichier json ici.
         return ResponseEntity
@@ -81,15 +83,15 @@ public abstract class CrudController <Model> {
                     .body("Au moins un paramètre est obligatoire");
         }
 
-        log.debug("appel de : PUT/updateModelByUniqueKey");
-
         // Construction de l'id en fonction du nombre de paramètres.
         String[] id = (param2 != null) ? new String[]{param1, param2} : new String[]{param1};
         
+        log.debug(this.getClass().getSimpleName() + " : PUT/updateModelByUniqueKey : key=" + Arrays.toString(id) + " " + model);
+
         // attention, pour la modification, il faut vérifier que le modèle que l'on va mettre à jour n'existe pas déjà (sauf moi même...).
         // vérification de l'unicité par le service => logique métier.
         if (!getService().isUnique(id, model)) {
-            log.info("modification : " + this.getClass().getSimpleName() + " : doublon");
+            log.info("modification : " + model + " ==> doublon");
             return ResponseEntity
                     .status(HttpStatus.CONFLICT) // 409 
                     .body("modification : another record already exists");
@@ -98,14 +100,14 @@ public abstract class CrudController <Model> {
         // c'est presque ok.
         if (getService().updateModelByUniqueKey(id, model)) {
             // ok.
-            log.info("modification : " + this.getClass().getSimpleName() + " : mise à jour réussie");
+            log.info("modification : " + model  + " ==> ok");
             jsonDataRepository.save(); // je mets à jour le fichier json ici.
             return ResponseEntity
                     .status(HttpStatus.OK) // 200
                     .body(model); // on retourne ce qui a été envoyé même si c'est identique ici pour respecter le standard.
         } else {
             // nok. 
-            log.info("modification : " + this.getClass().getSimpleName() + " : non trouvé ");
+            log.info("modification : " + model + " ==> non trouvé ");
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
                     .body("modification : not found");
@@ -128,21 +130,21 @@ public abstract class CrudController <Model> {
                     .body("Au moins un paramètre est obligatoire");
         }
         
-        log.debug("appel de : DELETE/deleteModelByUniqueKey");
-
         // Construction de l'id en fonction du nombre de paramètres.
         String[] id = (param2 != null) ? new String[]{param1, param2} : new String[]{param1};
         
+        log.debug(this.getClass().getSimpleName() + " : DELETE/deleteModelByUniqueKey : key=" + Arrays.toString(id));
+
         if (getService().deleteModelByUniqueKey(id)) {
             // ok.
-            log.info("suppression : " + this.getClass().getSimpleName() + " : supression réussie");
+            log.info("suppression : " + Arrays.toString(id) + " ==> ok");
             jsonDataRepository.save(); // je mets à jour le fichier json ici.
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT) // 204 mieux que 200
                     .build(); // on ne retourne pas de réponse, soit un body null.
         } else {
             // nok. 
-            log.info("suppression : " + this.getClass().getSimpleName() + " : non trouvé ");
+            log.info("suppression : " + Arrays.toString(id) + " ==> non trouvé ");
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
                     .body("suppression : not found");

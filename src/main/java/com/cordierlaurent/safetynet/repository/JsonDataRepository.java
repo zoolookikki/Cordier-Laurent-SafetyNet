@@ -35,7 +35,7 @@ public class JsonDataRepository {
     private ObjectMapper objectMapper;
     
     public void load() {
-        log.debug("JsonDataRepository : load called");                
+        log.debug("load called");                
         try {
             EntityContainer entityContainer = objectMapper.readValue(new File(jsonFileName), EntityContainer.class);
             
@@ -53,39 +53,39 @@ public class JsonDataRepository {
                 for (Person person : entityContainer.getPersons()) {
                     String uniqueKey = person.getFirstName() + person.getLastName();
                     if (personsByUniqueKey.putIfAbsent(uniqueKey, person) != null) {
-                        log.warn("JsonDataRepository/duplicate person filtering : "+person);
+                        log.warn("duplicate person filtering : "+person);
                     }
                 }
                 personRepository.setModels(new ArrayList<>(personsByUniqueKey.values()));
-                log.debug("JsonDataRepository : list person ok");
+                log.debug("list person ok");
             } else {
-                log.debug("JsonDataRepository : list person null");                
+                log.debug("list person null");                
             }
             if (entityContainer.getFireStations() != null) {
                 Map<String, FireStation> fireStationsByUniqueKey = new HashMap<>();
                 for (FireStation fireStation : entityContainer.getFireStations()) {
                     String uniqueKey = fireStation.getAddress();
                     if (fireStationsByUniqueKey.putIfAbsent(uniqueKey, fireStation) != null) {
-                        log.warn("JsonDataRepository/duplicate fireStation filtering : "+fireStation);
+                        log.warn("duplicate fireStation filtering : "+fireStation);
                     }
                 }
                 fireStationRepository.setModels(new ArrayList<>(fireStationsByUniqueKey.values()));
-                log.debug("JsonDataRepository : list firestation ok");                
+                log.debug("list firestation ok");                
             } else {
-                log.debug("JsonDataRepository : list firestation null");                
+                log.debug("list firestation null");                
             }
             if (entityContainer.getMedicalRecords() != null) {
                 Map<String, MedicalRecord> medicalRecordsByUniqueKey = new HashMap<>();
                 for (MedicalRecord medicalRecord : entityContainer.getMedicalRecords()) {
                     String uniqueKey = medicalRecord.getFirstName() + medicalRecord.getLastName();
                     if (medicalRecordsByUniqueKey.putIfAbsent(uniqueKey, medicalRecord) != null) {
-                        log.warn("JsonDataRepository/duplicate medicalRecord filtering : "+medicalRecord);
+                        log.warn("duplicate medicalRecord filtering : "+medicalRecord);
                     }
                 }
                 medicalRecordRepository.setModels(new ArrayList<>(medicalRecordsByUniqueKey.values()));
-                log.debug("JsonDataRepository : list medicalrecord ok");                
+                log.debug("list medicalrecord ok");                
             } else {
-                log.debug("JsonDataRepository : list medicalrecord null");                
+                log.debug("list medicalrecord null");                
             }
 
         } catch (IOException e) {
@@ -95,7 +95,7 @@ public class JsonDataRepository {
     }
     
     public void save() {
-        log.debug("JsonDataRepository : save called");                
+        log.debug("save called");                
         try {
             EntityContainer entityContainer = new EntityContainer(
                     personRepository.getModels(),

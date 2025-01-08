@@ -67,7 +67,9 @@ public class PersonInfosController {
     public ResponseEntity<?> getPersonInfoByPath(
             @PathVariable("lastName") 
             @NotBlank(message = "Le nom est obligatoire") String lastName) {
-        log.debug("appel de : /personInfolastName=<lastName>}");
+
+        log.debug("GET/getPersonInfoByPath : key=" + lastName);
+
         return getCommonPersonInfoLastName(lastName);
     }
     // $RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
@@ -75,13 +77,15 @@ public class PersonInfosController {
     public ResponseEntity<?> getPersonInfoByRequest(
             @RequestParam("lastName") 
             @NotBlank(message = "Le nom est obligatoire") String lastName) {
-        log.debug("appel de : /personInfo?lastName=<lastName>");
+
+        log.debug("GET/getPersonInfoByRequest : key=" + lastName);
+
         return getCommonPersonInfoLastName(lastName);
     }
     
     private ResponseEntity<?> getCommonPersonInfoLastName(String lastName) {
         List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOs = personService.findPersonInfoByLastName(lastName);
-        return ResponseEntityUtil.response(personHealthExtentedInformationsDTOs, "getCommonPersonInfoLastName");
+        return ResponseEntityUtil.response(personHealthExtentedInformationsDTOs, "personinfo : recherche par nom: "+ lastName);
      }
 
     // implémentation de l'url qui retourne les adresses mail de tous les habitants d'une ville donnée : http://localhost:8080/communityEmail?city=<city> 
@@ -101,9 +105,11 @@ public class PersonInfosController {
     public ResponseEntity<?> getCommunityEmails(
             @RequestParam("city") 
             @NotBlank(message = "Le nom de la vile est obligatoire") String city){
-        log.debug("appel de : /communityEmail?city=<city>");
+
+        log.debug("GET/getCommunityEmails : key=" + city);
+
         Set<String> emails = personService.findEmailsByCity(city);        
-        return ResponseEntityUtil.response(emails, "getCommunityEmails");
+        return ResponseEntityUtil.response(emails, "communityEmail : recherche par ville : " + city);
     }
     
 }

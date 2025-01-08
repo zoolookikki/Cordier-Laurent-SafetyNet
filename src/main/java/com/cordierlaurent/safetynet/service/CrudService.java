@@ -28,17 +28,17 @@ public abstract class CrudService<Model> {
                     continue;  
                 }
                 // Sinon, il y a un doublon.
-                log.debug(this.getClass().getSimpleName() + " : c'est un doublon");
+                log.debug(this.getClass().getSimpleName() + " : doublon");
                 return false;
             }
         }
-        log.debug(this.getClass().getSimpleName() + " : il est unique");
+        log.debug(this.getClass().getSimpleName() + " : unique");
         return true;
     }
     
     public void addModel(@NonNull Model modelToAdd) {
         getRepository().addModel(modelToAdd);
-        log.debug(this.getClass().getSimpleName() + " : ajout OK");
+        log.debug(this.getClass().getSimpleName() + " : OK");
     }
     
     

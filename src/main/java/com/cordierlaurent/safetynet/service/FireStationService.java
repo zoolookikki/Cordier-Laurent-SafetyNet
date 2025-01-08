@@ -50,6 +50,7 @@ public class FireStationService extends CrudService<FireStation> {
     }
 
     public PersonsCoveredByFireStationDTO findPersonsCoveredByFireStation(int stationNumber) {
+        log.debug("START findPersonsCoveredByFireStation");
 
         List<PersonBasicInformationsDTO> personBasicInformationsDTO = new ArrayList<>();
         int numberOfAdults = 0;
@@ -57,18 +58,18 @@ public class FireStationService extends CrudService<FireStation> {
         
         // recherche firestations par station => liste d'adresses.
         List<String> addresses = fireStationRepository.findAddressesByStationNumber(stationNumber);
-        log.debug("findPersonsCoveredByFireStation/findAddressesByStationNumber=>stationNumber="+stationNumber+",addresses.size="+addresses.size());
+        log.debug("findAddressesByStationNumber=>stationNumber="+stationNumber+",addresses.size="+addresses.size());
 
         // recherche personnes par adresse => liste de personnes.
         List<Person> persons = personRepository.findByAddresses(addresses);
-        log.debug("findPersonsCoveredByFireStation/findByAddresses=>persons.size="+persons.size());
+        log.debug("findByAddresses=>persons.size="+persons.size());
         
         if (!persons.isEmpty()) {
 
             // pour chaque personne trouvée, on calcule d'abord son age, si il est >=0 donc valide,  on met à jour la DTO pour n'avoir que le prénom + nom + adresse + téléphone.
             for (Person person : persons) {
                 int age = medicalRecordService.age(person);
-                log.debug("findPersonsCoveredByFireStation/firstName="+person.getFirstName()+",lastName="+person.getLastName()+",age="+age);
+                log.debug("firstName="+person.getFirstName()+",lastName="+person.getLastName()+",age="+age);
                 // on définit sa catégorie. 
                 if (age >=0) {
                     if (age > 18) {
@@ -91,24 +92,27 @@ public class FireStationService extends CrudService<FireStation> {
                 }
             }
         }
+        log.debug("END findPersonsCoveredByFireStation");
         return new PersonsCoveredByFireStationDTO(personBasicInformationsDTO, numberOfAdults, numberOfChildren);
     }
     
     public FireDTO findFireByaddress(String address) {
+        log.debug("START findFireByaddress");
         // créer la DTO de base qui contiendra prénom+nom+téléphone+age+antécédents médicaux.
         List<PersonHealthInformationsDTO> personHealthInformationsDTOs = new ArrayList<>();
 
         // Rechercher la station correspondante à cette adresse.
         int station = fireStationRepository.findStationByAddress(address);
-        log.debug("findFireByaddress/fireStationRepository.findStationByAddress=>address="+address+",station="+station);
+        log.debug("fireStationRepository.findStationByAddress=>address="+address+",station="+station);
         // Si la station existe
         if (station > 0) {
             // rechercher la liste des personnes habitant à cette adresse.
             List<Person> persons = personRepository.findByAddress(address);
-            log.debug("findFireByaddress/personRepository.findByAddress=>address="+address+",persons.size="+persons.size());
+            log.debug("personRepository.findByAddress=>address="+address+",persons.size="+persons.size());
             // DTO de base
             personHealthInformationsDTOs = medicalRecordService.getPersonHealthInformationsDTOs(persons);
         }
+        log.debug("END findFireByaddress");
         //Créer la DTO finale dans laquelle on met la station + le contenu de la DTO de base.
         return new FireDTO (station, personHealthInformationsDTOs);
     }

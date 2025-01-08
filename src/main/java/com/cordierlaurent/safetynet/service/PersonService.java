@@ -42,7 +42,8 @@ public class PersonService extends CrudService<Person> {
     }
 
     public List<PersonHealthExtentedInformationsDTO> findPersonInfoByLastName(String lastName) {
-        log.debug("findPersonInfoByLastName,lastName)="+lastName);
+        log.debug("START findPersonInfoByLastName");
+        log.debug("lastName="+lastName);
         // créer une liste de DTO contenant prénom+nom+adresse+age+email+antécédents médicaux.
         List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOList = new ArrayList<>();  
         // recherche personnes par nom => liste de personnes.
@@ -60,10 +61,10 @@ public class PersonService extends CrudService<Person> {
                             person.getLastName()});
             if (medicalRecordOptional.isPresent()) {
                 MedicalRecord medicalRecord = medicalRecordOptional.get();
-                log.debug("  findPersonInfoByLastName/medicalRecordRepository.findMedicalRecordByUniqueKey==> true");
+                log.debug("  medicalRecordRepository.findMedicalRecordByUniqueKey==> true");
                 // Calculer l'age
                 int age = DateUtil.CalculateAge(medicalRecord.getBirthdate());
-                log.debug("  findFireByaddress/DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
+                log.debug("  DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
                 if (age >= 0) {
                     // ajouter à la DTO.
                     personHealthExtentedInformationsDTOList.add(new PersonHealthExtentedInformationsDTO(
@@ -78,15 +79,17 @@ public class PersonService extends CrudService<Person> {
                 }
             }
             else {
-                log.debug("  findPersonInfoByLastName/medicalRecordRepository.findMedicalRecordByUniqueKey==> false");
+                log.debug("  medicalRecordRepository.findMedicalRecordByUniqueKey==> false");
             }
             
         }
+        log.debug("END findPersonInfoByLastName");
         return personHealthExtentedInformationsDTOList;
     }
 
     public Set<String> findEmailsByCity(String city) {
-        log.debug("findEmailsByCity,city)="+city);
+        log.debug("START findEmailsByCity");
+        log.debug("city="+city);
         // attention aux doublons d'e-mails => liste de type Set.
         // intéressant de trier la lsite également => TreeSet.
         Set<String> emails = new TreeSet<>();
@@ -102,6 +105,7 @@ public class PersonService extends CrudService<Person> {
                 }
             }
         }
+        log.debug("END findEmailsByCity");
        return emails;
     }    
 

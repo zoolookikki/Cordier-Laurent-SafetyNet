@@ -33,17 +33,18 @@ public class AlertService {
     private MedicalRecordService medicalRecordService;
 
     public List<ChildAlertDTO> findChilddByAddress(String address) {
+        log.debug("START findChilddByAddres");
         List<ChildAlertDTO> childAlertDTOs = new ArrayList<>();
   
         // Rechercher la liste des personnes habitant à cette adresse.
         List<Person> persons = personRepository.findByAddress(address);
-        log.debug("findChilddByAddress/findByAddressr=>address="+address+",perons.size="+persons.size());
+        log.debug("findByAddressr=>address="+address+",persons.size="+persons.size());
 
         if (!persons.isEmpty()) {
         
             for (Person person : persons) {
                 int age = medicalRecordService.age(person);
-                log.debug("findChilddByAddress/firstName="+person.getFirstName()+",lastName="+person.getLastName()+",age="+age);
+                log.debug("firstName="+person.getFirstName()+",lastName="+person.getLastName()+",age="+age);
 //              Si moins de 18 ans 
                 if (age >=0 && age <=18) {
                     List<PersonBasicInformationsDTO> householdMembers = new ArrayList<>();
@@ -71,10 +72,12 @@ public class AlertService {
                 }
             }
         }
+        log.debug("END findChilddByAddres");
         return childAlertDTOs;
     }
     
     public List<String> findPhoneNumbersdByFireStation(int fireStation){
+        log.debug("START findPhoneNumbersdByFireStation");
         // liste de numéros de téléphone à retourner.
         // attention aux doublons de numéro de téléphone => liste de type Set.
         // la liste doit être triée => TreeSet.
@@ -82,14 +85,18 @@ public class AlertService {
 
         // recherche les adresses par station => liste d'adresses.
         List<String> addresses = fireStationRepository.findAddressesByStationNumber(fireStation);
+        log.debug("findAddressesByStationNumber=>fireStation="+fireStation+",addresses.size="+addresses.size());
         // recherche personnes par adresse => liste de personnes.
         List<Person> persons = personRepository.findByAddresses(addresses);
+        log.debug("findByAddresses=>persons.size="+persons.size());
         
         // dans cette liste de personnes il ne faut avoir que le téléphone.
         for (Person person : persons) {
             phoneNumbers.add(person.getPhone()); 
         }
+        log.debug("after duplicate filter=>phoneNumbers.size="+phoneNumbers.size());
         
+        log.debug("END findPhoneNumbersdByFireStation");
         // Jackson, ne connait pour la désérialisation que : List, Map, ou Array.
         // conversion en List => création d'une nouvelle ArrayList contenant tous les éléments du Set.
         return new ArrayList<>(phoneNumbers); 

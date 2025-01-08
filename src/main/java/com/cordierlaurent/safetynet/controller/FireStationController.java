@@ -1,5 +1,7 @@
 package com.cordierlaurent.safetynet.controller;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +38,7 @@ public class FireStationController extends CrudController<FireStation>{
     // On invalide la suppression par défaut du CrudController en la surchargant car il faut soit supprimer par addresse, soit par station (la suppression par défaut ne fait que par adresse).
     @Override
     public ResponseEntity<?> deleteModelByUniqueKey(@PathVariable(required = false) String param1,@PathVariable(required = false) String param2){
-        log.info("suppression par adresse : " + this.getClass().getSimpleName() + " : fonctionnalité inexistante");
+        log.info("suppression par adresse : fonctionnalité inexistante");
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED) // 405
                 .body("Non-existent functionality");
@@ -51,19 +53,20 @@ public class FireStationController extends CrudController<FireStation>{
     public ResponseEntity<?> deleteByAddress(
             @PathVariable(required = false)
             @NotBlank(message = "L'adresse est obligatoire") String address){
-        log.debug("appel de : /firestation/address/{address}");
+
+        log.debug("DELETE/deletedeleteByAddress : key=" + address);
         
         // presque ok.
         if (fireStationService.deleteByAddress(address)) {
             // ok.
-            log.info("suppression par adresse : " + this.getClass().getSimpleName() + " : supression réussie");
+            log.info("suppression par adresse : " + address + " ==> ok");
             jsonDataRepository.save(); // je mets à jour le fichier json ici.
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT) // 204 mieux que 200
                     .build(); // on ne retourne pas de réponse, soit un body null.
         } else {
             // nok. 
-            log.info("suppression par adresse : " + this.getClass().getSimpleName() + " : non trouvé ");
+            log.info("suppression par adresse : " + address + " ==> non trouvé ");
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
                     .body("suppression : not found");
@@ -79,19 +82,20 @@ public class FireStationController extends CrudController<FireStation>{
     public ResponseEntity<?> deleteByStation(
             @PathVariable(required = false)
             @Min(value = 1, message = "Le numéro de station doit être supérieur à 0") int station){
-        log.debug("appel de : /firestation/station/{station}");
+
+        log.debug("DELETE/deleteByStation : key=" + station);
         
         // presque ok.
         if (fireStationService.deleteByStation(station)) {
             // ok.
-            log.info("suppression par station : " + this.getClass().getSimpleName() + " : supression réussie");
+            log.info("suppression par station : " + station + " ==> ok");
             jsonDataRepository.save(); // je mets à jour le fichier json ici.
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT) // 204 mieux que 200
                     .build(); // on ne retourne pas de réponse, soit un body null.
         } else {
             // nok. 
-            log.info("suppression par station : " + this.getClass().getSimpleName() + " : non trouvé ");
+            log.info("suppression par station : " + station + " ==> non trouvé ");
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
                     .body("suppression : not found");
