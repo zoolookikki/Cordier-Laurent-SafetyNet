@@ -12,6 +12,10 @@ public class FireStationRepository extends CrudRepository<FireStation> {
     
     @Override
     public boolean containsId(String[] id, FireStation fireStation) {
+        // id invalide => clef unique = adresse
+        if (id.length != 1) {
+            return false; 
+        }
         return fireStation.getAddress().equalsIgnoreCase(id[0]);
     }
     

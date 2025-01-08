@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,10 +15,13 @@ import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.dto.PersonHealthExtentedInformationsDTO;
 import com.cordierlaurent.safetynet.service.PersonService;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
 @Log4j2
+//@Validated Active la validation sur les paramètres avec @PathVariable et @RequestParam (voir @NotBlank etc... dans les paramètres de chaque méthode)
+@Validated 
 public class PersonInfosController {
     
     @Autowired
@@ -60,13 +64,17 @@ public class PersonInfosController {
     */
     // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode.
     @GetMapping("/personInfolastName={lastName}")
-    public ResponseEntity<?> getPersonInfoByPath(@PathVariable("lastName") String lastName) {
+    public ResponseEntity<?> getPersonInfoByPath(
+            @PathVariable("lastName") 
+            @NotBlank(message = "Le nom est obligatoire") String lastName) {
         log.debug("appel de : /personInfolastName=<lastName>}");
         return getCommonPersonInfoLastName(lastName);
     }
     // $RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/personInfo")
-    public ResponseEntity<?> getPersonInfoByRequest(@RequestParam("lastName") String lastName) {
+    public ResponseEntity<?> getPersonInfoByRequest(
+            @RequestParam("lastName") 
+            @NotBlank(message = "Le nom est obligatoire") String lastName) {
         log.debug("appel de : /personInfo?lastName=<lastName>");
         return getCommonPersonInfoLastName(lastName);
     }
@@ -90,7 +98,9 @@ public class PersonInfosController {
     */
     // $RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/communityEmail")
-    public ResponseEntity<?> getCommunityEmails(@RequestParam("city") String city){
+    public ResponseEntity<?> getCommunityEmails(
+            @RequestParam("city") 
+            @NotBlank(message = "Le nom de la vile est obligatoire") String city){
         log.debug("appel de : /communityEmail?city=<city>");
         Set<String> emails = personService.findEmailsByCity(city);        
         return ResponseEntityUtil.response(emails, "getCommunityEmails");

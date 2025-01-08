@@ -11,6 +11,10 @@ public class MedicalRecordRepository extends CrudRepository<MedicalRecord> {
     
     @Override
     public boolean containsId(String[] id, MedicalRecord medicalRecord) {
+        // id invalide => clef unique = prénom+nom.
+        if (id.length != 2) {
+            return false; 
+        }
         return medicalRecord.getFirstName().equalsIgnoreCase(id[0]) &&
                 medicalRecord.getLastName().equalsIgnoreCase(id[1]);
     }

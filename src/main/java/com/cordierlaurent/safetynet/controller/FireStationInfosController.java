@@ -3,6 +3,7 @@ package com.cordierlaurent.safetynet.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,10 +12,14 @@ import com.cordierlaurent.safetynet.dto.FireDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.service.FireStationService;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
 @Log4j2
+//@Validated Active la validation sur les paramètres avec @PathVariable et @RequestParam (voir @NotBlank etc... dans les paramètres de chaque méthode)
+@Validated 
 public class FireStationInfosController {
 
     @Autowired
@@ -50,7 +55,9 @@ public class FireStationInfosController {
     // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture.
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/firestation")
-    public ResponseEntity<?> getPersonsCoveredByFireStation(@RequestParam("stationNumber") int stationNumber){
+    public ResponseEntity<?> getPersonsCoveredByFireStation(
+            @RequestParam("stationNumber") 
+            @Min(value = 1, message = "Le numéro de station doit être supérieur à 0") int stationNumber){
         log.debug("appel de : /firestation?stationNumber=<station_number>");
         
         PersonsCoveredByFireStationDTO personsCoveredByFireStationDTO = fireStationService.findPersonsCoveredByFireStation(stationNumber);
@@ -110,7 +117,9 @@ public class FireStationInfosController {
     // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture.
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/fire")
-    public ResponseEntity<?> getFireByAddresse(@RequestParam("address") String address){
+    public ResponseEntity<?> getFireByAddresse(
+            @RequestParam("address") 
+            @NotBlank(message = "L'adresse est obligatoire") String address){
         log.debug("appel de : /fire?address=<address>");
         
         FireDTO fireDTO = fireStationService.findFireByaddress(address);

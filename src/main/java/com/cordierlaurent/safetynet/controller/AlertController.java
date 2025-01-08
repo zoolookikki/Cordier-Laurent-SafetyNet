@@ -3,7 +3,9 @@ package com.cordierlaurent.safetynet.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,10 +15,15 @@ import com.cordierlaurent.safetynet.dto.ChildAlertDTO;
 import com.cordierlaurent.safetynet.dto.FloodAlertDTO;
 import com.cordierlaurent.safetynet.service.AlertService;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
 @Log4j2
+//@Validated Active la validation sur les paramètres avec @PathVariable et @RequestParam (voir @NotBlank etc... dans les paramètres de chaque méthode)
+@Validated 
 public class AlertController {
 
     @Autowired
@@ -78,7 +85,9 @@ public class AlertController {
     // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture + route childAlert.
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/childAlert")
-    public ResponseEntity<?> getChildAlert(@RequestParam("address") String address){
+    public ResponseEntity<?> getChildAlert(
+            @RequestParam("address") 
+            @NotBlank(message = "L'adresse est obligatoire") String address){
         log.debug("appel de : /childAlert?address=<address>");
 
         List<ChildAlertDTO> childAlertDTO = alertService.findChilddByAddress(address);
@@ -108,7 +117,9 @@ public class AlertController {
     // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture + route phoneAlert.
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/phoneAlert")
-    public ResponseEntity<?> getPhoneAlert(@RequestParam("firestation") int fireStation){
+    public ResponseEntity<?> getPhoneAlert(
+            @RequestParam("firestation")
+            @Min(value = 1, message = "Le numéro de station doit être supérieur à 0") int fireStation){
         log.debug("appel de : /phoneAlert?firestation=<firestation_number>");
 
         // pas besoin de DTO ici car structure du fichier Json à renvoyer simple.
@@ -235,9 +246,16 @@ public class AlertController {
     // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture + route phoneAlert.
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/flood/stations")
-    public ResponseEntity<?> getFloodAlert(@RequestParam("stations") List<Integer> stations){
+    public ResponseEntity<?> getFloodAlert(
+            @RequestParam("stations") 
+            @NotEmpty(message = "La liste des stations ne peut pas être vide") List<Integer> stations){
         log.debug("appel de : /flood/stations?stations=<a list of station_numbers>");
-
+        // Vérification pour filtrer les valeurs nulles ==> filtrage @notEmpty insuffisant si ajout de blancs après stations=
+        if (stations == null || stations.isEmpty() || stations.contains(null)) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("La liste des stations est obligatoire et doit contenir uniquement des entiers valides");
+        }
         List<FloodAlertDTO> floodAlertDTO = alertService.findFloodByStations(stations);
         return ResponseEntityUtil.response(floodAlertDTO, "getFloodAlert");
     }

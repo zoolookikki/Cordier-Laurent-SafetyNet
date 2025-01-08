@@ -24,6 +24,8 @@ public class MedicalRecordController extends CrudController<MedicalRecord>{
         return medicalRecordService;
     }
 
+    // n'est plus utile.
+    /*
     @Override
     protected boolean checkId(String[] id) {
         if ((id == null) || (id.length != 2) || id[0].isBlank() || id[1].isBlank()) {
@@ -32,5 +34,6 @@ public class MedicalRecordController extends CrudController<MedicalRecord>{
             return true;
         }
     }
+    */
 }
 

@@ -12,6 +12,10 @@ public class PersonRepository extends CrudRepository<Person> {
     
     @Override
     public boolean containsId(String[] id, Person person) {
+        // id invalide => clef unique = prénom+nom.
+        if (id.length != 2) {
+            return false; 
+        }
         return person.getFirstName().equalsIgnoreCase(id[0]) &&
                 person.getLastName().equalsIgnoreCase(id[1]);
     }
