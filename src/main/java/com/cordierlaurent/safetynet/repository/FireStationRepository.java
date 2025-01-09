@@ -13,17 +13,19 @@ public class FireStationRepository extends CrudRepository<FireStation> {
     @Override
     public boolean containsId(String[] id, FireStation fireStation) {
         // id invalide => clef unique = adresse
-        if (id.length != 1) {
-            return false; 
-        }
-        return fireStation.getAddress().equalsIgnoreCase(id[0]);
+        return ((id.length == 1) && fireStation.getAddress().equalsIgnoreCase(id[0]));
     }
     
+    // c'est le mode par défaut.
     public boolean deleteByAddress(String address) {
-        String[] id = new String[] {address};
-        return deleteModelByUniqueKey (id); // c'est le mode par défaut.
+        return deleteModelByUniqueKey(new String[]{address});
     }
     
+    /*
+    la méthode removeIf parcourt chaque élément de la liste et supprime les éléments qui satisfont une condition (prédicat).
+    le prédicat est une expression lambda : model -> model.getStation() == station => est ce que le model donné par removeIf est égal à la station.
+    removeIf renvoit true si au moins un élément a été supprimé.
+     */
     public boolean deleteByStation(int station) {
         return models.removeIf(model -> model.getStation() == station);
     }

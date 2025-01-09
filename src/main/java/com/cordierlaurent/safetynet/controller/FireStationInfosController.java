@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.dto.FireDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.service.FireStationService;

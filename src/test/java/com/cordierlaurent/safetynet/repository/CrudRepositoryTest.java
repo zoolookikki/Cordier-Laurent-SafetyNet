@@ -23,9 +23,12 @@ public abstract class CrudRepositoryTest<Model> {
     protected String[] id2; // new String[]{"Jacob", "Boyd"}
     protected Model model3;
     
-    // à implémenter par les classes filles.
+    // à implémenter par les classes enfants.
+
     // cette fonction doit initialiser toutes les variables ci-dessus qui sont protected, dont la fille va hériter.
     protected abstract void init();
+    // cette fonction initialise le jeu d'essai.
+    protected abstract void initModels();
     
     // ne pas faire de @BeforeAll => static, quand héritage. Pas de problème de performance ici, je peux passre en @BeforeEach, voir pour le futur si il y a une solution.
     // @BeforeAll
@@ -44,6 +47,7 @@ public abstract class CrudRepositoryTest<Model> {
         assertNotNull(id2, "id2 uninitialized");
         assertNotNull(model3, "model3 uninitialized");
         
+        repository.setModels(new ArrayList<>());
     }
     
     @AfterAll

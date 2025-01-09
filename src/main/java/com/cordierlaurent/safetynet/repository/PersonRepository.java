@@ -7,24 +7,34 @@ import org.springframework.stereotype.Repository;
 
 import com.cordierlaurent.safetynet.model.Person;
 
+import lombok.extern.log4j.Log4j2;
+
 @Repository
+@Log4j2
 public class PersonRepository extends CrudRepository<Person> {
     
     @Override
     public boolean containsId(String[] id, Person person) {
         // id invalide => clef unique = prénom+nom.
-        if (id.length != 2) {
-            return false; 
-        }
-        return person.getFirstName().equalsIgnoreCase(id[0]) &&
+        return (id.length == 2) &&
+                person.getFirstName().equalsIgnoreCase(id[0]) &&
                 person.getLastName().equalsIgnoreCase(id[1]);
     }
     
     public List<Person> findByAddresses(List<String> addresses){
         List<Person> persons = new ArrayList<>();
         for (Person person : this.getModels()) {
-            if (addresses.contains(person.getAddress())) {
+            // pas trouvé d'équivalent genre contains ignore case...
+/*
+             if (addresses.contains(person.getAddress())) {
                 persons.add(person);
+*/
+            for (String address : addresses) {
+                if (person.getAddress().equalsIgnoreCase(address)) {
+                    persons.add(person);
+                    // une fois trouvé, on arrête.
+                    break; 
+                }
             }
         }
         return persons;

@@ -17,7 +17,7 @@ public class EntityDataTest {
     }
 
     public static Person createPerson2() {
-        return new Person("Jacob", "Boyd", "1509 Culver St", "Culver", "97451", "841-874-6513", "drk@email.com");
+        return new Person("Jacob", "Boyd", "9999 Culver St", "Culver", "97451", "841-874-6513", "drk@email.com");
     }
 
     public static Person createPerson3() {
@@ -34,6 +34,41 @@ public class EntityDataTest {
     
     public static String[] createPersonId2() {
         return new String[]{"Jacob", "Boyd"};
+    }
+    
+    // préférable de toujours tester avec un IgnoreCase.
+    public static String getPersonAddressIgnoreCaseMatch() {
+        return "1509 culver St";
+    }
+
+    public static String getPersonAddressNoMatch() {
+        return "xxxx";
+    }
+
+    // préférable de toujours tester avec un IgnoreCase.
+    public static String getPersonLastNameIgnoreCaseMatch() {
+        return "BOYD";
+    }
+
+    public static String getPersonLastNameNoMatch() {
+        return "XXXX";
+    }
+
+    // préférable de toujours tester avec un IgnoreCase.
+    public static String getPersonCityIgnoreCaseMatch() {
+        return "CULVER";
+    }
+
+    public static String getPersonCityNoMatch() {
+        return "XXXX";
+    }
+
+    public static List<String> getPersonAllAddressesMatch() {
+        return List.of("1509 Culver St", "1510 Culver St", "1511 Culver St");
+    }
+
+    public static List<String> getPersonAllAddressesNoMatch() {
+        return List.of("xxxx", "yyyy", "zzzz");
     }
 
     public static MedicalRecord createMedicalRecord1() {
@@ -116,11 +151,11 @@ public class EntityDataTest {
         return new String[]{"29 15th St"};
     }
     
-    public static int getStationForDeleteExist() {
+    public static int getStationExist() {
         return 3;
      }
 
-    public static int getSationForDeleteNotExist() {
+    public static int getStationNotExist() {
         return 1234;
     }
 
