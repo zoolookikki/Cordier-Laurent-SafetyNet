@@ -57,7 +57,7 @@ public abstract class CrudRepositoryTest<Model> {
     @Test
 //    @Disabled
     @DisplayName("Add models and verifies that the returned list is up to date")
-    void getPersonsTest() {
+    void getModelsTest() {
 
         // given
         repository.addModel(model1);
@@ -77,7 +77,7 @@ public abstract class CrudRepositoryTest<Model> {
 
     @Test
     @DisplayName("Replaces the existing list with a new list")
-    void setPersonsTest() {
+    void setModelsTest() {
          
          // given
          repository.addModel(model1);
@@ -99,7 +99,7 @@ public abstract class CrudRepositoryTest<Model> {
 
     @Test
     @DisplayName("A model has been added")
-    void addtPersonsTest() {
+    void addModelTest() {
 
         // given : repository empty.
 
@@ -117,7 +117,7 @@ public abstract class CrudRepositoryTest<Model> {
     
     @Test
     @DisplayName("Update of a model who exists with the unique key")
-    void updatePersonsTest() {
+    void updateModelTest() {
         
         // given
         repository.addModel(model1);
@@ -137,7 +137,7 @@ public abstract class CrudRepositoryTest<Model> {
         
     @Test
     @DisplayName("Update of a model who does not exist with the unique key")
-    void updatePersonsFailTest() {
+    void updateModelFailTest() {
         
         // given
         repository.addModel(model1);
@@ -154,7 +154,7 @@ public abstract class CrudRepositoryTest<Model> {
     
     @Test
     @DisplayName("Delete an existing model by the unique key")
-    void deletePersonsTest() {
+    void deleteModelTest() {
         
         // given
         repository.addModel(model1);
@@ -176,7 +176,7 @@ public abstract class CrudRepositoryTest<Model> {
     
     @Test
     @DisplayName("Delete a model who doesn't exist by the unique key")
-    void deletePersonsFailTest() {
+    void deleteModelFailTest() {
         
         // given
         repository.addModel(model1);

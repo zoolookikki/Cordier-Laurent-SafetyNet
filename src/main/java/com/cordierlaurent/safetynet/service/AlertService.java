@@ -84,8 +84,8 @@ public class AlertService {
         Set<String> phoneNumbers = new TreeSet<>();
 
         // recherche les adresses par station => liste d'adresses.
-        List<String> addresses = fireStationRepository.findAddressesByStationNumber(fireStation);
-        log.debug("findAddressesByStationNumber=>fireStation="+fireStation+",addresses.size="+addresses.size());
+        Set<String> addresses = fireStationRepository.findAddressesByStationNumber(fireStation);
+        log.debug("findAddressesByStationNumber=>fireStation="+fireStation+",addresses.size="+addresses.size()+",addresses="+addresses);
         // recherche personnes par adresse => liste de personnes.
         List<Person> persons = personRepository.findByAddresses(addresses);
         log.debug("findByAddresses=>persons.size="+persons.size());
@@ -114,7 +114,7 @@ public class AlertService {
         for (int station : stations) {
             log.debug("for each station=>"+station);
             // recherche les adresses par station => liste d'adresses.
-            List<String> addresses = fireStationRepository.findAddressesByStationNumber(station);
+            Set<String> addresses = fireStationRepository.findAddressesByStationNumber(station);
             // création de la DTO intermédiaire
             List<FloodHouseoldDTO> floodHouseoldDTOs = new ArrayList<>();
             // pour chaque adresses de la liste d'adresse filtrées.

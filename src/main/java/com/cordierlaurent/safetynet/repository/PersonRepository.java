@@ -2,6 +2,7 @@ package com.cordierlaurent.safetynet.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +22,7 @@ public class PersonRepository extends CrudRepository<Person> {
                 person.getLastName().equalsIgnoreCase(id[1]);
     }
     
-    public List<Person> findByAddresses(List<String> addresses){
+    public List<Person> findByAddresses(Set<String> addresses){
         List<Person> persons = new ArrayList<>();
         for (Person person : this.getModels()) {
             // pas trouvé d'équivalent genre contains ignore case...
@@ -41,7 +42,7 @@ public class PersonRepository extends CrudRepository<Person> {
     }
     
     public List<Person> findByAddress(String address) {
-        return findByAddresses(List.of(address));
+        return findByAddresses(Set.of(address));
     }
     
     public List<Person> findByLastName(String lastName){

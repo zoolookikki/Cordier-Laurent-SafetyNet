@@ -2,17 +2,11 @@ package com.cordierlaurent.safetynet.repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.cordierlaurent.safetynet.model.EntityContainer;
-import com.cordierlaurent.safetynet.model.FireStation;
-import com.cordierlaurent.safetynet.model.MedicalRecord;
-import com.cordierlaurent.safetynet.model.Person;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Data;
@@ -43,51 +37,25 @@ public class JsonDataRepository {
                 log.error("EntityContainer is null, unable to load data.");
                 return;
             }
-            /*
-            contrôle des fichiers json :
-                - doublons => clef unique pour Person et MedicalRecord (prénom+nom), pour FireStations (address)
-                    ==> Utilisation d'une Map pour stocker filtrer les doublons par clef unique.
-            */
             if (entityContainer.getPersons() != null) {
-                Map<String, Person> personsByUniqueKey = new HashMap<>();
-                for (Person person : entityContainer.getPersons()) {
-                    String uniqueKey = person.getFirstName() + person.getLastName();
-                    if (personsByUniqueKey.putIfAbsent(uniqueKey, person) != null) {
-                        log.warn("duplicate person filtering : "+person);
-                    }
-                }
-                personRepository.setModels(new ArrayList<>(personsByUniqueKey.values()));
+                personRepository.setModels(entityContainer.getPersons());
                 log.debug("list person ok");
             } else {
                 log.debug("list person null");                
             }
             if (entityContainer.getFireStations() != null) {
-                Map<String, FireStation> fireStationsByUniqueKey = new HashMap<>();
-                for (FireStation fireStation : entityContainer.getFireStations()) {
-                    String uniqueKey = fireStation.getAddress();
-                    if (fireStationsByUniqueKey.putIfAbsent(uniqueKey, fireStation) != null) {
-                        log.warn("duplicate fireStation filtering : "+fireStation);
-                    }
-                }
-                fireStationRepository.setModels(new ArrayList<>(fireStationsByUniqueKey.values()));
+                fireStationRepository.setModels(entityContainer.getFireStations());
                 log.debug("list firestation ok");                
             } else {
                 log.debug("list firestation null");                
             }
             if (entityContainer.getMedicalRecords() != null) {
-                Map<String, MedicalRecord> medicalRecordsByUniqueKey = new HashMap<>();
-                for (MedicalRecord medicalRecord : entityContainer.getMedicalRecords()) {
-                    String uniqueKey = medicalRecord.getFirstName() + medicalRecord.getLastName();
-                    if (medicalRecordsByUniqueKey.putIfAbsent(uniqueKey, medicalRecord) != null) {
-                        log.warn("duplicate medicalRecord filtering : "+medicalRecord);
-                    }
-                }
-                medicalRecordRepository.setModels(new ArrayList<>(medicalRecordsByUniqueKey.values()));
+                medicalRecordRepository.setModels(entityContainer.getMedicalRecords());
                 log.debug("list medicalrecord ok");                
             } else {
                 log.debug("list medicalrecord null");                
             }
-
+            
         } catch (IOException e) {
             log.error("unable to load Json file : " + jsonFileName);
             e.printStackTrace();

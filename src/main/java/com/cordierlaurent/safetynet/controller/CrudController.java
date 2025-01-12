@@ -1,6 +1,7 @@
 package com.cordierlaurent.safetynet.controller;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,9 +34,14 @@ public abstract class CrudController <Model> {
     // pour pouvoir appeler les fonctions de Crud de chaque service concerné.
     protected abstract CrudService<Model> getService();
     
-    // n'est plus utile.
-    // à implémenter dans la classe fille : on vérifie les paramètres reçus via le contrôleur, chaque contrôleur qui héritera choisira sa façon de vérifier les paramètres.
-//    protected abstract boolean checkId (String[] id);
+    protected Optional<ResponseEntity<?>> validateNotNullAndNotBlank(String param1, String param2) {
+        if (param1 == null || param2 == null || param1.isBlank() || param2.isBlank()) {
+            return Optional.of(ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Les 2 paramètres sont obligatoires"));
+        }
+        return Optional.empty(); // OK
+    }    
     
     // @PostMapping : mappe une requête HTTP POST à une méthode de contrôleur : création. 
     // ResponseEntity représente l'ensemble de la réponse HTTP envoyée au client (corps, status, entête http) : <Model> => objet générique retourné en Json.
@@ -76,17 +82,15 @@ public abstract class CrudController <Model> {
             @PathVariable(required = false) String param2, 
             @Valid @RequestBody Model model){
 
-        if (param1 == null || param1.isBlank()) {
-            log.debug("PUT : paramètre manquant ou vide");
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Au moins un paramètre est obligatoire");
+        Optional<ResponseEntity<?>> validationResponse = validateNotNullAndNotBlank(param1, param2);
+        if (validationResponse.isPresent()) {
+            return validationResponse.get();
         }
 
-        // Construction de l'id en fonction du nombre de paramètres.
-        String[] id = (param2 != null) ? new String[]{param1, param2} : new String[]{param1};
-        
-        log.debug(this.getClass().getSimpleName() + " : PUT/updateModelByUniqueKey : key=" + Arrays.toString(id) + " " + model);
+        // construction de l'id
+        String[] id = new String[]{param1, param2};
+            
+        log.debug(this.getClass().getSimpleName() + " : PUT/updateModelByUniqueKey : key=" + param1 + "/" + param2  + " " + model);
 
         // attention, pour la modification, il faut vérifier que le modèle que l'on va mettre à jour n'existe pas déjà (sauf moi même...).
         // vérification de l'unicité par le service => logique métier.
@@ -119,21 +123,20 @@ public abstract class CrudController <Model> {
     // "/{param1}/", "/" : pour capturer les cas avec uniquement le /
     // $PathVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut) ==> attention param2 est null si absent
     @DeleteMapping({"/{param1}", "/{param1}/{param2}", "/{param1}/", "/"})
+//    @DeleteMapping({"/{param1}/{param2}"})
     public ResponseEntity<?> deleteModelByUniqueKey(
-            @PathVariable(required = false) String param1,
-            @PathVariable(required = false) String param2) {
+        @PathVariable(required = false) String param1,
+        @PathVariable(required = false) String param2) {
 
-        if (param1 == null || param1.isBlank()) {
-            log.debug("DELETE : paramètre manquant ou vide");
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Au moins un paramètre est obligatoire");
+        Optional<ResponseEntity<?>> validationResponse = validateNotNullAndNotBlank(param1, param2);
+        if (validationResponse.isPresent()) {
+            return validationResponse.get();
         }
-        
-        // Construction de l'id en fonction du nombre de paramètres.
-        String[] id = (param2 != null) ? new String[]{param1, param2} : new String[]{param1};
-        
-        log.debug(this.getClass().getSimpleName() + " : DELETE/deleteModelByUniqueKey : key=" + Arrays.toString(id));
+
+        // construction de l'id
+        String[] id = new String[]{param1, param2};
+            
+        log.debug(this.getClass().getSimpleName() + " : DELETE/deleteModelByUniqueKey : key=" + param1 + '/' + param2);
 
         if (getService().deleteModelByUniqueKey(id)) {
             // ok.
@@ -150,5 +153,5 @@ public abstract class CrudController <Model> {
                     .body("suppression : not found");
         }
     }
-    
+
 }

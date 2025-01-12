@@ -2,7 +2,7 @@ package com.cordierlaurent.safetynet.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,73 +52,6 @@ public class FireStationRepositoryTest extends CrudRepositoryTest<FireStation> {
     }
 
     @Test
-    @DisplayName("Delete an existing firestation by address")
-    void deleteFireStationByAddressTest() {
-        // given
-        initModels();
-        
-        // when
-        boolean result = fireStationRepository.deleteByAddress(id2[0]);
-        List<FireStation> models = fireStationRepository.getModels();
-                
-        // then
-        assertThat(result).isTrue();
-        assertThat(models)
-            .isNotNull()
-            .hasSize(2)
-            .containsExactlyInAnyOrder(model1, model3); 
-       
-    }
-
-    @Test
-    @DisplayName("Delete a firestation who doesn't exist with address")
-    void deleteFireStationByAddressFailTest() {
-        // given
-        initModels();
-        
-        // when
-        boolean result = fireStationRepository.deleteByAddress(id1UpdatedNotExist[0]); 
-                
-        // then
-        assertThat(result).isFalse();
-       
-    }
-    
-    
-    @Test
-    @DisplayName("Delete an existing firestation by station")
-    void deleteFireStationByStationTest() {
-        // given
-        initModels();
-        
-        // when
-        boolean result = fireStationRepository.deleteByStation(EntityDataTest.getStationExist());
-        List<FireStation> models = fireStationRepository.getModels();
-                
-        // then
-        assertThat(result).isTrue();
-        assertThat(models)
-            .isNotNull()
-            .hasSize(1)
-            .containsExactlyInAnyOrder(model2); 
-       
-    }
-
-    @Test
-    @DisplayName("Delete a firestation who doesn't exist by station")
-    void deleteFireStationByStationFailTest() {
-        // given
-        initModels();
-        
-        // when
-        boolean result = fireStationRepository.deleteByStation(EntityDataTest.getStationNotExist()); 
-                
-        // then
-        assertThat(result).isFalse();
-       
-    }
-    
-    @Test
     @DisplayName("Find a existing firestation by address")
     void findStationByAddressTest() {
         // given
@@ -165,7 +98,7 @@ public class FireStationRepositoryTest extends CrudRepositoryTest<FireStation> {
         initModels();
 
         // when
-        List<String> addresses = fireStationRepository.findAddressesByStationNumber(model1.getStation());
+        Set<String> addresses = fireStationRepository.findAddressesByStationNumber(model1.getStation());
 
         // then
         assertThat(addresses)
@@ -181,7 +114,7 @@ public class FireStationRepositoryTest extends CrudRepositoryTest<FireStation> {
         initModels();
 
         // when
-        List<String> addresses = fireStationRepository.findAddressesByStationNumber(EntityDataTest.getStationNotExist()); 
+        Set<String> addresses = fireStationRepository.findAddressesByStationNumber(EntityDataTest.getStationNotExist()); 
 
         // then
         assertThat(addresses).isEmpty();

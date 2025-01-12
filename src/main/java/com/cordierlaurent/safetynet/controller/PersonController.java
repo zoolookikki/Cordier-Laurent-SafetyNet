@@ -24,15 +24,4 @@ public class PersonController extends CrudController<Person>{
         return personService;
     }
 
-    // n'est plus utile.
-/*
-     @Override
-    protected boolean checkId(String[] id) {
-        if ((id == null) || (id.length != 2) || id[0].isBlank() || id[1].isBlank()) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-*/
 }

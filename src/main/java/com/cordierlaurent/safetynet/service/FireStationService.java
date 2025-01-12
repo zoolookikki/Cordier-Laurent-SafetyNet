@@ -2,6 +2,7 @@ package com.cordierlaurent.safetynet.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,14 +41,6 @@ public class FireStationService extends CrudService<FireStation> {
     protected CrudRepository<FireStation> getRepository() {
         return fireStationRepository;
     }
-    
-    public boolean deleteByAddress (String address) {
-        return fireStationRepository.deleteByAddress(address);
-    }
-
-    public boolean deleteByStation (int station) {
-        return fireStationRepository.deleteByStation(station);
-    }
 
     public PersonsCoveredByFireStationDTO findPersonsCoveredByFireStation(int stationNumber) {
         log.debug("START findPersonsCoveredByFireStation");
@@ -57,8 +50,8 @@ public class FireStationService extends CrudService<FireStation> {
         int numberOfChildren = 0;    
         
         // recherche firestations par station => liste d'adresses.
-        List<String> addresses = fireStationRepository.findAddressesByStationNumber(stationNumber);
-        log.debug("findAddressesByStationNumber=>stationNumber="+stationNumber+",addresses.size="+addresses.size());
+        Set<String> addresses = fireStationRepository.findAddressesByStationNumber(stationNumber);
+        log.debug("findAddressesByStationNumber=>stationNumber="+stationNumber+",addresses.size="+addresses.size()+",adresses="+addresses);
 
         // recherche personnes par adresse => liste de personnes.
         List<Person> persons = personRepository.findByAddresses(addresses);

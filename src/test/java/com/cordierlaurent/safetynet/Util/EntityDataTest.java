@@ -1,6 +1,7 @@
 package com.cordierlaurent.safetynet.Util;
 
 import java.util.List;
+import java.util.Set;
 
 import com.cordierlaurent.safetynet.model.FireStation;
 import com.cordierlaurent.safetynet.model.MedicalRecord;
@@ -63,12 +64,12 @@ public class EntityDataTest {
         return "XXXX";
     }
 
-    public static List<String> getPersonAllAddressesMatch() {
-        return List.of("1509 Culver St", "1510 Culver St", "1511 Culver St");
+    public static Set<String> getPersonAllAddressesMatch() {
+        return Set.of("1509 Culver St", "1510 Culver St", "1511 Culver St");
     }
 
-    public static List<String> getPersonAllAddressesNoMatch() {
-        return List.of("xxxx", "yyyy", "zzzz");
+    public static Set<String> getPersonAllAddressesNoMatch() {
+        return Set.of("xxxx", "yyyy", "zzzz");
     }
 
     public static MedicalRecord createMedicalRecord1() {
@@ -140,15 +141,15 @@ public class EntityDataTest {
     }
 
     public static String[] createFireStationId1UpdatedExist() {
-       return new String[]{"1509 Culver St"};
+       return new String[]{"1509 Culver St", "3"};
     }
 
     public static String[] createFireStationId1UpdatedNotExist() {
-        return new String[]{"xxxxx"};
+        return new String[]{"xxxxx", "999"};
     }
     
     public static String[] createFireStationId2() {
-        return new String[]{"29 15th St"};
+        return new String[]{"29 15th St", "2"};
     }
     
     public static int getStationExist() {
