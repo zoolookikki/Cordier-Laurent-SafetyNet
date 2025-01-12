@@ -15,15 +15,11 @@ public class ResponseEntityUtil {
     on peut avoir en Item soit List ou Set => Collection est une interface parent commune donc OK.
     */
     public static <Item> ResponseEntity<?> response(Collection<Item> collection, String functionName){
-        // la liste est vide => rien trouvé.
         if (collection.isEmpty()) {
             log.info("{} : aucun résultat trouvé", functionName);
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND) // 404 
-                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
+        } else {
+            log.info("{} : {} résultat(s) trouvé(s)", functionName, collection.size());
         }
-        // il y a au moins un élément dans la liste.
-        log.info("{} : {} résultat(s) trouvé(s)", functionName, collection.size());
         return ResponseEntity
                 .status(HttpStatus.OK) // 200
                 .body(collection); 

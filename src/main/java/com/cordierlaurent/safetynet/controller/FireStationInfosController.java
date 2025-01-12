@@ -1,5 +1,7 @@
 package com.cordierlaurent.safetynet.controller;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,15 +67,12 @@ public class FireStationInfosController {
         
         // pour le moment non optimisable avec ResponseEntityUtil car il faut créer une méthode générique pour les DTO de ce type.
         
-        // la liste de personnes est vide => rien trouvé.
         if (personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().isEmpty()) {
             log.info("Recherche par station : " + stationNumber + " ==> non trouvé ");
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND) // 404 
-                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
+        } else {
+            log.info("Recherche par station : " + stationNumber + " ==> " +  personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().size() + " trouvé(s) ");
         }
-        // il y a au moins une personne => ok.
-        log.info("Recherche par station : " + stationNumber + " ==> " +  personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().size() + " trouvé(s) ");
+            
         return ResponseEntity
                 .status(HttpStatus.OK) // 200
                 .body(personsCoveredByFireStationDTO);
@@ -127,18 +126,17 @@ public class FireStationInfosController {
 
         // pour le moment non optimisable avec ResponseEntityUtil car il faut créer une méthode générique pour les DTO de ce type.
 
-        // la liste de personnes est vide => rien trouvé.
         if (fireDTO.getStation() <=0 || fireDTO.getPersons().isEmpty()) {
             log.info("recherche par addresse : " + address + " => non trouvé");
             return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND) // 404 
-                    .build(); // là, il ne faut peut être rien dire dans ce cas de figure => build : réponse sans body.
+                    .status(HttpStatus.OK) // 200
+                    .body(Collections.emptyList()); 
+        } else {
+            log.info("recherche par addresse : " + address + " => " +  fireDTO.getPersons().size() + " trouvé(s)");
+            return ResponseEntity
+                    .status(HttpStatus.OK) // 200
+                    .body(fireDTO); 
         }
-        // il y a au moins une personne => ok.
-        log.info("recherche par addresse : " + address + " => " +  fireDTO.getPersons().size() + " trouvé(s)");
-        return ResponseEntity
-                .status(HttpStatus.OK) // 200
-                .body(fireDTO); 
     }
     
 }
