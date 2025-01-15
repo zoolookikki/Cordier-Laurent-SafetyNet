@@ -57,6 +57,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String parameterName = ex.getName();  // Nom du paramètre (ex: "station", "id", "address")
+        
         String requiredType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "valeur correcte";
 
         String errorMessage = String.format(

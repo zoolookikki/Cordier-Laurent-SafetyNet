@@ -2,11 +2,11 @@ package com.cordierlaurent.safetynet.dto;
 
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Value;
 
-@Data
-@AllArgsConstructor
+// @Value mieux que @Data pour les DTO car cela génère tous les champs en final, ce qui signifie qu'ils ne peuvent pas être modifiés après l'initialisation.
+// pour éviter pbs de modification des DTO car passage par référence en argument et en retour de fonction.
+@Value
 //idem @JsonProperty pour changer le nom, mais pour la classe.
 // mais ne fonctionne pas sans WRAP_ROOT_VALUE (qui n'est pas activé par défaut) => changer la configuration par défault => modification assez lourde => ne vaut pas le coup ici.
 //@JsonRootName("children") 
@@ -15,6 +15,14 @@ public class ChildAlertDTO {
     private String lastName;
     private int age;
     private List<PersonBasicInformationsDTO> householdMembers;
+    
+    // Même si Lombok génère un champ final, une collection peut être modifiée par la référence externe => faire la copie dans le constructeur est l'approche recommandée pour des DTO immuables.
+    public ChildAlertDTO(String firstName, String lastName, int age, List<PersonBasicInformationsDTO> householdMembers) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.householdMembers = List.copyOf(householdMembers); // Copie défensive
+    }    
 }
 
 
