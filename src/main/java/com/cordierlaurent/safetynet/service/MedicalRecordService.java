@@ -42,7 +42,7 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
                 new String[]{
                         person.getFirstName(), 
                         person.getLastName()});
-        return DateUtil.CalculateAge(birthdate);        
+        return DateUtil.calculateAge(birthdate);        
     }
  
     public List<PersonHealthInformationsDTO> getPersonHealthInformationsDTOs(List<Person> persons){
@@ -57,7 +57,7 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
             if (medicalRecordOptional.isPresent()) {
                 MedicalRecord medicalRecord = medicalRecordOptional.get();
                 log.debug("      medicalRecordRepository.findMedicalRecordByUniqueKey=> true");
-                int age = DateUtil.CalculateAge(medicalRecord.getBirthdate());
+                int age = DateUtil.calculateAge(medicalRecord.getBirthdate());
                 log.debug("      DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
                 if (age >= 0) {
                     personHealthInformationsDTOs.add(new PersonHealthInformationsDTO(

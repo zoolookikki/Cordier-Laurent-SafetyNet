@@ -10,7 +10,7 @@ public class DateUtil {
     private DateUtil() {
     }
     
-    public static int CalculateAge(String birthdate) {
+    public static int calculateAge(String birthdate) {
 
         // Retourne -1 pour une date invalide
         if (birthdate == null || birthdate.isBlank()) return -1;

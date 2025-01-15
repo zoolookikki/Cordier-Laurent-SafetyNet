@@ -63,7 +63,7 @@ public class PersonService extends CrudService<Person> {
                 MedicalRecord medicalRecord = medicalRecordOptional.get();
                 log.debug("  medicalRecordRepository.findMedicalRecordByUniqueKey==> true");
                 // Calculer l'age
-                int age = DateUtil.CalculateAge(medicalRecord.getBirthdate());
+                int age = DateUtil.calculateAge(medicalRecord.getBirthdate());
                 log.debug("  DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
                 if (age >= 0) {
                     // ajouter à la DTO.
