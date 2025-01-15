@@ -20,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Collections;
 
 import com.cordierlaurent.safetynet.repository.JsonDataRepository;
-import com.cordierlaurent.safetynet.service.MessageService;
 import com.cordierlaurent.safetynet.service.PersonService;
 
 //pour ne charger que la partie concernant le MVC et précision de la classe pour ne charger que ce contrôleurs pour les tests.
@@ -37,10 +36,6 @@ public class PersonInfosControllerTest {
     
     @MockitoBean
     private JsonDataRepository jsonDataRepository;
-
-    // celui là m'a bien ennuyé => j'hésite entre le fait d'avoir @WebMvcTest et de mettre @SpringBootTest.
-    @MockitoBean
-    private MessageService messageService;
 
     @Test
     @DisplayName("Url by path that returns detailed information about people with a given last name")

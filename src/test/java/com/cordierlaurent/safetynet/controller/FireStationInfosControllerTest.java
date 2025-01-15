@@ -25,7 +25,6 @@ import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.model.FireStation;
 import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.FireStationService;
-import com.cordierlaurent.safetynet.service.MessageService;
 
 //pour ne charger que la partie concernant le MVC et précision de la classe pour ne charger que ce contrôleurs pour les tests.
 @WebMvcTest(FireStationInfosController.class)
@@ -41,10 +40,6 @@ public class FireStationInfosControllerTest {
     
     @MockitoBean
     private JsonDataRepository jsonDataRepository;
-
-    // celui là m'a bien ennuyé => j'hésite entre le fait d'avoir @WebMvcTest et de mettre @SpringBootTest.
-    @MockitoBean
-    private MessageService messageService;
 
     private static FireStation fireStation1;
     

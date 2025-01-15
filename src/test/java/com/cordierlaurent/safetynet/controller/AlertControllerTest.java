@@ -22,7 +22,6 @@ import java.util.List;
 
 import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.AlertService;
-import com.cordierlaurent.safetynet.service.MessageService;
 
 //pour ne charger que la partie concernant le MVC et précision de la classe pour ne charger que ce contrôleurs pour les tests.
 @WebMvcTest(AlertController.class)
@@ -38,10 +37,6 @@ public class AlertControllerTest {
 
     @MockitoBean
     private JsonDataRepository jsonDataRepository;
-
-    // celui là m'a bien ennuyé => j'hésite entre le fait d'avoir @WebMvcTest et de mettre @SpringBootTest.
-    @MockitoBean
-    private MessageService messageService;
 
     @Test
     @DisplayName("Url which returns the list of children <= 18 years old at a given address with the members of the household")

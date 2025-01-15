@@ -9,7 +9,6 @@ import com.cordierlaurent.safetynet.model.MedicalRecord;
 import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.CrudService;
 import com.cordierlaurent.safetynet.service.MedicalRecordService;
-import com.cordierlaurent.safetynet.service.MessageService;
 
 // pour ne charger que la partie concernant le MVC et précision de la classe pour ne charger que ce contrôleurs pour les tests.
 @WebMvcTest(MedicalRecordController.class)
@@ -21,10 +20,6 @@ public class MedicalRecordControllerTest  extends CrudControllerTest<MedicalReco
 
     @MockitoBean
     private JsonDataRepository jsonDataRepository;
-
-    // celui là m'a bien ennuyé => j'hésite entre le fait d'avoir @WebMvcTest et de mettre @SpringBootTest.
-    @MockitoBean
-    private MessageService messageService;
 
     @Override
     protected String getBaseUrl() {
