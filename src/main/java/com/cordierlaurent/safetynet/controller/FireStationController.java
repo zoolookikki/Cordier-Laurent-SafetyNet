@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.model.FireStation;
 import com.cordierlaurent.safetynet.service.CrudService;
 import com.cordierlaurent.safetynet.service.FireStationService;
@@ -54,7 +55,7 @@ public class FireStationController extends CrudController<FireStation>{
     
 
     private Optional<ResponseEntity<?>> validateFireStationParameters(String param1, String param2) {
-        return validateNotNullAndNotBlank(param1, param2)
+        return ResponseEntityUtil.validateNotNullAndNotBlank(param1, param2)
             .or(() -> validateStationNumber(param2)); 
     }    
     

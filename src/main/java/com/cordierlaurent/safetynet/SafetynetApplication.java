@@ -3,10 +3,11 @@ package com.cordierlaurent.safetynet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.CommandLineRunner;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.cordierlaurent.safetynet.repository.JsonDataRepository;
-import com.cordierlaurent.safetynet.service.MessageService;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -15,10 +16,11 @@ import lombok.extern.log4j.Log4j2;
 public class SafetynetApplication implements CommandLineRunner {
 
     @Autowired
-    private MessageService messageService;
-
-    @Autowired
     private JsonDataRepository jsonDataRepository;
+    
+    // Charge la propriété dynamique
+    @Value("${safetynet.json-file}") 
+    private String jsonFileName;
     
     public static void main(String[] args) {
 		SpringApplication.run(SafetynetApplication.class, args);
@@ -27,9 +29,7 @@ public class SafetynetApplication implements CommandLineRunner {
     // mémo : après démarrage complet de spring (même si Logger n'en a pas besoin).
     @Override
 	public void run(String... args) throws Exception {
-	    log.info(messageService.getMessage("log.info"));
-	    log.debug(messageService.getMessage("log.debug"));
-	    log.error(messageService.getMessage("log.error"));
+	    jsonDataRepository.init(jsonFileName);
 	    jsonDataRepository.load();
 	}
 

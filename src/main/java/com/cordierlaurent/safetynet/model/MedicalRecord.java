@@ -26,4 +26,5 @@ public class MedicalRecord {
     
     @NotNull(message = "La liste des allergies ne doit pas être nulle")
     private List<String> allergies;
+    
 }

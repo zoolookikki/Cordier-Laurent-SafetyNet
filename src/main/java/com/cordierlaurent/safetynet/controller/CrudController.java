@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.CrudService;
 
@@ -33,15 +34,6 @@ public abstract class CrudController <Model> {
     // pour pouvoir appeler le service concerné pour lui demander de vérifier l'unicité.
     // pour pouvoir appeler les fonctions de Crud de chaque service concerné.
     protected abstract CrudService<Model> getService();
-    
-    protected Optional<ResponseEntity<?>> validateNotNullAndNotBlank(String param1, String param2) {
-        if (param1 == null || param2 == null || param1.isBlank() || param2.isBlank()) {
-            return Optional.of(ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Les 2 paramètres sont obligatoires"));
-        }
-        return Optional.empty(); // OK
-    }    
     
     // @PostMapping : mappe une requête HTTP POST à une méthode de contrôleur : création. 
     // ResponseEntity représente l'ensemble de la réponse HTTP envoyée au client (corps, status, entête http) : <Model> => objet générique retourné en Json.
@@ -82,7 +74,7 @@ public abstract class CrudController <Model> {
             @PathVariable(required = false) String param2, 
             @Valid @RequestBody Model model){
 
-        Optional<ResponseEntity<?>> validationResponse = validateNotNullAndNotBlank(param1, param2);
+        Optional<ResponseEntity<?>> validationResponse = ResponseEntityUtil.validateNotNullAndNotBlank(param1, param2);
         if (validationResponse.isPresent()) {
             return validationResponse.get();
         }
@@ -128,7 +120,7 @@ public abstract class CrudController <Model> {
         @PathVariable(required = false) String param1,
         @PathVariable(required = false) String param2) {
 
-        Optional<ResponseEntity<?>> validationResponse = validateNotNullAndNotBlank(param1, param2);
+        Optional<ResponseEntity<?>> validationResponse = ResponseEntityUtil.validateNotNullAndNotBlank(param1, param2);
         if (validationResponse.isPresent()) {
             return validationResponse.get();
         }

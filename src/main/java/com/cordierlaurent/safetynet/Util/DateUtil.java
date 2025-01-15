@@ -6,6 +6,10 @@ import java.time.format.DateTimeFormatter;
 
 public class DateUtil {
     
+    // Constructeur privé pour empêcher l'instanciation
+    private DateUtil() {
+    }
+    
     public static int CalculateAge(String birthdate) {
 
         // Retourne -1 pour une date invalide
@@ -21,7 +25,5 @@ public class DateUtil {
             return -1;  // Retourne -1 en cas de format incorrect
         }
     }
-    
-
 
 }

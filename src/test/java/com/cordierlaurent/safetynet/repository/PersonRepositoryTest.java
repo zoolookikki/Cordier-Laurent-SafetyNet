@@ -85,7 +85,7 @@ public class PersonRepositoryTest extends CrudRepositoryTest<Person>{
         initModels();
 
         // when
-        List<Person> result = personRepository.findByAddress(EntityDataTest.getPersonAddressIgnoreCaseMatch());
+        List<Person> result = personRepository.findByAddress(EntityDataTest.getPerson1And3AddressIgnoreCaseMatch());
 
         // then
         assertThat(result).hasSize(2);

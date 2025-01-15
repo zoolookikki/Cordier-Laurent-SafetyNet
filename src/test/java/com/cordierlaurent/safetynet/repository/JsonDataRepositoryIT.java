@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 
@@ -19,7 +21,7 @@ import com.cordierlaurent.safetynet.model.Person;
 @SpringBootTest
 public class JsonDataRepositoryIT {
 
-    private final String JSON_FILENAME_TEST = "src/main/resources/data/test.json";
+    private final String JSON_FILENAME_TEST = "src/main/resources/data/JsonDataRepositoryIT.json";
 
     @Autowired
     JsonDataRepository jsonDataRepository;
@@ -45,13 +47,9 @@ public class JsonDataRepositoryIT {
         MedicalRecord medicalRecord2 = new MedicalRecord("Jacob", "Boyd", "03/06/1989", List.of("pharmacol:5000mg", "terazine:10mg", "noznazol:250mg"), List.of("peanut", "shellfish", "aznol"));
         
         // given
+        jsonDataRepository.init(JSON_FILENAME_TEST);
         File file = new File(JSON_FILENAME_TEST);
-        if (file.exists()) {
-            file.delete();
-        }
        
-        jsonDataRepository.setJsonFileName(JSON_FILENAME_TEST);
-
         // List.of crée une liste non modifiable, pour le test c'est ok et l'écriture est meilleure que des add.
         List<Person> persons = List.of(person1, person2, person3);
         List<FireStation> fireStations = List.of(fireStation1);
@@ -66,7 +64,7 @@ public class JsonDataRepositoryIT {
         fireStationRepository.setModels(new ArrayList<>());
         medicalRecordRepository.setModels(new ArrayList<>());
         jsonDataRepository.load();
-        
+                
         // then
         assertThat(file.exists()).isTrue();
         assertThat(personRepository.getModels())
@@ -82,5 +80,5 @@ public class JsonDataRepositoryIT {
             .hasSize(2)
             .containsExactlyInAnyOrder(medicalRecord1, medicalRecord2); 
     }
-    
+   
 }
