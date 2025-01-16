@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 
 class DateUtilTest {
-
     @Test
     void ValidDateTest() {
         // cela doit faire 0 tant que l'on a pas atteint le 01/01/2026 sinon ensuite cela fera + etc...

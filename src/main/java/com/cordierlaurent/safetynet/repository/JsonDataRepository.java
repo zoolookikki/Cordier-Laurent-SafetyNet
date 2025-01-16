@@ -49,12 +49,12 @@ public class JsonDataRepository {
         log.debug("load called");                
         try {
             if (!init) {
-                log.error("You must init fisrt.");
+                log.debug("must init fisrt.");
                 throw new IOException();
             }
             EntityContainer entityContainer = objectMapper.readValue(jsonFile, EntityContainer.class);
             if (entityContainer == null) {
-                log.error("EntityContainer is null, unable to load data.");
+                log.debug("EntityContainer is null, unable to load data.");
                 throw new IOException();
             }
             if (entityContainer.getPersons() != null) {
@@ -86,7 +86,7 @@ public class JsonDataRepository {
         log.debug("save called");                
         try {
             if (!init) {
-                log.error("You must init fisrt.");
+                log.debug("must init fisrt.");
                 throw new IOException();
             }
             EntityContainer entityContainer = new EntityContainer(

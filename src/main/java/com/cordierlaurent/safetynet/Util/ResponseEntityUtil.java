@@ -34,7 +34,7 @@ public class ResponseEntityUtil {
         if (param1 == null || param2 == null || param1.isBlank() || param2.isBlank()) {
             return Optional.of(ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Les 2 paramètres sont obligatoioioioioioires"));
+                    .body("Les 2 paramètres sont obligatoires"));
         }
         return Optional.empty(); // OK
     }    
