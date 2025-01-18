@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cordierlaurent.safetynet.Util.DateUtil;
-import com.cordierlaurent.safetynet.dto.PersonHealthInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonInformationsDTO;
 import com.cordierlaurent.safetynet.model.MedicalRecord;
 import com.cordierlaurent.safetynet.model.Person;
 import com.cordierlaurent.safetynet.repository.CrudRepository;
@@ -45,8 +45,8 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
         return DateUtil.calculateAge(birthdate);        
     }
  
-    public List<PersonHealthInformationsDTO> getPersonHealthInformationsDTOs(List<Person> persons){
-        List<PersonHealthInformationsDTO> personHealthInformationsDTOs = new ArrayList<>();
+    public List<PersonInformationsDTO> getPersonInformationsDTOs(List<Person> persons){
+        List<PersonInformationsDTO> personInformationsDTOs = new ArrayList<>();
 
         for (Person person : persons) {
             log.debug("    for each person=>firstName="+person.getFirstName()+",lastName="+person.getLastName());
@@ -60,11 +60,13 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
                 int age = DateUtil.calculateAge(medicalRecord.getBirthdate());
                 log.debug("      DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
                 if (age >= 0) {
-                    personHealthInformationsDTOs.add(new PersonHealthInformationsDTO(
+                    personInformationsDTOs.add(new PersonInformationsDTO(
                             person.getFirstName(),
                             person.getLastName(),
+                            person.getAddress(),
                             person.getPhone(),
                             age,
+                            person.getEmail(), 
                             medicalRecord.getMedications(),
                             medicalRecord.getAllergies()
                             ));
@@ -75,7 +77,7 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
             }
         }
         
-        return personHealthInformationsDTOs; 
+        return personInformationsDTOs; 
     }
     
     

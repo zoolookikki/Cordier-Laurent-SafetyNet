@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cordierlaurent.safetynet.dto.FireDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
+import com.cordierlaurent.safetynet.dto.Views;
 import com.cordierlaurent.safetynet.service.FireStationService;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -57,6 +59,7 @@ public class FireStationInfosController {
     // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture.
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/firestation")
+    @JsonView(Views.Address.class)
     public ResponseEntity<?> getPersonsCoveredByFireStation(
             @RequestParam("stationNumber") 
             @Min(value = 1, message = "Le numéro de station doit être supérieur à 0") int stationNumber){
@@ -67,12 +70,14 @@ public class FireStationInfosController {
         
         // pour le moment non optimisable avec ResponseEntityUtil car il faut créer une méthode générique pour les DTO de ce type.
         
-        if (personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().isEmpty()) {
+        if (personsCoveredByFireStationDTO.getPersonInformationsDTO().isEmpty()) {
             log.info("Recherche par station : " + stationNumber + " ==> non trouvé ");
         } else {
-            log.info("Recherche par station : " + stationNumber + " ==> " +  personsCoveredByFireStationDTO.getPersonBasicInformationsDTO().size() + " trouvé(s) ");
+            log.info("Recherche par station : " + stationNumber + " ==> " +  personsCoveredByFireStationDTO.getPersonInformationsDTO().size() + " trouvé(s) ");
         }
             
+        log.debug("personsCoveredByFireStationDTO="+personsCoveredByFireStationDTO);
+        
         return ResponseEntity
                 .status(HttpStatus.OK) // 200
                 .body(personsCoveredByFireStationDTO);
@@ -116,6 +121,7 @@ public class FireStationInfosController {
     // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture.
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/fire")
+    @JsonView(Views.Detailed.class)
     public ResponseEntity<?> getFireByAddresse(
             @RequestParam("address") 
             @NotBlank(message = "L'adresse est obligatoire") String address){
@@ -133,6 +139,7 @@ public class FireStationInfosController {
                     .body(Collections.emptyList()); 
         } else {
             log.info("recherche par addresse : " + address + " => " +  fireDTO.getPersons().size() + " trouvé(s)");
+            log.debug("fireDTO="+fireDTO);
             return ResponseEntity
                     .status(HttpStatus.OK) // 200
                     .body(fireDTO); 

@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cordierlaurent.safetynet.dto.FireDTO;
-import com.cordierlaurent.safetynet.dto.PersonBasicInformationsDTO;
-import com.cordierlaurent.safetynet.dto.PersonHealthInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonInformationsDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.model.FireStation;
 import com.cordierlaurent.safetynet.model.Person;
@@ -45,7 +44,7 @@ public class FireStationService extends CrudService<FireStation> {
     public PersonsCoveredByFireStationDTO findPersonsCoveredByFireStation(int stationNumber) {
         log.debug("START findPersonsCoveredByFireStation");
 
-        List<PersonBasicInformationsDTO> personBasicInformationsDTO = new ArrayList<>();
+        List<PersonInformationsDTO> personInformationsDTO = new ArrayList<>();
         int numberOfAdults = 0;
         int numberOfChildren = 0;    
         
@@ -72,27 +71,29 @@ public class FireStationService extends CrudService<FireStation> {
                     }
 
                     // on met à jour la DTO.
-                    personBasicInformationsDTO.add(
-                            new PersonBasicInformationsDTO(
+                    personInformationsDTO.add(
+                            new PersonInformationsDTO(
                                     person.getFirstName(), 
                                     person.getLastName(), 
                                     person.getAddress(), 
-                                    person.getPhone()
-                                    // pour un test.
-                                    //,birthdate
+                                    person.getPhone(),
+                                    0,
+                                    person.getEmail(), 
+                                    null,
+                                    null
                                     )
                             );
                 }
             }
         }
         log.debug("END findPersonsCoveredByFireStation");
-        return new PersonsCoveredByFireStationDTO(personBasicInformationsDTO, numberOfAdults, numberOfChildren);
+        return new PersonsCoveredByFireStationDTO(personInformationsDTO, numberOfAdults, numberOfChildren);
     }
     
     public FireDTO findFireByaddress(String address) {
         log.debug("START findFireByaddress");
         // créer la DTO de base qui contiendra prénom+nom+téléphone+age+antécédents médicaux.
-        List<PersonHealthInformationsDTO> personHealthInformationsDTOs = new ArrayList<>();
+        List<PersonInformationsDTO> personInformationsDTOs = new ArrayList<>();
 
         // Rechercher la station correspondante à cette adresse.
         int station = fireStationRepository.findStationByAddress(address);
@@ -103,11 +104,11 @@ public class FireStationService extends CrudService<FireStation> {
             List<Person> persons = personRepository.findByAddress(address);
             log.debug("personRepository.findByAddress=>address="+address+",persons.size="+persons.size());
             // DTO de base
-            personHealthInformationsDTOs = medicalRecordService.getPersonHealthInformationsDTOs(persons);
+            personInformationsDTOs = medicalRecordService.getPersonInformationsDTOs(persons);
         }
         log.debug("END findFireByaddress");
         //Créer la DTO finale dans laquelle on met la station + le contenu de la DTO de base.
-        return new FireDTO (station, personHealthInformationsDTOs);
+        return new FireDTO (station, personInformationsDTOs);
     }
     
 }

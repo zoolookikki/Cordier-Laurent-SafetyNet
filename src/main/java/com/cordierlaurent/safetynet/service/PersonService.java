@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cordierlaurent.safetynet.Util.DateUtil;
-import com.cordierlaurent.safetynet.dto.PersonHealthExtentedInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonInformationsDTO;
 import com.cordierlaurent.safetynet.model.MedicalRecord;
 import com.cordierlaurent.safetynet.model.Person;
 import com.cordierlaurent.safetynet.repository.CrudRepository;
@@ -41,11 +41,11 @@ public class PersonService extends CrudService<Person> {
         return personRepository;
     }
 
-    public List<PersonHealthExtentedInformationsDTO> findPersonInfoByLastName(String lastName) {
+    public List<PersonInformationsDTO> findPersonInfoByLastName(String lastName) {
         log.debug("START findPersonInfoByLastName");
         log.debug("lastName="+lastName);
         // créer une liste de DTO contenant prénom+nom+adresse+age+email+antécédents médicaux.
-        List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOList = new ArrayList<>();  
+        List<PersonInformationsDTO> personInformationsDTOList = new ArrayList<>();  
         // recherche personnes par nom => liste de personnes.
         List<Person> persons = personRepository.findByLastName(lastName);
 
@@ -67,10 +67,11 @@ public class PersonService extends CrudService<Person> {
                 log.debug("  DateUtil.CalculateAge=>medicalRecord.getBirthdate()="+medicalRecord.getBirthdate()+",age="+age);
                 if (age >= 0) {
                     // ajouter à la DTO.
-                    personHealthExtentedInformationsDTOList.add(new PersonHealthExtentedInformationsDTO(
+                    personInformationsDTOList.add(new PersonInformationsDTO(
                             person.getFirstName(),
                             person.getLastName(),
                             person.getAddress(),
+                            person.getPhone(),
                             age,
                             person.getEmail(),
                             medicalRecord.getMedications(),
@@ -84,7 +85,7 @@ public class PersonService extends CrudService<Person> {
             
         }
         log.debug("END findPersonInfoByLastName");
-        return personHealthExtentedInformationsDTOList;
+        return personInformationsDTOList;
     }
 
     public Set<String> findEmailsByCity(String city) {

@@ -15,7 +15,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.cordierlaurent.safetynet.Util.EntityDataTest;
 import com.cordierlaurent.safetynet.dto.FireDTO;
-import com.cordierlaurent.safetynet.dto.PersonHealthInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonInformationsDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.model.FireStation;
 import com.cordierlaurent.safetynet.model.MedicalRecord;
@@ -75,7 +75,7 @@ public class FireStationServiceTest {
         PersonsCoveredByFireStationDTO result = fireStationService.findPersonsCoveredByFireStation(EntityDataTest.getStation3Exist());
 
         // then
-        assertThat(result.getPersonBasicInformationsDTO()).hasSize(2);
+        assertThat(result.getPersonInformationsDTO()).hasSize(2);
         assertThat(result.getNumberOfAdults()).isEqualTo(1);
         assertThat(result.getNumberOfChildren()).isEqualTo(1);
     }
@@ -89,20 +89,24 @@ public class FireStationServiceTest {
             .thenReturn(fireStation1.getStation());
         when(personRepository.findByAddress(fireStation1.getAddress()))
             .thenReturn(List.of(person1, person3));
-        when(medicalRecordService.getPersonHealthInformationsDTOs(List.of(person1, person3)))
+        when(medicalRecordService.getPersonInformationsDTOs(List.of(person1, person3)))
             .thenReturn(List.of(
-                    new PersonHealthInformationsDTO(
+                    new PersonInformationsDTO(
                                person1.getFirstName(),
                                person1.getLastName(), 
+                               person1.getAddress(),
                                person1.getPhone(), 
                                19, 
+                               person1.getEmail(), 
                                medicalRecordPerson1.getMedications(), 
                                medicalRecordPerson1.getAllergies()),
-                    new PersonHealthInformationsDTO(
+                    new PersonInformationsDTO(
                             person3.getFirstName(),
-                            person3.getLastName(), 
-                            person3.getPhone(), 
+                            person3.getLastName(),
+                            person3.getAddress(),
+                            person3.getPhone(),
                             1, 
+                            person3.getEmail(), 
                             medicalRecordPerson3.getMedications(), 
                             medicalRecordPerson3.getAllergies())
                     ));

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.dto.ChildAlertDTO;
 import com.cordierlaurent.safetynet.dto.FloodAlertDTO;
+import com.cordierlaurent.safetynet.dto.Views;
 import com.cordierlaurent.safetynet.service.AlertService;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -85,6 +87,7 @@ public class AlertController {
     // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture + route childAlert.
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/childAlert")
+    @JsonView(Views.Address.class)
     public ResponseEntity<?> getChildAlert(
             @RequestParam("address") 
             @NotBlank(message = "L'adresse est obligatoire") String address){
@@ -249,6 +252,7 @@ public class AlertController {
     // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture + route phoneAlert.
     // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/flood/stations")
+    @JsonView(Views.Detailed.class) 
     public ResponseEntity<?> getFloodAlert(
             @RequestParam("stations") 
             @NotEmpty(message = "La liste des stations ne peut pas être vide") List<Integer> stations){
@@ -262,6 +266,19 @@ public class AlertController {
                     .body("La liste des stations est obligatoire et doit contenir uniquement des entiers valides");
         }
         List<FloodAlertDTO> floodAlertDTOs = alertService.findFloodByStations(stations);
+        
+        // Sérialisation explicite pour débogage
+/*        
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setConfig(objectMapper.getSerializationConfig().withView(Views.Detailed.class));
+            String serialized = objectMapper.writeValueAsString(floodAlertDTOs);
+            log.debug("Serialized output: " + serialized);
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing FloodAlertDTO: ", e);
+        }        
+        log.debug("Returning response: " + floodAlertDTOs);
+*/        
         return ResponseEntityUtil.response(floodAlertDTOs, "flood : recherche par stations: " + stations);
     }
 

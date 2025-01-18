@@ -1,6 +1,7 @@
 package com.cordierlaurent.safetynet.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.cordierlaurent.safetynet.Util.EntityDataTest;
-import com.cordierlaurent.safetynet.dto.PersonHealthInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonInformationsDTO;
 import com.cordierlaurent.safetynet.model.MedicalRecord;
 import com.cordierlaurent.safetynet.model.Person;
 import com.cordierlaurent.safetynet.repository.MedicalRecordRepository;
@@ -72,8 +73,8 @@ public class MedicalRecordServiceTest {
     }
 
     @Test
-    @DisplayName("Get person health informations")
-    void getPersonHealthInformationsDTOsTest() {
+    @DisplayName("Get person informations")
+    void getPersonInformationsDTOsTest() {
 
         // given
         when(medicalRecordRepository.findMedicalRecordByUniqueKey(new String[]{person1.getFirstName(), person1.getLastName()}))
@@ -82,11 +83,25 @@ public class MedicalRecordServiceTest {
             .thenReturn(Optional.of(medicalRecordPerson2));
 
         // when
-        List<PersonHealthInformationsDTO> result = medicalRecordService.getPersonHealthInformationsDTOs(List.of(person1, person2));
+        List<PersonInformationsDTO> result = medicalRecordService.getPersonInformationsDTOs(List.of(person1, person2));
 
         // then
         assertThat(result).hasSize(2);
     }
+    
+    @Test
+    @DisplayName("Get person information: fail")
+    void getPersonInformationsDTOsFailTest() {
+        // given
+        when(medicalRecordRepository.findMedicalRecordByUniqueKey(any(String[].class)))
+            .thenReturn(Optional.empty());
+
+        // when
+        List<PersonInformationsDTO> result = medicalRecordService.getPersonInformationsDTOs(List.of(person1, person2));
+
+        // then
+        assertThat(result).isEmpty();
+    }    
 
 }
 

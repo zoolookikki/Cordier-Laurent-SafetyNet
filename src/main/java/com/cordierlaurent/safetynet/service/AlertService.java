@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cordierlaurent.safetynet.dto.ChildAlertDTO;
 import com.cordierlaurent.safetynet.dto.FloodAlertDTO;
 import com.cordierlaurent.safetynet.dto.FloodHouseoldDTO;
-import com.cordierlaurent.safetynet.dto.PersonBasicInformationsDTO;
-import com.cordierlaurent.safetynet.dto.PersonHealthInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonInformationsDTO;
 import com.cordierlaurent.safetynet.model.Person;
 import com.cordierlaurent.safetynet.repository.FireStationRepository;
 import com.cordierlaurent.safetynet.repository.PersonRepository;
@@ -33,8 +32,8 @@ public class AlertService {
     private MedicalRecordService medicalRecordService;
 
     public List<ChildAlertDTO> findChilddByAddress(String address) {
-        log.debug("START findChilddByAddres");
         List<ChildAlertDTO> childAlertDTOs = new ArrayList<>();
+        log.debug("START findChilddByAddres");
   
         // Rechercher la liste des personnes habitant à cette adresse.
         List<Person> persons = personRepository.findByAddress(address);
@@ -47,18 +46,22 @@ public class AlertService {
                 log.debug("firstName="+person.getFirstName()+",lastName="+person.getLastName()+",age="+age);
 //              Si moins de 18 ans 
                 if (age >=0 && age <=18) {
-                    List<PersonBasicInformationsDTO> householdMembers = new ArrayList<>();
+                    List<PersonInformationsDTO> householdMembers = new ArrayList<>();
                     // Pour chaque personne correspondant habitant à cette adresse
                     for (Person personHouseHoldMember : persons) {
                         // Attention, exclure la personne en cours de traitement.
                         if (!personHouseHoldMember.getFirstName().equalsIgnoreCase(person.getFirstName()) ||
                             !personHouseHoldMember.getLastName().equalsIgnoreCase(person.getLastName())) {
                             // Complêter la DTO avec la liste des membres du foyer (ayant donc la même adresse). 
-                            householdMembers.add(new PersonBasicInformationsDTO(
+                            householdMembers.add(new PersonInformationsDTO(
                                     personHouseHoldMember.getFirstName(),
                                     personHouseHoldMember.getLastName(),
                                     personHouseHoldMember.getAddress(),
-                                    personHouseHoldMember.getPhone()
+                                    personHouseHoldMember.getPhone(),
+                                    0,
+                                    personHouseHoldMember.getEmail(),
+                                    null,
+                                    null
                                     )
                             );
                         }
@@ -123,10 +126,10 @@ public class AlertService {
                 // recherche personnes par adresse => liste de personnes.
                 List<Person> persons = personRepository.findByAddress(address);                
                 // DTO de base
-                List<PersonHealthInformationsDTO> personHealthInformationsDTOs = medicalRecordService.getPersonHealthInformationsDTOs(persons);
+                List<PersonInformationsDTO> personInformationsDTOs = medicalRecordService.getPersonInformationsDTOs(persons);
                 // si la DTO de base n'est pas vide, ajouter à la DTO intermédiaire.
-                if (!personHealthInformationsDTOs.isEmpty()) {
-                    floodHouseoldDTOs.add(new FloodHouseoldDTO(address, personHealthInformationsDTOs));
+                if (!personInformationsDTOs.isEmpty()) {
+                    floodHouseoldDTOs.add(new FloodHouseoldDTO(address, personInformationsDTOs));
                 }
             }
             // si la DTO intermédiaire n'est pas vide, ajouter à la DTO finale.

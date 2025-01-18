@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
-import com.cordierlaurent.safetynet.dto.PersonHealthExtentedInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonInformationsDTO;
+//import com.cordierlaurent.safetynet.dto.PersonHealthExtentedInformationsDTO;
+import com.cordierlaurent.safetynet.dto.Views;
 import com.cordierlaurent.safetynet.service.PersonService;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.log4j.Log4j2;
@@ -64,6 +67,7 @@ public class PersonInfosController {
     */
     // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode.
     @GetMapping("/personInfolastName={lastName}")
+    @JsonView(Views.WithEmail.class)
     public ResponseEntity<?> getPersonInfoByPath(
             @PathVariable("lastName") 
             @NotBlank(message = "Le nom est obligatoire") String lastName) {
@@ -74,6 +78,7 @@ public class PersonInfosController {
     }
     // $RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
     @GetMapping("/personInfo")
+    @JsonView(Views.WithEmail.class)
     public ResponseEntity<?> getPersonInfoByRequest(
             @RequestParam("lastName") 
             @NotBlank(message = "Le nom est obligatoire") String lastName) {
@@ -84,8 +89,8 @@ public class PersonInfosController {
     }
     
     private ResponseEntity<?> getCommonPersonInfoLastName(String lastName) {
-        List<PersonHealthExtentedInformationsDTO> personHealthExtentedInformationsDTOs = personService.findPersonInfoByLastName(lastName);
-        return ResponseEntityUtil.response(personHealthExtentedInformationsDTOs, "personinfo : recherche par nom: "+ lastName);
+        List<PersonInformationsDTO> personInformationsDTOs = personService.findPersonInfoByLastName(lastName);
+        return ResponseEntityUtil.response(personInformationsDTOs, "personinfo : recherche par nom: "+ lastName);
      }
 
     // implémentation de l'url qui retourne les adresses mail de tous les habitants d'une ville donnée : http://localhost:8080/communityEmail?city=<city> 

@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.cordierlaurent.safetynet.Util.EntityDataTest;
-import com.cordierlaurent.safetynet.dto.PersonHealthExtentedInformationsDTO;
+import com.cordierlaurent.safetynet.dto.PersonInformationsDTO;
 import com.cordierlaurent.safetynet.model.MedicalRecord;
 import com.cordierlaurent.safetynet.model.Person;
 import com.cordierlaurent.safetynet.repository.MedicalRecordRepository;
@@ -96,7 +96,7 @@ public class PersonServiceTest {
             .thenReturn(Optional.of(medicalRecordPerson2));
 
         // when.
-        List<PersonHealthExtentedInformationsDTO> result = personService.findPersonInfoByLastName(person1.getLastName());
+        List<PersonInformationsDTO> result = personService.findPersonInfoByLastName(person1.getLastName());
 
         // then.
         // car person1 et person2 ont le même nom.
@@ -114,7 +114,7 @@ public class PersonServiceTest {
             .thenReturn(Optional.empty());
 
         // when
-        List<PersonHealthExtentedInformationsDTO> result = personService.findPersonInfoByLastName(person1.getLastName());
+        List<PersonInformationsDTO> result = personService.findPersonInfoByLastName(person1.getLastName());
 
         // then
         // no medical record => no DTO created
@@ -132,7 +132,7 @@ public class PersonServiceTest {
             .thenReturn(Optional.of(EntityDataTest.getInvalidAgeMedicalRecord()));
 
         // when
-        List<PersonHealthExtentedInformationsDTO> result = personService.findPersonInfoByLastName(person1.getLastName());
+        List<PersonInformationsDTO> result = personService.findPersonInfoByLastName(person1.getLastName());
 
         // then
         // Invalid age => no DTO created
