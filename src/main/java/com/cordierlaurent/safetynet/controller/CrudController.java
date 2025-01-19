@@ -1,6 +1,5 @@
 package com.cordierlaurent.safetynet.controller;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +46,14 @@ public abstract class CrudController <Model> {
 
         // vérification de l'unicité par le service => logique métier.
         if (!getService().isUnique(null,model)) {
-            log.info("creation : " + model + " ==> doublon");
+            log.info("creation : doublon => " + model);
             return ResponseEntity
                     .status(HttpStatus.CONFLICT) // 409 
                     .body("creation : already exists");
         }
         
         // c'est ok.
-        log.info("creation : " + model + " ==> ok");
+        log.info("creation : ok => " + model);
         getService().addModel(model);
         jsonDataRepository.save(); // je mets à jour le fichier json ici.
         return ResponseEntity
@@ -87,7 +86,7 @@ public abstract class CrudController <Model> {
         // attention, pour la modification, il faut vérifier que le modèle que l'on va mettre à jour n'existe pas déjà (sauf moi même...).
         // vérification de l'unicité par le service => logique métier.
         if (!getService().isUnique(id, model)) {
-            log.info("modification : " + model + " ==> doublon");
+            log.info("modification : doublon => " + model);
             return ResponseEntity
                     .status(HttpStatus.CONFLICT) // 409 
                     .body("modification : another record already exists");
@@ -96,14 +95,14 @@ public abstract class CrudController <Model> {
         // c'est presque ok.
         if (getService().updateModelByUniqueKey(id, model)) {
             // ok.
-            log.info("modification : " + model  + " ==> ok");
+            log.info("modification : ok => " + model);
             jsonDataRepository.save(); // je mets à jour le fichier json ici.
             return ResponseEntity
                     .status(HttpStatus.OK) // 200
                     .body(model); // on retourne ce qui a été envoyé même si c'est identique ici pour respecter le standard.
         } else {
             // nok. 
-            log.info("modification : " + model + " ==> non trouvé ");
+            log.info("modification : non trouvé => " + model);
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
                     .body("modification : not found");
@@ -132,14 +131,14 @@ public abstract class CrudController <Model> {
 
         if (getService().deleteModelByUniqueKey(id)) {
             // ok.
-            log.info("suppression : " + Arrays.toString(id) + " ==> ok");
+            log.info("suppression : ok");
             jsonDataRepository.save(); // je mets à jour le fichier json ici.
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT) // 204 mieux que 200
                     .build(); // on ne retourne pas de réponse, soit un body null.
         } else {
             // nok. 
-            log.info("suppression : " + Arrays.toString(id) + " ==> non trouvé ");
+            log.info("suppression : non trouvé");
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
                     .body("suppression : not found");

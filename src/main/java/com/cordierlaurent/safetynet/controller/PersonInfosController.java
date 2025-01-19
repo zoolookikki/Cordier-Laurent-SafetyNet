@@ -30,7 +30,7 @@ public class PersonInfosController {
     @Autowired
     private PersonService personService;
 
-    // implémentation de l'url qui retourne les informations détaillées des personnes portant un nom de famille donné : http://localhost:8080/personInfolastName=<lastName> 
+    // implémentation de l'url qui retourne la liste des informations détaillées des personnes portant un nom de famille donné : http://localhost:8080/personInfolastName=<lastName> 
     /*
     créer une liste de DTO contenant prénom+nom+adresse+age+email+antécédents médicaux.
     recherche personnes par nom => liste de personnes.
@@ -90,10 +90,10 @@ public class PersonInfosController {
     
     private ResponseEntity<?> getCommonPersonInfoLastName(String lastName) {
         List<PersonInformationsDTO> personInformationsDTOs = personService.findPersonInfoByLastName(lastName);
-        return ResponseEntityUtil.response(personInformationsDTOs, "personinfo : recherche par nom: "+ lastName);
+        return ResponseEntityUtil.response(personInformationsDTOs, "Liste des informations détaillées des personnes portant le nom "+ lastName);
      }
 
-    // implémentation de l'url qui retourne les adresses mail de tous les habitants d'une ville donnée : http://localhost:8080/communityEmail?city=<city> 
+    // implémentation de l'url qui retourne la liste des adresses mail de tous les habitants d'une ville donnée : http://localhost:8080/communityEmail?city=<city> 
     /*
     recherche personnes par ville => liste de personnes.
     pour chaque personne 
@@ -114,7 +114,7 @@ public class PersonInfosController {
         log.debug("GET/getCommunityEmails : key=" + city);
 
         Set<String> emails = personService.findEmailsByCity(city);        
-        return ResponseEntityUtil.response(emails, "communityEmail : recherche par ville : " + city);
+        return ResponseEntityUtil.response(emails, "Liste des adresses e-mail de tous les habitants de la ville " + city);
     }
     
 }

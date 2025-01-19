@@ -1,15 +1,13 @@
 package com.cordierlaurent.safetynet.controller;
 
-import java.util.Collections;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
 import com.cordierlaurent.safetynet.dto.FireDTO;
 import com.cordierlaurent.safetynet.dto.PersonsCoveredByFireStationDTO;
 import com.cordierlaurent.safetynet.dto.Views;
@@ -68,22 +66,14 @@ public class FireStationInfosController {
         
         PersonsCoveredByFireStationDTO personsCoveredByFireStationDTO = fireStationService.findPersonsCoveredByFireStation(stationNumber);
         
-        // pour le moment non optimisable avec ResponseEntityUtil car il faut créer une méthode générique pour les DTO de ce type.
-        
-        if (personsCoveredByFireStationDTO.getPersonInformationsDTO().isEmpty()) {
-            log.info("Recherche par station : " + stationNumber + " ==> non trouvé ");
-        } else {
-            log.info("Recherche par station : " + stationNumber + " ==> " +  personsCoveredByFireStationDTO.getPersonInformationsDTO().size() + " trouvé(s) ");
-        }
-            
         log.debug("personsCoveredByFireStationDTO="+personsCoveredByFireStationDTO);
-        
-        return ResponseEntity
-                .status(HttpStatus.OK) // 200
-                .body(personsCoveredByFireStationDTO);
+
+        return ResponseEntityUtil.response(personsCoveredByFireStationDTO, 
+                personsCoveredByFireStationDTO.getPersonInformationsDTO(), 
+                "Liste des personnes corresponant à la station "+stationNumber);
     }
 
-    // implémentation de l'url qui retourne les personnes habitants à une adresse donnée avec le numéro de la caserne de pompiers la déservant. 
+    // implémentation de l'url qui retourne la liste des personnes habitants à une adresse donnée avec le numéro de la caserne de pompiers la déservant. 
     // Cette liste doit inclure également le numéro de téléphone, l'âge et les antécédents mécidaux de chaque personne.
     // http://localhost:8080/fire?address=<address>
     /*
@@ -130,20 +120,9 @@ public class FireStationInfosController {
         
         FireDTO fireDTO = fireStationService.findFireByaddress(address);
 
-        // pour le moment non optimisable avec ResponseEntityUtil car il faut créer une méthode générique pour les DTO de ce type.
-
-        if (fireDTO.getStation() <=0 || fireDTO.getPersons().isEmpty()) {
-            log.info("recherche par addresse : " + address + " => non trouvé");
-            return ResponseEntity
-                    .status(HttpStatus.OK) // 200
-                    .body(Collections.emptyList()); 
-        } else {
-            log.info("recherche par addresse : " + address + " => " +  fireDTO.getPersons().size() + " trouvé(s)");
-            log.debug("fireDTO="+fireDTO);
-            return ResponseEntity
-                    .status(HttpStatus.OK) // 200
-                    .body(fireDTO); 
-        }
+        return ResponseEntityUtil.response(fireDTO, 
+                fireDTO.getPersons(), 
+                "Liste des personnes habitants à l'adresse "+address);
     }
     
 }

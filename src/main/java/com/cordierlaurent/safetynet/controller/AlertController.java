@@ -96,7 +96,7 @@ public class AlertController {
 
         List<ChildAlertDTO> childAlertDTOs = alertService.findChilddByAddress(address);
         
-        return ResponseEntityUtil.response(childAlertDTOs, "childAlert : recherche par adresse : " + address);
+        return ResponseEntityUtil.response(childAlertDTOs, "Liste des enfants <= 18 ans habitant à l'adresse " + address);
     }
     
     
@@ -130,7 +130,7 @@ public class AlertController {
 
         // pas besoin de DTO ici car structure du fichier Json à renvoyer simple.
         List<String> phoneNumbers = alertService.findPhoneNumbersdByFireStation(fireStation);
-        return ResponseEntityUtil.response(phoneNumbers, "phoneAlert : recherche par station : " + fireStation);
+        return ResponseEntityUtil.response(phoneNumbers, "Liste des numéros de téléphone des personnes couvertes par la station " + fireStation);
     }
     
     // implémentation de l'url qui retourne une liste des foyers desservis par des casernes de pompiers en cas d'inondation : http://localhost:8080/flood/stations?stations=<a list of station_numbers>
@@ -279,7 +279,7 @@ public class AlertController {
         }        
         log.debug("Returning response: " + floodAlertDTOs);
 */        
-        return ResponseEntityUtil.response(floodAlertDTOs, "flood : recherche par stations: " + stations);
+        return ResponseEntityUtil.response(floodAlertDTOs, "Liste des foyers desservis par les stations " + stations);
     }
 
 }
