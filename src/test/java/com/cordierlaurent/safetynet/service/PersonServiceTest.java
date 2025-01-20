@@ -148,7 +148,7 @@ public class PersonServiceTest {
             .thenReturn(List.of(person1, person2, person3, person4));
 
         // when.
-        Set<String> result = personService.findEmailsByCity(any());
+        Set<String> result = personService.findEmailsByCity("xxx");
 
         // then.
         assertThat(result)
@@ -167,7 +167,7 @@ public class PersonServiceTest {
             .thenReturn(List.of(person1, person2, person3, person4, EntityDataTest.getPersonInvalidData()));
 
         // when.
-        Set<String> result = personService.findEmailsByCity(any());
+        Set<String> result = personService.findEmailsByCity("xxx");
 
         // then
         // Only valid emails should be included

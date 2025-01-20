@@ -1,6 +1,7 @@
 package com.cordierlaurent.safetynet.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 
@@ -49,7 +50,8 @@ public class PersonRepositoryTest extends CrudRepositoryTest<Person>{
         // firstName + lastName not exist
         assertThat(personRepository.containsId(id1UpdatedNotExist, model1)).isFalse();
         // bad id.
-        assertThat(personRepository.containsId(new String[]{}, model1)).isFalse(); 
+        assertThatThrownBy(() -> personRepository.containsId(new String[] {}, model1))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

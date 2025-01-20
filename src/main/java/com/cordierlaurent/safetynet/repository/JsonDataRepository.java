@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.cordierlaurent.safetynet.exception.JsonFileException;
 import com.cordierlaurent.safetynet.model.EntityContainer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,63 +32,61 @@ public class JsonDataRepository {
     private String jsonFileName;
     
     // à cause du @Autowired qui m'empêche d'initialiser avec le constructeur... Il y a des solutions, à revoir.
+    /**
+     * Initializes the repository with a JSON file.
+     *
+     * @param jsonFileName The name of the JSON file.
+     * @throws IllegalArgumentException if the file blank, does not exist, or is not a valid file.
+     */
     public void init (String jsonFileName) {
-        if (jsonFileName == null || jsonFileName.isBlank()) {
+        if ((jsonFileName == null) || jsonFileName.isBlank()) {
             throw new IllegalArgumentException("jsonFileName must not be null or blank.");
         }
         this.jsonFileName = jsonFileName;
 
         jsonFile = new File(jsonFileName);
         if (!jsonFile.exists() || !jsonFile.isFile()) {
-            throw new IllegalArgumentException("jsonFile must exist and be a valid file : " + jsonFileName);
+            throw new JsonFileException("jsonFile must exist and be a valid file : " + jsonFileName);
         }
         init = true;
-        log.debug("Init jsonFile OK : "+jsonFileName);                
+        log.debug("Repository initialized with JSON file : " + jsonFileName);                
     }
 
+    /**
+     * Loads data from the JSON file into the repositories.
+     *
+     * @throws JsonFileException if loading fails or the data is invalid.
+     */
     public void load() {
-        log.debug("load called");                
         try {
             if (!init) {
-                log.debug("must init fisrt.");
-                throw new IOException();
+                throw new JsonFileException("Repository not initialized. Call init() first.");
             }
             EntityContainer entityContainer = objectMapper.readValue(jsonFile, EntityContainer.class);
             if (entityContainer == null) {
-                log.debug("EntityContainer is null, unable to load data.");
-                throw new IOException();
+                throw new JsonFileException("EntityContainer is null, unable to load data.");
             }
-            if (entityContainer.getPersons() != null) {
-                personRepository.setModels(entityContainer.getPersons());
-                log.debug("list person ok");
-            } else {
-                log.debug("list person null");                
-            }
-            if (entityContainer.getFireStations() != null) {
-                fireStationRepository.setModels(entityContainer.getFireStations());
-                log.debug("list firestation ok");                
-            } else {
-                log.debug("list firestation null");                
-            }
-            if (entityContainer.getMedicalRecords() != null) {
-                medicalRecordRepository.setModels(entityContainer.getMedicalRecords());
-                log.debug("list medicalrecord ok");                
-            } else {
-                log.debug("list medicalrecord null");                
+            if ((entityContainer.getPersons() == null) ||
+                    (entityContainer.getFireStations() == null) ||
+                    (entityContainer.getMedicalRecords() == null)) {
+                throw new JsonFileException("Bad JSON format, unable to load data.");
             }
             
+            personRepository.setModels(entityContainer.getPersons());
+            fireStationRepository.setModels(entityContainer.getFireStations());
+            medicalRecordRepository.setModels(entityContainer.getMedicalRecords());
+            
+            log.debug("Data loaded successfully");
+            
         } catch (IOException e) {
-            log.error("unable to load Json file : " + jsonFileName);
-            e.printStackTrace();
+            throw new JsonFileException("Unable to load JSON file : " + jsonFileName);
         }
     }
     
     public void save() {
-        log.debug("save called");                
         try {
             if (!init) {
-                log.debug("must init fisrt.");
-                throw new IOException();
+                throw new JsonFileException("Repository not initialized. Call init() first.");
             }
             EntityContainer entityContainer = new EntityContainer(
                     personRepository.getModels(),
@@ -96,9 +95,10 @@ public class JsonDataRepository {
                     );
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(jsonFile, entityContainer);
 
+            log.debug("Data saved successfully");            
+
         } catch (IOException e) {
-            log.error("write error in json file : " + jsonFileName);
-            e.printStackTrace();
+            throw new JsonFileException("Unable to save JSON file: " + jsonFileName);
         }
     }
     

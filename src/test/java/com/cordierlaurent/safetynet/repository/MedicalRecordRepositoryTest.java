@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public class MedicalRecordRepositoryTest extends CrudRepositoryTest<MedicalRecor
         // then
         assertThat(medicalRecordRepository.containsId(id1UpdatedExist, model1)).isTrue(); 
         assertThat(medicalRecordRepository.containsId(id1UpdatedNotExist, model1)).isFalse();
-        assertThat(medicalRecordRepository.containsId(new String[]{}, model1)).isFalse();
+        assertThatThrownBy(() -> medicalRecordRepository.containsId(new String[] {}, model1));
     }
 
     @Test

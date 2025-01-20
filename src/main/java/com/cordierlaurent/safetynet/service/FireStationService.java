@@ -43,6 +43,9 @@ public class FireStationService extends CrudService<FireStation> {
 
     public PersonsCoveredByFireStationDTO findPersonsCoveredByFireStation(int stationNumber) {
         log.debug("START findPersonsCoveredByFireStation");
+        if (stationNumber <= 0) {
+            throw new IllegalArgumentException("stationNumber must be greater than 0");
+        }        
 
         List<PersonInformationsDTO> personInformationsDTO = new ArrayList<>();
         int numberOfAdults = 0;
@@ -92,6 +95,10 @@ public class FireStationService extends CrudService<FireStation> {
     
     public FireDTO findFireByaddress(String address) {
         log.debug("START findFireByaddress");
+        if (address == null || address.isBlank()) {
+            throw new IllegalArgumentException("address cannot be null or blank");
+        }        
+        
         // créer la DTO de base qui contiendra prénom+nom+téléphone+age+antécédents médicaux.
         List<PersonInformationsDTO> personInformationsDTOs = new ArrayList<>();
 

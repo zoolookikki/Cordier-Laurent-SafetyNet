@@ -1,6 +1,7 @@
 package com.cordierlaurent.safetynet.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Set;
 
@@ -48,7 +49,8 @@ public class FireStationRepositoryTest extends CrudRepositoryTest<FireStation> {
         // address not exist.
         assertThat(fireStationRepository.containsId(id1UpdatedNotExist, model1)).isFalse();
         // bad id.
-        assertThat(fireStationRepository.containsId(new String[]{}, model1)).isFalse(); 
+        assertThatThrownBy(() -> fireStationRepository.containsId(new String[] {}, model1))
+        .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

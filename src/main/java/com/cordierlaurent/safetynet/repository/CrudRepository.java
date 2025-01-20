@@ -2,10 +2,9 @@ package com.cordierlaurent.safetynet.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Repository;
-
-import lombok.NonNull;
 
 // Crud de base pour tous les modèles.
 @Repository
@@ -28,17 +27,20 @@ public abstract class CrudRepository<Model> {
     // pour remplacer la liste de tous les éléments du modèle.
     // création d'une nouvelle liste : attention au passage par référence des objets.
     public void setModels(List<Model> newModels) {
+        Objects.requireNonNull(newModels, "newModels cannot be null");
         models = new ArrayList<>(newModels);  
     }
 
     // ajouter un modèle dans la liste de tous les éléments du modèle.
-    // @NonNull gère l'exception si person est null.
-    public void addModel(@NonNull Model model) {
+    public void addModel(Model model) {
+        Objects.requireNonNull(model, "model cannot be null");
         models.add(model);
     }
 
     // mise à jour du modèle avec la clef unique.
-    public boolean updateModelByUniqueKey (String[] id, @NonNull Model modelToUpdate) {
+    public boolean updateModelByUniqueKey (String[] id, Model modelToUpdate) {
+        Objects.requireNonNull(id, "id cannot be null");
+        Objects.requireNonNull(modelToUpdate, "modelToUpdate cannot be null");
         for (Model model : models) {
             if (containsId(id, model)) {
                 models.set(models.indexOf(model), modelToUpdate);
@@ -50,6 +52,7 @@ public abstract class CrudRepository<Model> {
     
     // Suppression par clef unique avec lambda.
     public boolean deleteModelByUniqueKey(String[] id) {
+        Objects.requireNonNull(id, "id cannot be null");
         return models.removeIf(model -> containsId(id, model));
     }
 

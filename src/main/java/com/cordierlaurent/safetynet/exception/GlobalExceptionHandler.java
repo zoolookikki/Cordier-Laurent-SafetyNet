@@ -85,6 +85,43 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(errorMessage);
     }
+
+    // pour éviter l'internal server error de base => plus propre, il n'y a que l'essentiel qui s'affiche pour le client, pas de divulgation d'informations. 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<?> handleNullPointerException(NullPointerException ex) {
+        
+        log.error("Null pointer exception: ", ex);
+        
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Internal error : " + ex.getMessage());
+    }
     
+    // idem.
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+        
+        log.error("IllegalArgumentException occurred: {}", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Internal error / invalid input : " + ex.getMessage());
+    }
+    
+    /**
+     * Handles JsonFileException and returns an HTTP 500 response with a message for the customer without disclosing information.
+     *
+     * @param ex The exception to handle.
+     * @return A ResponseEntity with the error details.
+     */
+    @ExceptionHandler(JsonFileException.class)
+    public ResponseEntity<?> handleJsonFileException(JsonFileException ex) {
+
+        log.error("Error in JSON file operation: {}", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Internal error / invalid JSON file : " + ex.getMessage());
+    }
     
 }

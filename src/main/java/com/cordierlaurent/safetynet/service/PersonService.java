@@ -43,7 +43,11 @@ public class PersonService extends CrudService<Person> {
 
     public List<PersonInformationsDTO> findPersonInfoByLastName(String lastName) {
         log.debug("START findPersonInfoByLastName");
+        if (lastName == null || lastName.isBlank()) {
+            throw new IllegalArgumentException("lastName cannot be null or blank");
+        }
         log.debug("lastName="+lastName);
+
         // créer une liste de DTO contenant prénom+nom+adresse+age+email+antécédents médicaux.
         List<PersonInformationsDTO> personInformationsDTOList = new ArrayList<>();  
         // recherche personnes par nom => liste de personnes.
@@ -90,7 +94,11 @@ public class PersonService extends CrudService<Person> {
 
     public Set<String> findEmailsByCity(String city) {
         log.debug("START findEmailsByCity");
+        if (city == null || city.isBlank()) {
+            throw new IllegalArgumentException("City cannot be null or blank");
+        }        
         log.debug("city="+city);
+        
         // attention aux doublons d'e-mails => liste de type Set.
         // intéressant de trier la lsite également => TreeSet.
         Set<String> emails = new TreeSet<>();

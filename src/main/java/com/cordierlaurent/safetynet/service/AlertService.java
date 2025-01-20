@@ -2,6 +2,7 @@ package com.cordierlaurent.safetynet.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,9 +33,11 @@ public class AlertService {
     private MedicalRecordService medicalRecordService;
 
     public List<ChildAlertDTO> findChilddByAddress(String address) {
-        List<ChildAlertDTO> childAlertDTOs = new ArrayList<>();
         log.debug("START findChilddByAddres");
-  
+        Objects.requireNonNull(address, "address cannot be null");
+
+        List<ChildAlertDTO> childAlertDTOs = new ArrayList<>();
+        
         // Rechercher la liste des personnes habitant à cette adresse.
         List<Person> persons = personRepository.findByAddress(address);
         log.debug("findByAddressr=>address="+address+",persons.size="+persons.size());
@@ -81,6 +84,10 @@ public class AlertService {
     
     public List<String> findPhoneNumbersdByFireStation(int fireStation){
         log.debug("START findPhoneNumbersdByFireStation");
+        if (fireStation <= 0) {
+            throw new IllegalArgumentException("fireStation must be greater than 0");
+        }
+
         // liste de numéros de téléphone à retourner.
         // attention aux doublons de numéro de téléphone => liste de type Set.
         // la liste doit être triée => TreeSet.
@@ -108,7 +115,10 @@ public class AlertService {
     // List<Integer> et non List<int> car List ne peut stocker que des objets (pas des primitifs).
     public List<FloodAlertDTO> findFloodByStations(List<Integer> stations){
         log.debug("START findFloodByStations");
-
+        Objects.requireNonNull(stations, "stations cannot be null");
+        if (stations.isEmpty()) {
+            throw new IllegalArgumentException("list stations cannot be null or empty");
+        }
         // création de la DTO à retourner.
         List<FloodAlertDTO> floodAlertDTOs = new ArrayList<>();
 

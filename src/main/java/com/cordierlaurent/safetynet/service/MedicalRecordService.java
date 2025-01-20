@@ -2,6 +2,7 @@ package com.cordierlaurent.safetynet.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,8 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
     }
     
     public int age(Person person) {
+        Objects.requireNonNull(person, "person cannot be null");
+
         // on retrouve sa date de naissance via la clef unique dans MedicalRecord.
         String birthdate = medicalRecordRepository.findBirthdateByUniqueKey(
                 new String[]{
@@ -46,6 +49,8 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
     }
  
     public List<PersonInformationsDTO> getPersonInformationsDTOs(List<Person> persons){
+        Objects.requireNonNull(persons, "list persons cannot be null");
+
         List<PersonInformationsDTO> personInformationsDTOs = new ArrayList<>();
 
         for (Person person : persons) {
