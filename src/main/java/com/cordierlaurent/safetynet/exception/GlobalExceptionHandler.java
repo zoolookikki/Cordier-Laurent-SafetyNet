@@ -16,14 +16,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/*
-Le handler récupère tous les champs invalides et les messages associés, puis retourne un ResponseEntity 
-*/
+/**
+ * Global exception handler for managing application-level exceptions and providing user-friendly error responses.
+ *
+ * This class uses Spring's @RestControllerAdvice to intercept exceptions across all controllers and return appropriate HTTP responses with meaningful error messages.
+ */
 @RestControllerAdvice
 @Log4j2
 public class GlobalExceptionHandler {
 
-    // pour récupérer les exceptions quand une validation échoue (@NotNull, @NotBlank, @Email) contrôler au niveau du body json.
+    /**
+    * To catch exceptions when validation on a request body fails (@NotNull, @NotBlank, @Email).
+    *
+    */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -39,12 +44,15 @@ public class GlobalExceptionHandler {
                 .body(errors);
     }
     
-    //pour récupérer les exceptions sur les @Validated qui active la validation sur les paramètres avec @PathVariable et @RequestParam.
+    /**
+     * To catch exceptions on @Validated which enables validation on parameters with @PathVariable and @RequestParam.
+     *
+     */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleValidationException(ConstraintViolationException ex) {
         String errorMessage = ex.getConstraintViolations().stream()
                 .map(violation -> violation.getMessage())
-                .collect(Collectors.joining(", "));  // Concatène les erreurs en une seule chaîne
+                .collect(Collectors.joining(", "));  // Concatenate errors into a single string
 
         log.debug("GlobalExceptionHandler : ConstraintViolationException");
 
@@ -53,15 +61,18 @@ public class GlobalExceptionHandler {
                 .body(errorMessage);
     }
     
-    // pour récupérer les exceptions quand les types ne sont pas respectés (comme abcd sur les stations qui sont int)
+    /**
+     * To catch exceptions when types are not respected (like abcd on stations that are int)
+     *
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String parameterName = ex.getName();  // Nom du paramètre (ex: "station", "id", "address")
         
-        String requiredType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "valeur correcte";
+        String requiredType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "bad value";
 
         String errorMessage = String.format(
-                "Le paramètre '%s' doit être de type '%s'.",
+                "The '%s' parameter must be of type '%s'.",
                 parameterName,
                 requiredType
         );
@@ -73,11 +84,14 @@ public class GlobalExceptionHandler {
                 .body(errorMessage);
     }
     
-    // pour récupérer les exceptions quand les paramètres d'une requête de type http://....? sont absents.
+    /**
+     * To recover exceptions when the parameters of a request like http://....? are absent.
+     *
+     */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<?> handleMissingParams(MissingServletRequestParameterException ex) {
         String paramName = ex.getParameterName();
-        String errorMessage = "Le paramètre '" + paramName + "' est obligatoire.";
+        String errorMessage = "The parameter '" + paramName + "' is required.";
         
         log.debug("GlobalExceptionHandler : MissingServletRequestParameterException");
 
@@ -86,7 +100,10 @@ public class GlobalExceptionHandler {
                 .body(errorMessage);
     }
 
-    // pour éviter l'internal server error de base => plus propre, il n'y a que l'essentiel qui s'affiche pour le client, pas de divulgation d'informations. 
+    /**
+     * To avoid the basic internal server error => cleaner, only the essentials are displayed for the client, no disclosure of information.
+     *
+     */
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<?> handleNullPointerException(NullPointerException ex) {
         
@@ -97,7 +114,10 @@ public class GlobalExceptionHandler {
                 .body("Internal error : " + ex.getMessage());
     }
     
-    // idem.
+    /**
+     * To avoid the basic internal server error => cleaner, only the essentials are displayed for the client, no disclosure of information.
+     *
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
         
@@ -109,10 +129,8 @@ public class GlobalExceptionHandler {
     }
     
     /**
-     * Handles JsonFileException and returns an HTTP 500 response with a message for the customer without disclosing information.
+     * To catch JsonFileException to return an HTTP 500 response with a message for the customer without disclosing information.
      *
-     * @param ex The exception to handle.
-     * @return A ResponseEntity with the error details.
      */
     @ExceptionHandler(JsonFileException.class)
     public ResponseEntity<?> handleJsonFileException(JsonFileException ex) {

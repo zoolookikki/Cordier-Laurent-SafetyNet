@@ -10,12 +10,10 @@ import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.CrudService;
 import com.cordierlaurent.safetynet.service.MedicalRecordService;
 
-// pour ne charger que la partie concernant le MVC et précision de la classe pour ne charger que ce contrôleurs pour les tests.
 @WebMvcTest(MedicalRecordController.class)
 public class MedicalRecordControllerTest  extends CrudControllerTest<MedicalRecord> {
 
-    //    @MockitoBean  // idem @Mock + injecté dans Spring et remplace le bean réel (remplace @MockBean déprécié).
-    @MockitoBean
+    @MockitoBean // replaces deprecated @MockBean
     private MedicalRecordService medicalRecordService;
 
     @MockitoBean

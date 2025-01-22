@@ -1,15 +1,19 @@
 package com.cordierlaurent.safetynet.interceptor;
 
-import com.fasterxml.jackson.annotation.JsonView; // Pour @JsonView
-import jakarta.servlet.http.HttpServletRequest; // Pour HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse; // Pour HttpServletResponse
-import org.springframework.stereotype.Component; // Pour @Component
-import org.springframework.web.method.HandlerMethod; // Pour HandlerMethod
-import org.springframework.web.servlet.ModelAndView; // Pour ModelAndView
+import com.fasterxml.jackson.annotation.JsonView; 
+import jakarta.servlet.http.HttpServletRequest; 
+import jakarta.servlet.http.HttpServletResponse; 
+import org.springframework.stereotype.Component; 
+import org.springframework.web.method.HandlerMethod; 
+import org.springframework.web.servlet.ModelAndView; 
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.apache.logging.log4j.LogManager; // Pour le logger
-import org.apache.logging.log4j.Logger; // Pour le logger
+import org.apache.logging.log4j.LogManager; 
+import org.apache.logging.log4j.Logger; 
 
+/**
+ * Allows you to know which JSON view is used when processing HTTP responses.
+ * 
+ */
 @Component
 public class JsonViewInterceptor implements HandlerInterceptor {
     private static final Logger log = LogManager.getLogger(JsonViewInterceptor.class);

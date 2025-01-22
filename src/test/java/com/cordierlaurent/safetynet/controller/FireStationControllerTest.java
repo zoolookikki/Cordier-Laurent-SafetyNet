@@ -23,19 +23,17 @@ import com.cordierlaurent.safetynet.service.CrudService;
 import com.cordierlaurent.safetynet.service.FireStationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-//pour ne charger que la partie concernant le MVC et précision de la classe pour ne charger que ce contrôleurs pour les tests.
 @WebMvcTest(FireStationController.class)
 public class FireStationControllerTest extends CrudControllerTest<FireStation> {
 
-    // car MockMvc n'est pas automatiquement configuré dans un test unitaire @WebMvcTest.
+    // because MockMvc is not automatically configured in a @WebMvcTest unit test.
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-//  @MockitoBean  // idem @Mock + injecté dans Spring et remplace le bean réel (remplace @MockBean déprécié).
-    @MockitoBean
+    @MockitoBean // replaces deprecated @MockBean
     private FireStationService fireStationService;
     
     @MockitoBean

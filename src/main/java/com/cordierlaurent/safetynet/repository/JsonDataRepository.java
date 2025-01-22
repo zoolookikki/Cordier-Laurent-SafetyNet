@@ -13,6 +13,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Repository responsible for managing data from a JSON file.
+ * 
+ * <p>This class handles the initialization, loading, and saving of data  from/to a JSON file. 
+ * It uses ObjectMapper for JSON deserialization and serialization.
+ * 
+ * <p>The repository must be initialized using the init(String) method before loading or saving data.</p>
+ */
 @Repository
 @Data
 @Log4j2
@@ -31,13 +39,13 @@ public class JsonDataRepository {
     private File jsonFile;
     private String jsonFileName;
     
-    // à cause du @Autowired qui m'empêche d'initialiser avec le constructeur... Il y a des solutions, à revoir.
     /**
      * Initializes the repository with a JSON file.
      *
      * @param jsonFileName The name of the JSON file.
      * @throws IllegalArgumentException if the file blank, does not exist, or is not a valid file.
      */
+    // à cause du @Autowired qui m'empêche d'initialiser avec le constructeur... Il y a des solutions, à revoir.
     public void init (String jsonFileName) {
         if ((jsonFileName == null) || jsonFileName.isBlank()) {
             throw new IllegalArgumentException("jsonFileName must not be null or blank.");
@@ -83,6 +91,11 @@ public class JsonDataRepository {
         }
     }
     
+    /**
+     * Saves the current state of the repositories to the JSON file.
+     * 
+     * @throws JsonFileException if the repository is not initialized or if saving fails.
+     */
     public void save() {
         try {
             if (!init) {

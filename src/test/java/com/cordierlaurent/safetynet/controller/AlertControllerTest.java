@@ -23,16 +23,14 @@ import java.util.List;
 import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.AlertService;
 
-//pour ne charger que la partie concernant le MVC et précision de la classe pour ne charger que ce contrôleurs pour les tests.
 @WebMvcTest(AlertController.class)
 public class AlertControllerTest {
 
-    // car MockMvc n'est pas automatiquement configuré dans un test unitaire @WebMvcTest.
+    // because MockMvc is not automatically configured in a @WebMvcTest unit test.
     @Autowired
     private MockMvc mockMvc;
 
-//  @MockitoBean  // idem @Mock + injecté dans Spring et remplace le bean réel (remplace @MockBean déprécié).
-    @MockitoBean
+    @MockitoBean // replaces deprecated @MockBean
     private AlertService alertService;
 
     @MockitoBean

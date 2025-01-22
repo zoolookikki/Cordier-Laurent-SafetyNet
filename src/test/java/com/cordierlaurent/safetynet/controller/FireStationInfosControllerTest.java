@@ -26,16 +26,14 @@ import com.cordierlaurent.safetynet.model.FireStation;
 import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.FireStationService;
 
-//pour ne charger que la partie concernant le MVC et précision de la classe pour ne charger que ce contrôleurs pour les tests.
 @WebMvcTest(FireStationInfosController.class)
 public class FireStationInfosControllerTest {
 
-    // car MockMvc n'est pas automatiquement configuré dans un test unitaire @WebMvcTest.
+    // because MockMvc is not automatically configured in a @WebMvcTest unit test.
     @Autowired
     private MockMvc mockMvc;
 
-//  @MockitoBean  // idem @Mock + injecté dans Spring et remplace le bean réel (remplace @MockBean déprécié).
-    @MockitoBean
+    @MockitoBean // replaces deprecated @MockBean
     private FireStationService fireStationService;
     
     @MockitoBean

@@ -19,6 +19,10 @@ import com.cordierlaurent.safetynet.repository.PersonRepository;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Service class responsible for managing alert-related operations.
+ * 
+ */
 @Service
 @Log4j2
 public class AlertService {
@@ -32,6 +36,22 @@ public class AlertService {
     @Autowired
     private MedicalRecordService medicalRecordService;
 
+    /**
+     * Retrieves a list of children (less than or equal to 18 years old) living at a given address, along with members of their household.
+     *
+     * @param address the address for which to retrieve children and household members.
+     * @return a list of ChildAlertDTO objects containing information about children and their household members.
+     * @throws NullPointerException if the provided address is null.
+     */
+    /*
+    Rechercher la liste des personnes habitant à cette adresse.
+    Pour chaque personne :
+        Trouver l'age via la clef unique dans MedicalRecord
+        Si moins de 18 ans 
+            Ajouter dans la nouvelle DTO (prénom,nom,age).
+            Complêter la DTO avec la liste des membres du foyer (ayant donc la même adresse). Attention à exclure la personne en cours de traitement.
+    
+    */
     public List<ChildAlertDTO> findChilddByAddress(String address) {
         log.debug("START findChilddByAddres");
         Objects.requireNonNull(address, "address cannot be null");
@@ -47,7 +67,7 @@ public class AlertService {
             for (Person person : persons) {
                 int age = medicalRecordService.age(person);
                 log.debug("firstName="+person.getFirstName()+",lastName="+person.getLastName()+",age="+age);
-//              Si moins de 18 ans 
+                // Si moins de 18 ans 
                 if (age >=0 && age <=18) {
                     List<PersonInformationsDTO> householdMembers = new ArrayList<>();
                     // Pour chaque personne correspondant habitant à cette adresse
@@ -82,6 +102,21 @@ public class AlertService {
         return childAlertDTOs;
     }
     
+    /**
+     * Retrieves a list of phone numbers of people covered by a given fire station.
+     *
+     * @param fireStation the number of the fire station.
+     * @return a sorted list of unique phone numbers.
+     * @throws IllegalArgumentException if the fire station number is less than or equal to 0.
+     */
+    /*
+    recherche les adresses par station => liste d'adresses.
+    recherche personnes par adresse => liste de personnes.
+    dans cette liste de personnes il ne faut avoir que le téléphone.
+    attention aux doublons de numéro de téléphone => liste de type Set.
+    la liste doit être triée => TreeSet.
+    Renvoyer un json sous la forme :
+    */
     public List<String> findPhoneNumbersdByFireStation(int fireStation){
         log.debug("START findPhoneNumbersdByFireStation");
         if (fireStation <= 0) {
@@ -107,12 +142,36 @@ public class AlertService {
         log.debug("after duplicate filter=>phoneNumbers.size="+phoneNumbers.size());
         
         log.debug("END findPhoneNumbersdByFireStation");
-        // Jackson, ne connait pour la désérialisation que : List, Map, ou Array.
-        // conversion en List => création d'une nouvelle ArrayList contenant tous les éléments du Set.
+        // Jackson only knows for deserialization: List, Map, or Array => conversion to List => creation of a new ArrayList containing all the elements of the Set.
         return new ArrayList<>(phoneNumbers); 
     }
-    
-    // List<Integer> et non List<int> car List ne peut stocker que des objets (pas des primitifs).
+
+    /**
+     * Retrieves detailed information about households served by the given fire stations in case of flooding.
+     *
+     * @param stations a list of fire station numbers.
+     * @return a list of FloodAlertDTO objects containing household information by station.
+     * @throws NullPointerException if the stations list is null.
+     * @throws IllegalArgumentException if the stations list is empty.
+     */
+    /*
+    création de la DTO FloodAlertDTO ((station, liste de FloodHouseoldDTO)
+    pour chaque station
+        création de la DTO FloodHouseoldDTO (address, liste de PersonHealthInformationsDTO)
+        recherche des adresses de la station => liste d'adresses.
+        pour chaque adresses
+            recherche personnes par adresse => liste de personnes.
+            création de la DTO PersonHealthInformations
+            pour chaque personne
+                trouver la date de naissance et les antécédents médicaux via la clef unique dans MedicalRecord
+                calculer l'age 
+                ajouter à la DTO PersonHealthInformationsDTO
+            si la DTO PersonHealthInformationsDTO n'est pas vide
+                ajouter à la DTO FloodHouseoldDTO
+        si la DTO FloodHouseoldDTO n'est pas vide
+            ajouter à la DTO FloodAlertDTO 
+    */
+    // List<Integer> and not List<int> because List can only store objects (not primitives).
     public List<FloodAlertDTO> findFloodByStations(List<Integer> stations){
         log.debug("START findFloodByStations");
         Objects.requireNonNull(stations, "stations cannot be null");

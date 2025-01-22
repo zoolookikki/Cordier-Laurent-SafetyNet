@@ -10,15 +10,26 @@ import com.cordierlaurent.safetynet.service.MedicalRecordService;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Controller responsible for handling HTTP requests related to MedicalRecord entities.
+ * 
+ * This controller extends CrudController to reuse generic CRUD functionalities.
+ * 
+ */
 @RestController
 @Log4j2
-// la route est définie ici dans la classe fille.
+//The base route for this controller.
 @RequestMapping("/medicalrecord")
 public class MedicalRecordController extends CrudController<MedicalRecord>{
 
     @Autowired
     private MedicalRecordService medicalRecordService;
 
+    /**
+     * Provides the specific service for abstract CrudController.
+     *
+     * @return The instance of the service.
+     */
     @Override
     protected CrudService<MedicalRecord> getService() {
         return medicalRecordService;

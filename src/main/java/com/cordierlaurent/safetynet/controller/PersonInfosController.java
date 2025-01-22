@@ -21,24 +21,65 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Controller for retrieving detailed information about persons.
+ * 
+ */
 @RestController
 @Log4j2
-//@Validated Active la validation sur les paramètres avec @PathVariable et @RequestParam (voir @NotBlank etc... dans les paramètres de chaque méthode)
 @Validated 
 public class PersonInfosController {
     
     @Autowired
     private PersonService personService;
 
-    // implémentation de l'url qui retourne la liste des informations détaillées des personnes portant un nom de famille donné : http://localhost:8080/personInfolastName=<lastName> 
+    /**
+     * Common logic for retrieving detailed persons informations by last name.
+     * 
+     * @param lastName the last name to filter persons by.
+     * @return a JSON response containing the list of persons with detailed information. 
+     */
+    private ResponseEntity<?> getCommonPersonInfoLastName(String lastName) {
+        List<PersonInformationsDTO> personInformationsDTOs = personService.findPersonInfoByLastName(lastName);
+        return ResponseEntityUtil.response(personInformationsDTOs, "List of detailed information of persons with the name "+ lastName);
+     }
+
+    /**
+     * Returns the list of detailed information of persons with a given last name (/personInfolastName=<lastName>).
+     * 
+     * @param lastName the required last name to filter persons by. 
+     * @return a JSON response containing the list of persons with detailed information. 
+     */
+    // Warning, i managed 2 cases of URL because the one requested in the specifications is not usual : (nok) /personInfolastName=<lastName>
+    @GetMapping("/personInfolastName={lastName}")
+    @JsonView(Views.WithEmail.class)
+    public ResponseEntity<?> getPersonInfoByPath(
+            @PathVariable("lastName") 
+            @NotBlank(message = "Lastname is required") String lastName) {
+
+        log.debug("GET/getPersonInfoByPath : key=" + lastName);
+
+        return getCommonPersonInfoLastName(lastName);
+    }
+    /**
+     * Returns the list of detailed information of persons with a given last name via a query parameter (/personInfo?lastName=&lt;lastName&gt;).
+     * 
+     * @param lastName the required last name to filter persons by. 
+     * @return a JSON response containing the list of persons with detailed information. 
+     */
+    // Warning, i managed 2 cases of URL because the one requested in the specifications is not usual : (ok) /personInfo?lastName=<lastName>
+    @GetMapping("/personInfo")
+    @JsonView(Views.WithEmail.class)
+    public ResponseEntity<?> getPersonInfoByRequest(
+            @RequestParam("lastName") 
+            @NotBlank(message = "Lastname is required") String lastName) {
+
+        log.debug("GET/getPersonInfoByRequest : key=" + lastName);
+
+        return getCommonPersonInfoLastName(lastName);
+    }
     /*
-    créer une liste de DTO contenant prénom+nom+adresse+age+email+antécédents médicaux.
-    recherche personnes par nom => liste de personnes.
-    Pour chaque personne 
-        Trouver la date de naissance et les antécédents médicaux via la clef unique dans MedicalRecord
-        Calculer l'age 
-        Ajouter à la liste de DTO 
-    Renvoyer un json sous la forme :
+    Example result :
     [
         {
             "firstName": "xxxx",
@@ -60,61 +101,30 @@ public class PersonInfosController {
         }
     ]
     */
-    /* Attention car gestion de 2 cas d'url car celle demandée dans les spécifications n'est pas "standard".
-        http://localhost:8080/personInfolastName=<lastName>
-        http://localhost:8080/personInfo?lastName=<lastName>
-    @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture => on gère ici les 2 urls.
-    */
-    // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode.
-    @GetMapping("/personInfolastName={lastName}")
-    @JsonView(Views.WithEmail.class)
-    public ResponseEntity<?> getPersonInfoByPath(
-            @PathVariable("lastName") 
-            @NotBlank(message = "Le nom est obligatoire") String lastName) {
 
-        log.debug("GET/getPersonInfoByPath : key=" + lastName);
+    /**
+     * Returns the list of email addresses of all residents of a given city (/communityEmail?city=&lt;city&gt;).
+     *
+     * @param city the required name of the city filter residents by. 
+     * @return a JSON response containing the list of email addresses of all residents in the specified city
+     */
+    @GetMapping("/communityEmail")
+    public ResponseEntity<?> getCommunityEmails(
+            @RequestParam("city") 
+            @NotBlank(message = "The city name is required") String city){
 
-        return getCommonPersonInfoLastName(lastName);
+        log.debug("GET/getCommunityEmails : key=" + city);
+
+        Set<String> emails = personService.findEmailsByCity(city);        
+        return ResponseEntityUtil.response(emails, "List of email addresses of everyone in town " + city);
     }
-    // $RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
-    @GetMapping("/personInfo")
-    @JsonView(Views.WithEmail.class)
-    public ResponseEntity<?> getPersonInfoByRequest(
-            @RequestParam("lastName") 
-            @NotBlank(message = "Le nom est obligatoire") String lastName) {
-
-        log.debug("GET/getPersonInfoByRequest : key=" + lastName);
-
-        return getCommonPersonInfoLastName(lastName);
-    }
-    
-    private ResponseEntity<?> getCommonPersonInfoLastName(String lastName) {
-        List<PersonInformationsDTO> personInformationsDTOs = personService.findPersonInfoByLastName(lastName);
-        return ResponseEntityUtil.response(personInformationsDTOs, "Liste des informations détaillées des personnes portant le nom "+ lastName);
-     }
-
-    // implémentation de l'url qui retourne la liste des adresses mail de tous les habitants d'une ville donnée : http://localhost:8080/communityEmail?city=<city> 
     /*
-    recherche personnes par ville => liste de personnes.
-    pour chaque personne 
-        ajout de l'adresse e-mail dans la liste (attention au filtrage des doublons).
-    Renvoyer un json sous la forme :
+    Example result :
     [
       "xxxx@xxxx.com",
       "yyyy@yyyy.com",
       "zzzz@zzzz.com",
     ]
     */
-    // $RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
-    @GetMapping("/communityEmail")
-    public ResponseEntity<?> getCommunityEmails(
-            @RequestParam("city") 
-            @NotBlank(message = "Le nom de la vile est obligatoire") String city){
-
-        log.debug("GET/getCommunityEmails : key=" + city);
-
-        Set<String> emails = personService.findEmailsByCity(city);        
-        return ResponseEntityUtil.response(emails, "Liste des adresses e-mail de tous les habitants de la ville " + city);
-    }
     
 }

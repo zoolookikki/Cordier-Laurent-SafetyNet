@@ -6,17 +6,23 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Value;
 
-//@Value mieux que @Data pour les DTO car cela génère tous les champs en final, ce qui signifie qu'ils ne peuvent pas être modifiés après l'initialisation.
-//pour éviter pbs de modification des DTO car passage par référence en argument et en retour de fonction.
+/**
+ * Data Transfer Object representing a flood alert, used to structure data related to households served by a specific station in case of flooding.
+ * 
+ */
+/*
+@Value better than @Data for DTOs because it generates all fields final, meaning they cannot be changed after initialization.
+To avoid problems with modifying DTOs due to passing by reference in argument and function return.
+*/
 @Value
 @JsonView(Views.Detailed.class) 
 public class FloodAlertDTO {
     private int station;
     private List<FloodHouseoldDTO> households;
     
-    // Même si Lombok génère un champ final, une collection peut être modifiée par la référence externe => faire la copie dans le constructeur est l'approche recommandée pour des DTO immuables.
+    // Even though Lombok generates a final field, a collection can be modified by the external reference => making the copy in the constructor is the recommended approach for immutable DTOs.
     public FloodAlertDTO(int station, List<FloodHouseoldDTO> households) {
         this.station = station;
-        this.households = List.copyOf(households); // Copie défensive
+        this.households = List.copyOf(households); // Defensive copy.
     }    
 }

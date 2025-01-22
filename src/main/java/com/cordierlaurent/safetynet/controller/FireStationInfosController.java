@@ -18,22 +18,42 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Controller responsible for handling information requests related to FireStations.
+ */
 @RestController
 @Log4j2
-//@Validated Active la validation sur les paramètres avec @PathVariable et @RequestParam (voir @NotBlank etc... dans les paramètres de chaque méthode)
 @Validated 
 public class FireStationInfosController {
 
     @Autowired
     private FireStationService fireStationService;
     
-    // implémentation de l'url qui demande la liste des personnes corresponant à une station : http://localhost:8080/firestation?stationNumber=<station_number>
+    /**
+     * Retrieves the list of persons covered by a station number (/firestation?stationNumber=&lt;station_number&gt;)
+     * 
+     * @param stationNumber The number of the fireStation.
+     * @return a JSON response containing the list of persons and additional statistics (a count of the number of adults (greater than 18 years) and children (less than or equal 18 years)).
+     */
+    // the route is indicated here because for each endpoint, it is different.
+    @GetMapping("/firestation")
+    @JsonView(Views.Address.class)
+    public ResponseEntity<?> getPersonsCoveredByFireStation(
+            @RequestParam("stationNumber") 
+            @Min(value = 1, message = "Station number must be greater than 0") int stationNumber){
+
+        log.debug("GET/getPersonsCoveredByFireStation : key=" + stationNumber);
+        
+        PersonsCoveredByFireStationDTO personsCoveredByFireStationDTO = fireStationService.findPersonsCoveredByFireStation(stationNumber);
+        
+        log.debug("personsCoveredByFireStationDTO="+personsCoveredByFireStationDTO);
+
+        return ResponseEntityUtil.response(personsCoveredByFireStationDTO, 
+                personsCoveredByFireStationDTO.getPersonInformationsDTO(), 
+                "List of people corresponding to the station "+stationNumber);
+    }
     /*
-    recherche firestations par station => liste d'adresses.
-    recherche personnes par adresse => liste de personnes.
-    dans cette liste de personnes il ne faut avoir que le prénom + nom + adresse + téléphone.
-    calculer le nombre de personnes > et <=18. 
-    Renvoyer un json sous la forme :
+    Example result :
     {
         "persons": [
         {
@@ -53,39 +73,33 @@ public class FireStationInfosController {
       "numberOfChildren": ?
     }
     */
+
     
-    // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture.
-    // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
-    @GetMapping("/firestation")
-    @JsonView(Views.Address.class)
-    public ResponseEntity<?> getPersonsCoveredByFireStation(
-            @RequestParam("stationNumber") 
-            @Min(value = 1, message = "Le numéro de station doit être supérieur à 0") int stationNumber){
+    /**
+     * Retrieves the list of people living at a given address with the number of the fire station serving it (/fire?address=&lt;address&gt;).
+     * 
+     * This list must also include the telephone number, age and medical history of each person.
+     * 
+     * @param address the required address to search for.
+     * @return a JSON response containing for the associated FireStation, the list of persons.
+     */
+    // the route is indicated here because for each endpoint, it is different.
+    @GetMapping("/fire")
+    @JsonView(Views.Detailed.class)
+    public ResponseEntity<?> getFireByAddresse(
+            @RequestParam("address") 
+            @NotBlank(message = "Address is required") String address){
 
-        log.debug("GET/getPersonsCoveredByFireStation : key=" + stationNumber);
+        log.debug("GET/getFireByAddresse : key=" + address);
         
-        PersonsCoveredByFireStationDTO personsCoveredByFireStationDTO = fireStationService.findPersonsCoveredByFireStation(stationNumber);
-        
-        log.debug("personsCoveredByFireStationDTO="+personsCoveredByFireStationDTO);
+        FireDTO fireDTO = fireStationService.findFireByaddress(address);
 
-        return ResponseEntityUtil.response(personsCoveredByFireStationDTO, 
-                personsCoveredByFireStationDTO.getPersonInformationsDTO(), 
-                "Liste des personnes corresponant à la station "+stationNumber);
+        return ResponseEntityUtil.response(fireDTO, 
+                fireDTO.getPersons(), 
+                "List of people living at the address "+address);
     }
-
-    // implémentation de l'url qui retourne la liste des personnes habitants à une adresse donnée avec le numéro de la caserne de pompiers la déservant. 
-    // Cette liste doit inclure également le numéro de téléphone, l'âge et les antécédents mécidaux de chaque personne.
-    // http://localhost:8080/fire?address=<address>
     /*
-    Rechercher la station correspondante à cette adresse.
-    Si elle existe, rechercher la liste des personnes habitant à cette adresse.
-    créer une nouvelle DTO1 contenant prénom+nom+téléphone+age+antécédents médicaux.
-    Pour chaque personne 
-        Trouver la date de naissance et les antécédents médicaux via la clef unique dans MedicalRecord
-        Calculer l'age 
-        Ajouter à la DTO1 
-    Créer une nouvelle DTO2 dans laquelle on met la station + le contenu de la DTO1.
-    Renvoyer un json sous la forme :
+    Example result :
     {
       "station": ?,
       "persons": [
@@ -108,21 +122,5 @@ public class FireStationInfosController {
       ]
     }
     */
-    // @GettMapping : mappe une requête HTTP GET à une méthode de contrôleur : lecture.
-    // @RequestParam : pour récupérer le paramètre passé en ? (ou & si plusieurs).
-    @GetMapping("/fire")
-    @JsonView(Views.Detailed.class)
-    public ResponseEntity<?> getFireByAddresse(
-            @RequestParam("address") 
-            @NotBlank(message = "L'adresse est obligatoire") String address){
-
-        log.debug("GET/getFireByAddresse : key=" + address);
-        
-        FireDTO fireDTO = fireStationService.findFireByaddress(address);
-
-        return ResponseEntityUtil.response(fireDTO, 
-                fireDTO.getPersons(), 
-                "Liste des personnes habitants à l'adresse "+address);
-    }
     
 }

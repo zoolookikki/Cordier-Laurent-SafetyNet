@@ -17,6 +17,10 @@ import com.cordierlaurent.safetynet.repository.MedicalRecordRepository;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Service responsible for managing medical records.
+ * Provides CRUD operations.
+ */
 @Service
 @Log4j2
 public class MedicalRecordService extends CrudService<MedicalRecord> {
@@ -25,6 +29,14 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
     private MedicalRecordRepository medicalRecordRepository;
     
 
+    /**
+     * Compares two medical record models to determine if they are the same.
+     * A medical record is considered the same if it has the same first name and last name.
+     *
+     * @param model the existing medical record model.
+     * @param modelToVerify the medical record model to verify.
+     * @return true if both models have the same first and last names, false otherwise.
+     */
     @Override
     protected boolean isSameModel(MedicalRecord model, MedicalRecord modelToVerify) {
         return (model.getFirstName().equalsIgnoreCase(modelToVerify.getFirstName()) &&
@@ -32,15 +44,27 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
             
     }
 
+    /**
+     * Provides the repository used for CRUD operations on medical records.
+     *
+     * @return the repository instance managing medical records.
+     */
     @Override
     protected CrudRepository<MedicalRecord> getRepository() {
         return medicalRecordRepository;
     }
     
+    /**
+     * Calculates the age of a person based on their medical record's birthdate.
+     *
+     * @param person the person whose age is to be calculated.
+     * @return the calculated age, or -1 if the birthdate is invalid or not found.
+     * @throws NullPointerException if the person is null.
+     */
     public int age(Person person) {
         Objects.requireNonNull(person, "person cannot be null");
 
-        // on retrouve sa date de naissance via la clef unique dans MedicalRecord.
+        // we find his date of birth via the unique key in MedicalRecord.
         String birthdate = medicalRecordRepository.findBirthdateByUniqueKey(
                 new String[]{
                         person.getFirstName(), 
@@ -48,6 +72,13 @@ public class MedicalRecordService extends CrudService<MedicalRecord> {
         return DateUtil.calculateAge(birthdate);        
     }
  
+    /**
+     * Creates a list of PersonInformationsDTO objects for the given list of persons.
+     *
+     * @param persons the list of persons to process.
+     * @return a list of PersonInformationsDTO, with one entry per person.
+     * @throws NullPointerException if the list of persons is null}.
+     */
     public List<PersonInformationsDTO> getPersonInformationsDTOs(List<Person> persons){
         Objects.requireNonNull(persons, "list persons cannot be null");
 

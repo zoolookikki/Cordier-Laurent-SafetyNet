@@ -9,22 +9,21 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 @Data
-@AllArgsConstructor //  Génère un constructeur avec tous les arguments.
+@AllArgsConstructor 
 public class MedicalRecord {
 
-    @NotBlank(message = "Le prénom est obligatoire")    
+    @NotBlank(message = "First name is required")    
     private String firstName;
     
-    @NotBlank(message = "Le nom est obligatoire")    
+    @NotBlank(message = "Name is required")    
     private String lastName;
 
-    @Pattern(regexp = "^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\\d{4}$", message = "Le format de la date doit être mm/dd/yyyy")
+    @Pattern(regexp = "^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\\d{4}$", message = "The date format must be mm/dd/yyyy")
     private String birthdate;
     
-    @NotNull(message = "La liste des médicaments ne doit pas être nulle")
+    @NotNull(message = "The list of medications must not be null")
     private List<String> medications;
     
-    @NotNull(message = "La liste des allergies ne doit pas être nulle")
+    @NotNull(message = "The list of allergies must not be null")
     private List<String> allergies;
-    
 }

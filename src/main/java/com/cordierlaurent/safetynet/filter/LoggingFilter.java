@@ -8,28 +8,40 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * For logging HTTP request details.
+ *
+ * <p>This filter logs the HTTP method and full URL of every incoming request, including query parameters if present.</p>
+ *
+ */
 @Component
 @Log4j2
 public class LoggingFilter implements Filter {
 
+    /**
+     * Logs the details of the incoming HTTP request and continues the filter chain.
+     *
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
 
-        // Récupérer l'URL de base
+        // Retrieve the base URL
         String url = req.getRequestURL().toString();
 
-        // Récupérer les paramètres de requête
+        // Retrieve query parameters, if any
         String queryString = req.getQueryString();
 
-        // Construire l'URL complète avec les paramètres
+        // Construct the full URL with query parameters
         String fullUrl = (queryString != null) ? url + "?" + queryString : url;
 
+        // Get the HTTP method (GET, POST...)
         String method = req.getMethod();
 
-        log.info("Requête reçue : [{}] {}", method, fullUrl);
+        // Log the HTTP method and full URL
+        log.info("Request received : [{}] {}", method, fullUrl);
 
-        // Continuer la chaîne de filtres.
+        // Continue the filter chain
         chain.doFilter(request, response);  
     }
 }

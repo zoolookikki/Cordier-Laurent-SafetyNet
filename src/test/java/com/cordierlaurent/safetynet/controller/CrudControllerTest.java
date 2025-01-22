@@ -30,8 +30,7 @@ public abstract class CrudControllerTest<Model> {
     @Autowired
     protected ObjectMapper objectMapper;
 
-//  @MockitoBean  // idem @Mock + injecté dans Spring et remplace le bean réel (remplace @MockBean déprécié).
-    @MockitoBean
+    @MockitoBean // replaces deprecated @MockBean
     protected JsonDataRepository jsonDataRepository;
 
     // To do the test of each child class :

@@ -6,13 +6,12 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 
 @Data
-@AllArgsConstructor //  Génère un constructeur avec tous les arguments.
+@AllArgsConstructor 
 public class FireStation {
 
-    @NotBlank(message = "L'adresse est obligatoire")    
+    @NotBlank(message = "Address is required")    
     private String address;
 
-    @Positive(message = "Le numéro de station doit être positif")
+    @Positive(message = "Station number must be positive")
     private int station;
-    
 }

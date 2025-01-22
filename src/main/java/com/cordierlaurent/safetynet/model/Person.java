@@ -8,40 +8,33 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Email;
 
-/*
-Getter et Setter pour le repository
-toString pour les traces.
-equals si je dois comparer les entités + utilisation comparaison containsExactly assertJ objet identique et non pas la référence mémoire.
- */
 @Data 
-// je préfère les utiliser 1 par 1 pour le moment.
-@AllArgsConstructor //  Génère un constructeur avec tous les arguments.
-// @SuppressWarnings("unused") // pour Eclipse => inutile après installation de lombok dans Eclipse.
+@AllArgsConstructor 
 public class Person {
     
-    @NotBlank(message = "Le prénom est obligatoire")    
+    @NotBlank(message = "First name is required")    
     private String firstName;
 
-    @NotBlank(message = "Le nom est obligatoire")    
+    @NotBlank(message = "Name is required")    
     private String lastName;
 
-    @NotBlank(message = "L'adresse est obligatoire")    
+    @NotBlank(message = "Address is required")    
     private String address;
 
-    @NotBlank(message = "La ville est obligatoire")    
+    @NotBlank(message = "The city is required")    
     private String city;
 
-    @NotBlank(message = "Le code postal est obligatoire")    
-    @Pattern(regexp = "\\d{5}", message = "Le code postal doit être sur 5 chiffres")
+    @NotBlank(message = "Zip code is required")    
+    @Pattern(regexp = "\\d{5}", message = "The zip code must be 5 digits")
     private String zip; 
 
-    @NotBlank(message = "Le numéro de téléphone est obligatoire")    
-//    @Pattern(regexp = "\\d{10}", message = "Le numéro de téléphone doit être composé de 10 chiffres")
-    @Pattern(regexp = "^\\d{3}-\\d{3}-\\d{4}$", message = "Le numéro de téléphone doit être au format 123-456-7890")
+    @NotBlank(message = "Telephone number is required")    
+//    @Pattern(regexp = "\\d{10}", message = "The phone number must be 10 digits")
+    @Pattern(regexp = "^\\d{3}-\\d{3}-\\d{4}$", message = "The phone number should be in the format 123-456-7890")
     private String phone;
 
-    @NotBlank(message = "L'email est obligatoire")    
-    @Email(message = "L'email doit être valide")
+    @NotBlank(message = "Email is required")    
+    @Email(message = "Email must be valid")
     private String email;
     
 }

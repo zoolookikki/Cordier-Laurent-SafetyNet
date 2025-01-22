@@ -1,9 +1,15 @@
 package com.cordierlaurent.safetynet.exception;
 
-// pour que ce soit plus clair au niveau des exceptions pour json (j'aurai pu utiliser IllegalArgumentException) => customisable si besoin.
+/**
+ * Custom exception to handle errors related to JSON file operations.
+ *
+ * <p>This exception is a subclass of RuntimeException and is intended to provide clarity when dealing with JSON file-related issues in the application. 
+ * It is designed to be more specific than a general IllegalArgumentException and can be customized further if necessary.</p>
+ *
+ * <p>While the class does not currently utilize serialization, the serialVersionUID is defined to avoid warnings in tools like Eclipse when serialization is applied.</p>
+ */
 public class JsonFileException extends RuntimeException {
 
-    // si utilisation de la sérialisation (application distribuée / sauvegarde), ce qui n'est pas mon cas ici, mais évite le warning sous Eclipse.
     private static final long serialVersionUID = 1L; 
     
     public JsonFileException(String message) {

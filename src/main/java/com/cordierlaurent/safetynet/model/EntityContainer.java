@@ -8,15 +8,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A container class for aggregating entity lists such as Person}, FireStation, and MedicalRecord.
+ * 
+ * <p>This class is used to encapsulate multiple lists of entities that are deserialized from JSON files.</p> 
+ */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor  // Jackson a besoin d'un constructeur par défaut (sans argument) pour instancier l'objet lors de la désérialisation.
+@NoArgsConstructor  // Jackson needs a default constructor (no arguments) to instantiate the object during deserialization.
 public class EntityContainer {
     private List<Person> persons;
-    // pour que Jackson fasse automatiquement la désérialisation sur firestations au lieu fireStations.
+    // To make Jackson automatically deserialize to firestations instead of fireStations.
     @JsonProperty("firestations")
     private List<FireStation> fireStations; 
-    // idem medicalrecords au lieu de medicalRecords.
+    // To make Jackson automatically deserialize to medicalrecords instead of medicalRecords.
     @JsonProperty("medicalrecords")
     private List<MedicalRecord> medicalRecords; 
 }

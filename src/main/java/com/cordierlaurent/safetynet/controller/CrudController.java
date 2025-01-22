@@ -20,54 +20,72 @@ import com.cordierlaurent.safetynet.service.CrudService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Abstract REST controller for CRUD operations.
+ * 
+ * @param <Model> the type of model managed by this controller.
+ */
 @RestController
 @Log4j2
-//@Validated Active la validation sur les paramètres avec @PathVariable et @RequestParam (voir @NotBlank etc... dans les paramètres de chaque méthode)
 @Validated
 public abstract class CrudController <Model> {
 
     @Autowired
     protected JsonDataRepository jsonDataRepository;
 
-    // à implémenter dans la classe fille : 
-    // pour pouvoir appeler le service concerné pour lui demander de vérifier l'unicité.
-    // pour pouvoir appeler les fonctions de Crud de chaque service concerné.
+    /**
+     * Retourne the service associated with this controller.
+     * 
+     * This function is to be implemented in the child class, it allows you to call:
+     * - the service concerned in order to ask it to verify the uniqueness. 
+     * - the Crud functions of each service concerned.
+     * 
+     * @return the service.
+     */
     protected abstract CrudService<Model> getService();
-    
-    // @PostMapping : mappe une requête HTTP POST à une méthode de contrôleur : création. 
-    // ResponseEntity représente l'ensemble de la réponse HTTP envoyée au client (corps, status, entête http) : <Model> => objet générique retourné en Json.
-    // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique Model (désérialisaion automatique : json -> Model).
-    // @Valid : pour valider tout ce qui a été déclaré comme à contrôler dans le modèle (@NotNull, @NotBlank etc...)    
-    // ? au lieu de Model sinon erreur type mismatch car ici on renvoit soit Model soit un String.
-    // ici pour @PostMapping je ne mets plus entre () la route HTTP à laquelle la méthode doit répondre : c'est juste un POST pour le moment, la route est à définir dans la classe fille avec @RequestMapping.
+
+    /**
+     * Creates a new entity.
+     *
+     * @param model the entity to add.
+     * @return an HTTP response with the created entity or an error message.
+     */
+    // For @PostMapping, there is no (HTTP route to which the method must respond): the route must be defined in the child class with @RequestMapping.
     @PostMapping
+    // ? instead of Model otherwise type mismatch error because here we return either Model or a String.
     public ResponseEntity<?> addModel(@Valid @RequestBody Model model) {
         log.debug(this.getClass().getSimpleName() + " : POST/addModel : "+ model);
 
-        // vérification de l'unicité par le service => logique métier.
+        // verification of uniqueness by the service.
         if (!getService().isUnique(null,model)) {
-            log.info("creation : doublon => " + model);
+            log.info("creation : already exists => " + model);
             return ResponseEntity
                     .status(HttpStatus.CONFLICT) // 409 
                     .body("creation : already exists");
         }
         
-        // c'est ok.
         log.info("creation : ok => " + model);
         getService().addModel(model);
-        jsonDataRepository.save(); // je mets à jour le fichier json ici.
+        jsonDataRepository.save();
         return ResponseEntity
-                .status(HttpStatus.CREATED) // 201 created => préférable à 200 ok.
-                .body(model); // on retourne ce qui a été envoyé même si c'est identique ici pour respecter le standard.
+                .status(HttpStatus.CREATED) // 201 created => preferable to 200 ok.
+                .body(model); // returns what was sent even to respect the standard.
     }
     
-    // @PutMapping : mappe une requête HTTP PUT à une méthode de contrôleur : mise à jour.
-    // /{param1}", "/{param1}/{param2} : syntaxe pour dire que j'attends 1 ou 2 paramètres sur l'url en plus du Json dans le body.
-    // "/{param1}/", "/" : pour capturer les cas avec uniquement le /
-    // $PatchVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut).
-    // @Valid : pour valider tout ce qui a été déclaré comme à contrôler dans le modèle (@NotNull, @NotBlank etc...)    
-    // @RequestBody : pour lier automatiquement le corps de la requête HTTP (JSON, XML, etc.) à l'objet générique Model (désérialisaion automatique : json -> Model).
+    
+    /**
+     * Updates an existing entity identified by a unique key.
+     * 
+     * "/{param1}", "/{param1}/{param2} : syntax to say that we expect 1 or 2 parameters on the url in addition to the Json in the body.
+     * "/{param1}/", "/" : to capture cases with only the /
+     *
+     * @param param1 the first parameter of the unique key.
+     * @param param2 the second parameter of the unique key.
+     * @param model  the entity to update.
+     * @return an HTTP response with the updated entity or an error message.
+     */    
     @PutMapping({"/{param1}", "/{param1}/{param2}", "/{param1}/", "/"})
+    // ? instead of Model otherwise type mismatch error because here we return either Model or a String.
     public ResponseEntity<?> updateModelByUniqueKey(
             @PathVariable(required = false) String param1,
             @PathVariable(required = false) String param2, 
@@ -78,43 +96,47 @@ public abstract class CrudController <Model> {
             return validationResponse.get();
         }
 
-        // construction de l'id
         String[] id = new String[]{param1, param2};
             
         log.debug(this.getClass().getSimpleName() + " : PUT/updateModelByUniqueKey : key=" + param1 + "/" + param2  + " " + model);
 
-        // attention, pour la modification, il faut vérifier que le modèle que l'on va mettre à jour n'existe pas déjà (sauf moi même...).
-        // vérification de l'unicité par le service => logique métier.
+        // for modification, we must check that the model we are going to update does not already exist.
         if (!getService().isUnique(id, model)) {
-            log.info("modification : doublon => " + model);
+            log.info("update : another record already exists => " + model);
             return ResponseEntity
                     .status(HttpStatus.CONFLICT) // 409 
-                    .body("modification : another record already exists");
+                    .body("update : another record already exists");
         }
         
-        // c'est presque ok.
         if (getService().updateModelByUniqueKey(id, model)) {
             // ok.
-            log.info("modification : ok => " + model);
-            jsonDataRepository.save(); // je mets à jour le fichier json ici.
+            log.info("update : ok => " + model);
+            jsonDataRepository.save(); 
             return ResponseEntity
                     .status(HttpStatus.OK) // 200
-                    .body(model); // on retourne ce qui a été envoyé même si c'est identique ici pour respecter le standard.
+                    .body(model); // returns what was sent even to respect the standard.
         } else {
             // nok. 
-            log.info("modification : non trouvé => " + model);
+            log.info("update : not found => " + model);
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
-                    .body("modification : not found");
+                    .body("update : not found");
         }
     }
+
     
-    // @DeleteMapping : mappe une requête HTTP DELETE à une méthode de contrôleur : suppression.
-    // /{param1}", "/{param1}/{param2} : syntaxe pour dire que j'attends 1 ou 2 paramètres sur l'url en plus du Json dans le body.
-    // "/{param1}/", "/" : pour capturer les cas avec uniquement le /
-    // $PathVariable : extrait les paramètres de la requête HTTP et les transmet en tant que paramètres à la méthode, le 2 ème n'étant pas requis (requis par défaut) ==> attention param2 est null si absent
+    /**
+     * Deletes an entity identified by a unique key.
+     * 
+     * "/{param1}", "/{param1}/{param2} : syntax to say that we expect 1 or 2 parameters on the url in addition to the Json in the body.
+     * "/{param1}/", "/" : to capture cases with only the /
+     *
+     * @param param1 the first parameter of the unique key.
+     * @param param2 the second parameter of the unique key.
+     * @return an HTTP response confirming the deletion or an error message.
+     */
     @DeleteMapping({"/{param1}", "/{param1}/{param2}", "/{param1}/", "/"})
-//    @DeleteMapping({"/{param1}/{param2}"})
+    // ? instead of Model otherwise type mismatch error because here we return either Model or a String.
     public ResponseEntity<?> deleteModelByUniqueKey(
         @PathVariable(required = false) String param1,
         @PathVariable(required = false) String param2) {
@@ -124,24 +146,21 @@ public abstract class CrudController <Model> {
             return validationResponse.get();
         }
 
-        // construction de l'id
         String[] id = new String[]{param1, param2};
             
         log.debug(this.getClass().getSimpleName() + " : DELETE/deleteModelByUniqueKey : key=" + param1 + '/' + param2);
 
         if (getService().deleteModelByUniqueKey(id)) {
-            // ok.
-            log.info("suppression : ok");
-            jsonDataRepository.save(); // je mets à jour le fichier json ici.
+            log.info("delete : ok");
+            jsonDataRepository.save();
             return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT) // 204 mieux que 200
-                    .build(); // on ne retourne pas de réponse, soit un body null.
+                    .status(HttpStatus.NO_CONTENT) // 204 better than 200
+                    .build(); // we do not return a response, therefore a body null.
         } else {
-            // nok. 
-            log.info("suppression : non trouvé");
+            log.info("delete : not found");
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND) // 404 
-                    .body("suppression : not found");
+                    .body("delete : not found");
         }
     }
 
