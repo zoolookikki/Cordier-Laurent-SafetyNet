@@ -209,16 +209,16 @@
             </plugin>
 
 			<!--  Javadoc -->
-	        <plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-javadoc-plugin</artifactId>
-	            <configuration>
-	                <show>protected</show> <!-- Inclure les méthodes protégées -->
-	                <author>true</author> <!-- Inclure les auteurs dans la Javadoc -->
-	                <version>true</version> <!-- Inclure les versions dans la Javadoc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<show>protected</show> <!-- Inclure les méthodes protégées -->
+					<author>true</author> <!-- Inclure les auteurs dans la Javadoc -->
+					<version>true</version> <!-- Inclure les versions dans la Javadoc -->
 					<additionalOptions>-Xdoclint:none</additionalOptions> <!-- Désactiver les avertissements stricts -->
-	            </configuration>
-	        </plugin>
+					</configuration>
+			</plugin>
             
 		</plugins>
 	</build>

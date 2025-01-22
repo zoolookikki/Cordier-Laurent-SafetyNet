@@ -44,10 +44,10 @@ public class SafetynetApplication implements CommandLineRunner {
      * Initializes and loads data from the JSON file.
      */
     @Override
-	public void run(String... args) {
+    public void run(String... args) {
         jsonDataRepository.init(jsonFileName);
         jsonDataRepository.load();
-	}
+    }
 
 }
 
