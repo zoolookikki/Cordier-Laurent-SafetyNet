@@ -20,7 +20,7 @@ Same as @JsonProperty to change the name, but for the class.
 Doesn't work without WRAP_ROOT_VALUE (which is not enabled by default) => change the default configuration => quite heavy modification => not worth it here.
 */
 //@JsonRootName("children") 
-@JsonView(Views.Address.class)
+@JsonView(Views.Basic.class)
 public class ChildAlertDTO {
     private String firstName;
     private String lastName;

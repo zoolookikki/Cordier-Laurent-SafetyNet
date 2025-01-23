@@ -28,7 +28,7 @@ public class PersonInformationsDTO {
     @JsonView({Views.Address.class, Views.WithEmail.class})
     private String address;
 
-    @JsonView({Views.Basic.class, Views.Detailed.class})
+    @JsonView({Views.Address.class, Views.Detailed.class})
     private String phone;
 
     @JsonView({Views.Detailed.class, Views.WithEmail.class})

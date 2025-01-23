@@ -40,7 +40,7 @@ public class AlertController {
      * @return a JSON response containing the list of children, and for each child, the list of household members.
      */
     @GetMapping("/childAlert")
-    @JsonView(Views.Address.class)
+    @JsonView(Views.Basic.class)
     public ResponseEntity<?> getChildAlert(
             @RequestParam("address") 
             @NotBlank(message = "Address is required") String address){
@@ -63,14 +63,10 @@ public class AlertController {
                     {
                         "firstName": "aaaa",
                         "lastName": "bbbb",
-                        "address": "cccc",
-                        "phone": "dddd"
                     },
                     {
                         "firstName": "eeee",
-                        "lastName": "ffff",
-                        "address": "gggg",
-                        "phone": "hhhh"
+                        "lastName": "ffff"
                     }
                 ]
             },
@@ -81,15 +77,11 @@ public class AlertController {
                 "householdMembers": [
                     {
                         "firstName": "aaaa",
-                        "lastName": "bbbb",
-                        "address": "cccc",
-                        "phone": "dddd"
+                        "lastName": "bbbb"
                     },
                     {
                         "firstName": "eeee",
-                        "lastName": "ffff",
-                        "address": "gggg",
-                        "phone": "hhhh"
+                        "lastName": "ffff"  
                     }
                 ]
             }
