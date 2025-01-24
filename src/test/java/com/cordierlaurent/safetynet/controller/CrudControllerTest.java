@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 // .... à revoir pourquoi cela ne s'importe pas automatiquement :
@@ -18,7 +17,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 // idem pas automatique : cet import regroupe toutes les méthodes comme : status() jsonPath() content() view() redirectedUrl()
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.CrudService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,9 +27,6 @@ public abstract class CrudControllerTest<Model> {
 
     @Autowired
     protected ObjectMapper objectMapper;
-
-    @MockitoBean // replaces deprecated @MockBean
-    protected JsonDataRepository jsonDataRepository;
 
     // To do the test of each child class :
     // For ex : "/person".
@@ -60,7 +55,6 @@ public abstract class CrudControllerTest<Model> {
 
         verify(getMockService(), times(1)).isUnique(null, validModel);
         verify(getMockService(), times(1)).addModel(validModel);
-        verify(jsonDataRepository, times(1)).save();
     }
 
     @Test
@@ -78,7 +72,6 @@ public abstract class CrudControllerTest<Model> {
 
         verify(getMockService(), times(1)).isUnique(null, validModel);
         verify(getMockService(), times(0)).addModel(validModel);
-        verify(jsonDataRepository, times(0)).save();
     }
 
     @Test
@@ -98,7 +91,6 @@ public abstract class CrudControllerTest<Model> {
 
         verify(getMockService(), times(1)).isUnique(id, updatedModel);
         verify(getMockService(), times(1)).updateModelByUniqueKey(id, updatedModel);
-        verify(jsonDataRepository, times(1)).save();
     }
 
     @Test
@@ -116,8 +108,7 @@ public abstract class CrudControllerTest<Model> {
             .andExpect(status().isConflict());
 
         verify(getMockService(), times(1)).isUnique(id, updatedModel);
-        verify(getMockService(), times(0)).updateModelByUniqueKey(id, updatedModel); 
-        verify(jsonDataRepository, times(0)).save(); 
+        verify(getMockService(), times(0)).updateModelByUniqueKey(id, updatedModel);
     }
 
     @Test
@@ -136,7 +127,6 @@ public abstract class CrudControllerTest<Model> {
             .andExpect(status().isNotFound());
 
         verify(getMockService(), times(1)).updateModelByUniqueKey(id, updatedModel);
-        verify(jsonDataRepository, times(0)).save();
     }
 
     @Test
@@ -151,7 +141,6 @@ public abstract class CrudControllerTest<Model> {
             .andExpect(status().isNoContent());
 
         verify(getMockService(), times(1)).deleteModelByUniqueKey(id);
-        verify(jsonDataRepository, times(1)).save();
     }
     
     @Test
@@ -166,7 +155,6 @@ public abstract class CrudControllerTest<Model> {
             .andExpect(status().isNotFound());
 
         verify(getMockService(), times(1)).deleteModelByUniqueKey(id);
-        verify(jsonDataRepository, times(0)).save();
     }
     
 }

@@ -2,7 +2,6 @@ package com.cordierlaurent.safetynet.controller;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cordierlaurent.safetynet.Util.ResponseEntityUtil;
-import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 import com.cordierlaurent.safetynet.service.CrudService;
 
 import jakarta.validation.Valid;
@@ -29,9 +27,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Validated
 public abstract class CrudController <Model> {
-
-    @Autowired
-    protected JsonDataRepository jsonDataRepository;
 
     /**
      * Retourne the service associated with this controller.
@@ -66,7 +61,6 @@ public abstract class CrudController <Model> {
         
         log.info("creation : ok => " + model);
         getService().addModel(model);
-        jsonDataRepository.save();
         return ResponseEntity
                 .status(HttpStatus.CREATED) // 201 created => preferable to 200 ok.
                 .body(model); // returns what was sent even to respect the standard.
@@ -111,7 +105,6 @@ public abstract class CrudController <Model> {
         if (getService().updateModelByUniqueKey(id, model)) {
             // ok.
             log.info("update : ok => " + model);
-            jsonDataRepository.save(); 
             return ResponseEntity
                     .status(HttpStatus.OK) // 200
                     .body(model); // returns what was sent even to respect the standard.
@@ -152,7 +145,6 @@ public abstract class CrudController <Model> {
 
         if (getService().deleteModelByUniqueKey(id)) {
             log.info("delete : ok");
-            jsonDataRepository.save();
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT) // 204 better than 200
                     .build(); // we do not return a response, therefore a body null.

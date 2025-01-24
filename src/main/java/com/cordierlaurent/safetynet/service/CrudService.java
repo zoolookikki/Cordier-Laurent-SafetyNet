@@ -2,9 +2,11 @@ package com.cordierlaurent.safetynet.service;
 
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cordierlaurent.safetynet.repository.CrudRepository;
+import com.cordierlaurent.safetynet.repository.JsonDataRepository;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -16,6 +18,10 @@ import lombok.extern.log4j.Log4j2;
 @Service
 @Log4j2
 public abstract class CrudService<Model> {
+    
+    @Autowired
+    protected JsonDataRepository jsonDataRepository;
+
     
     /**
      * Retrieves the repository associated with the model type.
@@ -89,6 +95,7 @@ public abstract class CrudService<Model> {
     public void addModel(Model modelToAdd) {
         Objects.requireNonNull(modelToAdd, "modelToAdd cannot be null");
         getRepository().addModel(modelToAdd);
+        jsonDataRepository.save();
         log.debug(this.getClass().getSimpleName() + " : OK");
     }
     
@@ -105,7 +112,12 @@ public abstract class CrudService<Model> {
     public boolean updateModelByUniqueKey (String[] id, Model modelToUpdate) {
         validId(id);
         Objects.requireNonNull(modelToUpdate, "modelToUpdate cannot be null");
-        return getRepository().updateModelByUniqueKey(id, modelToUpdate);
+        if (getRepository().updateModelByUniqueKey(id, modelToUpdate)) {
+            jsonDataRepository.save();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -118,7 +130,12 @@ public abstract class CrudService<Model> {
      */
     public boolean deleteModelByUniqueKey (String[] id) {
         validId(id);
-        return getRepository().deleteModelByUniqueKey(id);
+        if (getRepository().deleteModelByUniqueKey(id)) {
+            jsonDataRepository.save();
+            return true;
+        } else {
+            return false;
+        }
     }
     
 }
